@@ -1,5 +1,7 @@
 package com.tim7.eform;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -26,6 +28,14 @@ public class EFormProjectApplication implements CommandLineRunner{
 		customerRepository.save(c2);
 		customerRepository.save(c3);
 		customerRepository.save(c4);
+		
+		System.out.println("************");
+		
+		List<Customer> customers = customerRepository.findAll();
+		
+		for(Customer c : customers) {
+			System.out.println(c.toString());
+		}
 	}
 
 }

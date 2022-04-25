@@ -1,31 +1,24 @@
 {
-	"name": "frontend",
-	"version": "0.0.1",
-	"private": true,
-	"scripts": {
-		"android": "react-native run-android",
-		"ios": "react-native run-ios",
-		"start": "react-native start",
-		"test": "jest",
-		"lint": "eslint .",
-		"instrumentDynatrace": "node node_modules\\@dynatrace\\react-native-plugin\\scripts\\instrument.js"
-	},
-	"dependencies": {
-		"@dynatrace/react-native-plugin": "^2.231.1",
-		"react": "17.0.2",
-		"react-native": "0.68.1"
-	},
-	"devDependencies": {
-		"@babel/core": "^7.17.9",
-		"@babel/runtime": "^7.17.9",
-		"@react-native-community/eslint-config": "^3.0.1",
-		"babel-jest": "^27.5.1",
-		"eslint": "^8.13.0",
-		"jest": "^27.5.1",
-		"metro-react-native-babel-preset": "^0.70.1",
-		"react-test-renderer": "17.0.2"
-	},
-	"jest": {
-		"preset": "react-native"
-	}
+  "name": "frontend",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "react": "16.8.3",
+    "react-native": "0.59.10"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.9",
+    "@babel/runtime": "^7.17.9",
+    "babel-jest": "^27.5.1",
+    "jest": "^27.5.1",
+    "metro-react-native-babel-preset": "^0.70.2",
+    "react-test-renderer": "16.8.3"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
 }

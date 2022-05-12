@@ -19,10 +19,10 @@ public class EFormProjectApplication implements CommandLineRunner{
 	}
 
 	public void run(String... args) throws Exception {
-		Customer c1 = new Customer("1", "Bambang","Munoye");
-		Customer c2 = new Customer("2", "Ilham","Sugih");
-		Customer c3 = new Customer("3", "Budi","Yanto");
-		Customer c4 = new Customer("4", "Andi","M");
+		Customer c1 = new Customer(1,"email1", "Bambang");
+		Customer c2 = new Customer(2,"email2", "Ilham");
+		Customer c3 = new Customer(3,"email3", "Budi");
+		Customer c4 = new Customer(4,"email4", "Andi");
 		
 		customerRepository.save(c1);
 		customerRepository.save(c2);

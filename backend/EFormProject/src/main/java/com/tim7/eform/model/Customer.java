@@ -2,44 +2,54 @@ package com.tim7.eform.model;
 
 import org.springframework.data.annotation.Id;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Customer {
 	@Id
-	public String id;
-	public String firstName;
-	public String lastName;
+	public long id;
+	public String email;
+	public String username;
 	
 	public Customer(){
 		
 	}
 	
-	public String getId() {
+	public long getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(long id) {
 		this.id = id;
 	}
-	public String getFirstName() {
-		return firstName;
+
+	public String getEmail() {
+		return email;
 	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setEmail(String email) {
+		this.email = email;
 	}
-	public String getLastName() {
-		return lastName;
+
+	public String getUsername() {
+		return username;
 	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setUsername(String username) {
+		this.username = username;
 	}
-	public Customer(String id, String firstName, String lastName) {
+
+	public Customer(long id, String email, String username) {
 		super();
 		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
+		this.email = email;
+		this.username = username;
 	}
 	
 	@Override
 	public String toString() {
-		return "Customer [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + "]";
+		return "Customer [id=" + id + ", email="+email + ", username=" + username + "]";
 	}
 	
 	

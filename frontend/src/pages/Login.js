@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Pressable, Button } from "react-native";
 import Inputs from "../components/Inputs";
 import LoginImage from "../assets/images/login.png"
 import Buttons from "../components/Buttons";
+import AccountCreationTitle from "../components/AccountCreationTitle";
 
 
 const Login = ({ navigation }) => {
@@ -31,9 +32,7 @@ const Login = ({ navigation }) => {
                 style={styles.loginImage}
                 resizeMode="contain"
             />
-            <Text>
-
-            </Text>
+            <AccountCreationTitle text="Login"/>
             <Inputs placeholder="Email" value={email} setValue={setEmail}></Inputs>
             <Inputs placeholder="Password" value={password} setValue={setPassword} secureTextEntry={true}></Inputs>
             <Buttons text="Forgot Password?" onPress={onForgotPressed} type="SECONDARY"></Buttons>

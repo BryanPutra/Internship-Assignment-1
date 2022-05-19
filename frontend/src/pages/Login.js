@@ -11,10 +11,10 @@ const Login = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const onLoginPressed = () => {
-        // switch to main menu, request auth 
+        // switch to main menu, request auth
     }
     const onForgotPressed = () => {
-        // switch to forgot password menu 
+        // switch to forgot password menu
     }
 
     const onLoginGoogle = () => {

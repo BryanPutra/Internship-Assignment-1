@@ -47,6 +47,7 @@
 		6DB42FC5732C4C42833ED0B7 /* libRNScreens.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0880E400B3A3495DB56EAA8F /* libRNScreens.a */; };
 		80C4557C777649378672F0EF /* libRNScreens-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B1A02DE7A5471A800ED44B /* libRNScreens-tvOS.a */; };
 		2B68C640B40C4B858F70C0BD /* libRNCSafeAreaContext.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 043FA23CC859417488565AD0 /* libRNCSafeAreaContext.a */; };
+		8835A88720B34BE4856AC49E /* libRNCMaskedView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ACE26825B5344A2A8199AD0 /* libRNCMaskedView.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -365,6 +366,9 @@
 		29B1A02DE7A5471A800ED44B /* libRNScreens-tvOS.a */ = {isa = PBXFileReference; name = "libRNScreens-tvOS.a"; path = "libRNScreens-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		345CEFEF14254B7B9A9A4D1A /* RNSafeAreaContext.xcodeproj */ = {isa = PBXFileReference; name = "RNSafeAreaContext.xcodeproj"; path = "../node_modules/react-native-safe-area-context/ios/RNSafeAreaContext.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		043FA23CC859417488565AD0 /* libRNCSafeAreaContext.a */ = {isa = PBXFileReference; name = "libRNCSafeAreaContext.a"; path = "libRNCSafeAreaContext.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		BF94797BE0024AF095D614FB /* RNCMaskedView.xcodeproj */ = {isa = PBXFileReference; name = "RNCMaskedView.xcodeproj"; path = "../node_modules/@react-native-community/masked-view/ios/RNCMaskedView.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		4ACE26825B5344A2A8199AD0 /* libRNCMaskedView.a */ = {isa = PBXFileReference; name = "libRNCMaskedView.a"; path = "libRNCMaskedView.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		6B0DF8F1FB1345FF8741552A /* SafeAreaView.xcodeproj */ = {isa = PBXFileReference; name = "SafeAreaView.xcodeproj"; path = "../node_modules/react-native-safe-area-context/ios/SafeAreaView.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -397,6 +401,7 @@
 				936D444942864601A3E75226 /* libRNGestureHandler.a in Frameworks */,
 				6DB42FC5732C4C42833ED0B7 /* libRNScreens.a in Frameworks */,
 				2B68C640B40C4B858F70C0BD /* libRNCSafeAreaContext.a in Frameworks */,
+				8835A88720B34BE4856AC49E /* libRNCMaskedView.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -593,6 +598,8 @@
 				7EF7B22AD27F448BAA6E89A3 /* RNGestureHandler.xcodeproj */,
 				5A3DAA66E964464F917B5736 /* RNScreens.xcodeproj */,
 				345CEFEF14254B7B9A9A4D1A /* RNSafeAreaContext.xcodeproj */,
+				BF94797BE0024AF095D614FB /* RNCMaskedView.xcodeproj */,
+				6B0DF8F1FB1345FF8741552A /* SafeAreaView.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1227,6 +1234,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1234,6 +1242,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-screens\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\masked-view\ios",
+					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios\SafeAreaView",
 				);
 			};
 			name = Debug;
@@ -1262,6 +1272,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1269,6 +1280,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-screens\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\masked-view\ios",
+					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios\SafeAreaView",
 				);
 			};
 			name = Release;
@@ -1295,6 +1308,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-screens\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\masked-view\ios",
+					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios\SafeAreaView",
 				);
 			};
 			name = Debug;
@@ -1320,6 +1335,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-screens\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\masked-view\ios",
+					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios\SafeAreaView",
 				);
 			};
 			name = Release;
@@ -1356,6 +1373,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1363,6 +1381,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-screens\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\masked-view\ios",
+					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios\SafeAreaView",
 				);
 			};
 			name = Debug;
@@ -1399,6 +1419,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1406,6 +1427,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-screens\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\masked-view\ios",
+					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios\SafeAreaView",
 				);
 			};
 			name = Release;
@@ -1441,6 +1464,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1448,6 +1472,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-screens\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\masked-view\ios",
+					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios\SafeAreaView",
 				);
 			};
 			name = Debug;
@@ -1483,6 +1509,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1490,6 +1517,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-screens\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\masked-view\ios",
+					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios\SafeAreaView",
 				);
 			};
 			name = Release;

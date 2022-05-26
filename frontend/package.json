@@ -15,10 +15,11 @@
     "react": "16.8.3",
     "react-native": "0.59.10",
     "react-native-gesture-handler": "^1.1.x",
-    "react-native-reanimated": "^1.x.x",
+    "react-native-reanimated": "1.13.2",
     "react-native-safe-area-context": "3.4.1",
     "react-native-screens": "^1.0.0-alpha.23",
-    "react-navigation": "^4.4.4"
+    "react-navigation": "^4.x.x",
+    "react-navigation-stack": "^2.10.4"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",

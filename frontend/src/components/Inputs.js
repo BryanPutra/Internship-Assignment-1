@@ -1,3 +1,4 @@
+import React, { Component, useState } from "react";
 import { TextInput, StyleSheet, Text, View } from "react-native";
 
 const Inputs = ({ value, setValue, placeholder, secureTextEntry}) => {

@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
+// import { createStackNavigator } from 'react-navigation-stack';
 import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
 //pages
 import MainMenu from "./src/pages/MainMenu";
@@ -16,12 +18,14 @@ const instructions = Platform.select({
     "Shake or press menu button for dev menu",
 });
 
-const AppNavigator = createStackNavigator({
-  Home: {
-    screen: HomeScreen,
-  },
-});
-const RootAppContainer = createAppContainer(AppNavigator);
+const Stack = createStackNavigator();
+
+// const AppNavigator = createStackNavigator({
+//   Home: {
+//     screen: HomeScreen,
+//   },
+// });
+// const RootAppContainer = createAppContainer(AppNavigator);
 
 export default class App extends Component<Props> {
   render() {

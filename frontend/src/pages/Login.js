@@ -1,8 +1,8 @@
-import React, { Component, useState } from "react";
-import { StyleSheet, Text, View, Pressable, Button } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Text, View, Pressable, Button, Image } from "react-native";
 import Inputs from "../components/Inputs";
-import LoginImage from "../assets/images/login.png"
-import Buttons from "../components/Buttons";
+import Buttons from "../components/CustomButtons";
+import LoginImage from "../assets/images/login.png";
 import AccountCreationTitle from "../components/AccountCreationTitle";
 
 
@@ -33,13 +33,13 @@ const Login = ({ navigation }) => {
                 resizeMode="contain"
             />
             <AccountCreationTitle text="Login"/>
-            <Inputs placeholder="Email" value={email} setValue={setEmail}></Inputs>
-            <Inputs placeholder="Password" value={password} setValue={setPassword} secureTextEntry={true}></Inputs>
-            <Buttons text="Forgot Password?" onPress={onForgotPressed} type="SECONDARY"></Buttons>
-            <Buttons text="Login" onPress={onLoginPressed}></Buttons>
+            <Inputs placeholder="Email" value={email} setValue={setEmail}/>
+            <Inputs placeholder="Password" value={password} setValue={setPassword} secureTextEntry={true}/>
+            <Buttons text="Forgot Password?" onPress={onForgotPressed} type="SECONDARY"/>
+            <Buttons text="Login" onPress={onLoginPressed}/>
             <Text style={styles.orDividier}>OR</Text>
-            <Buttons text="Login with Google" onPress={onLoginGoogle} bgColor="#f4998d" fgColor="#f40000"></Buttons>
-            <Buttons text="Dont have an account? Register here" onPress={onRegisterPressed} type="SECONDARY"></Buttons>
+            <Buttons text="Login with Google" onPress={onLoginGoogle} bgColor="#f4998d" fgColor="#f40000"/>
+            <Buttons text="Dont have an account? Register here" onPress={onRegisterPressed} type="SECONDARY"/>
         </View>
     );
 }

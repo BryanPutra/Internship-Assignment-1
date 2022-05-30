@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("customers")
-public class Customer {
+@Document("users")
+public class User {
 	
 	@Transient
 	public static final String SEQUENCE_NAME = "customers_sequence";
@@ -29,10 +29,11 @@ public class Customer {
     private String gender;
     private Date birthDate;
     private String email;
+    private String password;
     private Date createdDate;
     
-	public Customer(Long id, String cifCode, String name, String mothersMaiden, String gender, Date birthDate,
-			String email, Date createdDate) {
+	public User(Long id, String cifCode, String name, String mothersMaiden, String gender, Date birthDate,
+			String email, String password, Date createdDate) {
 		super();
 		this.id = id;
 		this.cifCode = cifCode;
@@ -41,6 +42,7 @@ public class Customer {
 		this.gender = gender;
 		this.birthDate = birthDate;
 		this.email = email;
+		this.password = password;
 		this.createdDate = createdDate;
 	}
 
@@ -108,14 +110,19 @@ public class Customer {
 		this.createdDate = createdDate;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	@Override
 	public String toString() {
-		return "Customer [id=" + id + ", cifCode=" + cifCode + ", name=" + name + ", mothersMaiden=" + mothersMaiden
-				+ ", gender=" + gender + ", birthDate=" + birthDate + ", email=" + email + ", createdDate="
-				+ createdDate + "]";
+		return "User [id=" + id + ", cifCode=" + cifCode + ", name=" + name + ", mothersMaiden=" + mothersMaiden
+				+ ", gender=" + gender + ", birthDate=" + birthDate + ", email=" + email + ", password=" + password
+				+ ", createdDate=" + createdDate + "]";
 	}
     
-    
-	
-	
 }

@@ -8,6 +8,7 @@
     "postinstall": "npx jetify"
   },
   "dependencies": {
+    "@react-native-community/cli": "^8.0.2",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/native": "^5.x",
     "@react-navigation/stack": "^5.x",
@@ -28,6 +29,7 @@
     "jest": "^27.5.1",
     "jetifier": "^2.0.0",
     "metro-react-native-babel-preset": "^0.70.2",
+    "react-devtools": "^3",
     "react-test-renderer": "16.8.3"
   },
   "jest": {

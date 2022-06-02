@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Pressable, Button, Image } from "react-native";
 import Inputs from "../components/Inputs";
-import Buttons from "../components/CustomButtons";
+import Buttons from "../components/CustomButtons"
 import LoginImage from "../assets/images/login.png";
 import AccountCreationTitle from "../components/AccountCreationTitle";
-
 
 const Login = ({ navigation }) => {
 
@@ -46,14 +45,14 @@ const Login = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     mainContainer: {
-      flex: 1,
+      flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
       backgroundColor: "#F5FCFF",
     },
 
     loginImage: {
-
+      flex: 1,
     },
 
     orDividier: {

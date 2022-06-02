@@ -1,5 +1,7 @@
 package com.tim7.eform.jwt;
 
+import java.util.Date;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,14 +13,13 @@ import org.springframework.web.util.WebUtils;
 
 import com.tim7.eform.service.UserDetails;
 
+import io.jsonwebtoken.*;
+
 public class JwtUtils {
 	private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
-	@Value("${tim7.app.jwtSecret}")
-	private String jwtSecret;
-	@Value("${tim7.app.jwtExpirationMs}")
-	private String jwtExpirationMs;
-	@Value("${tim7.app.jwtCookieName}")
-	private String jwtCookie;
+	private String jwtSecret = "s3cREEtJ50nWE8T0k3N";
+	private String jwtExpirationMs = "86400000";
+	private String jwtCookie = "tim7-proj";
 	
 	public String getJwtFromCookies(HttpServletRequest request) {
 		Cookie cookie = WebUtils.getCookie(request, jwtCookie);
@@ -35,5 +36,40 @@ public class JwtUtils {
 		return cookie;
 	}
 	
+	public ResponseCookie getCleanJwtCookie() {
+		ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
+		return cookie;
+	}
 	
+	public String getUserNameFromJwtToken(String token) {
+		return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+	}
+	
+	public boolean validateJwtToken(String authToken) {
+		try {
+			Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+			return true;
+		}catch(SignatureException e) {
+			logger.error("Invalid JWT signature: {}", e.getMessage());
+		}
+		catch(MalformedJwtException e) {
+			logger.error("Invalid JWT token: {}", e.getMessage());
+		}
+		catch(ExpiredJwtException e) {
+			logger.error("JWT token is expired: {}", e.getMessage());
+		}
+		catch(UnsupportedJwtException e) {
+			logger.error("JWT is unsupported: {}", e.getMessage());
+		}
+		catch(IllegalArgumentException e) {
+			logger.error("JWT string is empty: {}", e.getMessage());
+		}
+		return false;
+	}
+	
+	public String generateTokenFromUsername(String username) {
+		return Jwts.builder().setSubject(username).setIssuedAt(new Date())
+				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
+	}
 }

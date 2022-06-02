@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.tim7.eform.jwt.AuthEntryPointJwt;
+import com.tim7.eform.service.UserDetailsService;
 import com.tim7.eform.service.UserService;
 
 @Configuration
@@ -22,7 +24,7 @@ import com.tim7.eform.service.UserService;
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
-	private UserDetailsService userDetailsService;
+	UserDetailsService userDetailsService;
 	@Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
 	@Bean

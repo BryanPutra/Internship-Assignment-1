@@ -1,14 +1,7 @@
 import React, { Component } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
-import 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-
-//pages
-import MainMenu from "./src/pages/MainMenu";
-import Login from "./src/pages/Login";
-import Register from "./src/pages/Login";
-
+import { Platform, StyleSheet, View } from "react-native";
+import "react-native-gesture-handler";
+import Navigation from "./src/navigation/Navigation";
 // const instructions = Platform.select({
 //   ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
 //   android:
@@ -20,12 +13,9 @@ const Stack = createStackNavigator();
 export default class App extends Component<Props> {
   render() {
     return (
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Register" component={Register} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <View style={styles.container}>
+        <Navigation />
+      </View>
     );
   }
 }
@@ -33,8 +23,6 @@ export default class App extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF",
+    backgroundColor: '#F9FBFC',
   },
 });

@@ -10,8 +10,8 @@
   "dependencies": {
     "@react-native-community/cli": "^8.0.2",
     "@react-native-community/masked-view": "^0.1.11",
-    "@react-navigation/native": "^5.x",
-    "@react-navigation/stack": "^5.x",
+    "@react-navigation/native": "^5.0.5",
+    "@react-navigation/stack": "^6.2.1",
     "hermes-engine": "^0.11.0",
     "react": "16.8.3",
     "react-native": "0.59.10",
@@ -19,8 +19,7 @@
     "react-native-reanimated": "1.13.2",
     "react-native-safe-area-context": "3.4.1",
     "react-native-screens": "^1.0.0-alpha.23",
-    "react-navigation": "^4.x.x",
-    "react-navigation-stack": "^2.10.4"
+    "react-navigation": "^4.4.4"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",

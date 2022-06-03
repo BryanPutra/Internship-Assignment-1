@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from '@react-navigation/stack';
-import 'react-native-gesture-handler';
 
-import MainMenu from "./src/pages/MainMenu";
-import Login from "./src/pages/Login";
-import Register from "./src/pages/Login";
+//pages
+import Login from "../pages/Login";
+import MainMenu from "../pages/MainMenu";
+import Register from "../pages/Register";
 
 const Stack = createStackNavigator();
 

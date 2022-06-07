@@ -7,7 +7,7 @@ import {
   Button,
   Image,
   ScrollView,
-  Dimensions,
+  useWindowDimensions,
 } from "react-native";
 import Inputs from "../components/Inputs";
 import Buttons from "../components/CustomButtons";
@@ -15,8 +15,7 @@ import LoginImage from "../assets/images/login1.png";
 import AccountCreationTitle from "../components/AccountCreationTitle";
 
 const Login = ({ navigation }) => {
-    const windowWidth = Dimensions.get('window').width;
-    const windowHeight = Dimensions.get('window').height;
+  const { height, width } = useWindowDimensions();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const onLoginPressed = () => {
@@ -40,7 +39,7 @@ const Login = ({ navigation }) => {
         {/* <LoginImage/> */}
         <Image
           source={LoginImage}
-          style={[styles.loginImage, { height: windowHeight * 0.3 }]}
+          style={[styles.loginImage, { height: height * 0.3 }]}
           resizeMode="contain"
         />
         <AccountCreationTitle text="Login" />

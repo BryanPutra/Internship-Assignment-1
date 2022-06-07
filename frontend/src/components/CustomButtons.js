@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { TextInput, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { TextInput, StyleSheet, Text, View, Pressable } from "react-native";
 
 const CustomButtons = ({ onPress, text, type="PRIMARY", bgColor, fgColor }) => {
     return ( 
         <View>
-            <TouchableOpacity onPress={onPress}
+            <Pressable onPress={onPress}
                 style={[
                 styles.container, 
                 styles['container_${type}'],
@@ -12,7 +12,7 @@ const CustomButtons = ({ onPress, text, type="PRIMARY", bgColor, fgColor }) => {
                 ]}
             >
                 <Text style={[styles.text, styles['text_${type}']]}>{text}</Text>
-            </TouchableOpacity>
+            </Pressable>
         </View>
     );
 }

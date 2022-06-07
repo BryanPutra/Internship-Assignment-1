@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, Pressable, Button } from "react-native";
 
 const MainMenu = ( {navigation} ) => {

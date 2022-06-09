@@ -1238,8 +1238,6 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)\..\node_modules\react-native-reanimated\ios/**",
-					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-screens\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-safe-area-context\ios/**",
 					"$(SRCROOT)\..\node_modules\@react-native-community\masked-view\ios",

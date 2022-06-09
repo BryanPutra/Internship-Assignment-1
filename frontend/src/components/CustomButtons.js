@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TextInput, StyleSheet, Text, View, Pressable } from "react-native";
 
 const CustomButtons = ({ onPress, text, type="PRIMARY", bgColor, fgColor }) => {
-    return (
+    return ( 
         <View>
             <Pressable onPress={onPress}
                 style={[
@@ -14,16 +14,15 @@ const CustomButtons = ({ onPress, text, type="PRIMARY", bgColor, fgColor }) => {
                 <Text style={[styles.text, styles['text_${type}']]}>{text}</Text>
             </Pressable>
         </View>
-        
     );
 }
-
+ 
 const styles = StyleSheet.create({
     container: {
         width: '100%',
         padding: 15,
         alignItems: 'center',
-        borderRadius: 6,
+        borderRadius: 8,
         elevation: 4,
     },
 

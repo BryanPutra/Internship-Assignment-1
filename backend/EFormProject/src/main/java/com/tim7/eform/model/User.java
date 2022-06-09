@@ -24,23 +24,25 @@ public class User {
 	private Long id;
     private String cifCode;
     //private String title;
-    private String name;
+    private String fullName;
     private String mothersMaiden;
     private String gender;
     private Date birthDate;
+    private String username;
     private String email;
     private String password;
     private Date createdDate;
     
-	public User(Long id, String cifCode, String name, String mothersMaiden, String gender, Date birthDate,
+	public User(Long id, String cifCode, String fullName, String mothersMaiden, String gender, Date birthDate, String username,
 			String email, String password, Date createdDate) {
 		super();
 		this.id = id;
 		this.cifCode = cifCode;
-		this.name = name;
+		this.fullName = fullName;
 		this.mothersMaiden = mothersMaiden;
 		this.gender = gender;
 		this.birthDate = birthDate;
+		this.username = username;
 		this.email = email;
 		this.password = password;
 		this.createdDate = createdDate;
@@ -62,12 +64,12 @@ public class User {
 		this.cifCode = cifCode;
 	}
 
-	public String getName() {
-		return name;
+	public String getFullName() {
+		return fullName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
 	public String getMothersMaiden() {
@@ -118,11 +120,21 @@ public class User {
 		this.password = password;
 	}
 
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", cifCode=" + cifCode + ", name=" + name + ", mothersMaiden=" + mothersMaiden
-				+ ", gender=" + gender + ", birthDate=" + birthDate + ", email=" + email + ", password=" + password
-				+ ", createdDate=" + createdDate + "]";
+		return "User [id=" + id + ", cifCode=" + cifCode + ", fullName=" + fullName + ", mothersMaiden=" + mothersMaiden
+				+ ", gender=" + gender + ", birthDate=" + birthDate + ", username=" + username + ", email=" + email
+				+ ", password=" + password + ", createdDate=" + createdDate + "]";
 	}
+
+	
     
 }

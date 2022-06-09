@@ -9,17 +9,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
-import com.tim7.eform.service.UserDetails;
+import com.tim7.eform.service.UserDetailsImplements;
 
 import io.jsonwebtoken.*;
 
+@Component
 public class JwtUtils {
 	private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
-	private String jwtSecret = "s3cREEtJ50nWE8T0k3N";
-	private String jwtExpirationMs = "86400000";
-	private String jwtCookie = "tim7-proj";
+	@Value("s3cREEtJ50nWE8T0k3N")
+	private String jwtSecret;
+	
+	@Value("86400000")
+	private int jwtExpirationMs;
+	
+	@Value("tim7Cookie")
+	private String jwtCookie;
 	
 	public String getJwtFromCookies(HttpServletRequest request) {
 		Cookie cookie = WebUtils.getCookie(request, jwtCookie);
@@ -29,7 +36,7 @@ public class JwtUtils {
 		return null;
 	}
 	
-	public ResponseCookie generateJwtCookie(UserDetails userPrincipal) {
+	public ResponseCookie generateJwtCookie(UserDetailsImplements userPrincipal) {
 		String jwt = generateTokenFromUsername(userPrincipal.getUsername());
 		ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api")
 				.maxAge(24 * 60 * 60).httpOnly(true).build();
@@ -68,7 +75,9 @@ public class JwtUtils {
 	}
 	
 	public String generateTokenFromUsername(String username) {
-		return Jwts.builder().setSubject(username).setIssuedAt(new Date())
+		return Jwts.builder()
+				.setSubject(username)
+				.setIssuedAt(new Date())
 				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
 				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
 	}

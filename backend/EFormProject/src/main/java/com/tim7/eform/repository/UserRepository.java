@@ -1,4 +1,4 @@
-package com.tim7.eform;
+package com.tim7.eform.repository;
 
 import com.tim7.eform.model.User;
 

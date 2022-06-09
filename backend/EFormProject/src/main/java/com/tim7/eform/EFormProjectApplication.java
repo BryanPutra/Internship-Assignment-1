@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.tim7.eform.model.User;
+import com.tim7.eform.repository.UserRepository;
 import com.tim7.eform.service.SequenceGeneratorService;
 
 @SpringBootApplication
@@ -17,6 +20,8 @@ public class EFormProjectApplication implements CommandLineRunner{
 
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	PasswordEncoder encoder;
 	@Autowired
 	private SequenceGeneratorService sequence;
 	
@@ -41,8 +46,9 @@ public class EFormProjectApplication implements CommandLineRunner{
 	    		"Susi Aja",
 	    		"Male",
 	    		dob,
+	    		"BambangAja",
 	    		"bambangaja@gmail.com",
-	    		"12345",
+	    		encoder.encode("12345"),
 	    		createdDate
 	    		);
 		//sequence.getNextSequence(Customer.SEQUENCE_NAME)
@@ -51,8 +57,9 @@ public class EFormProjectApplication implements CommandLineRunner{
 	    		"Susanti Aja",
 	    		"Male",
 	    		dob,
+	    		"BudiAja",
 	    		"budiajah@gmail.com",
-	    		"12345",
+	    		encoder.encode("12345"),
 	    		createdDate
 	    		);
 

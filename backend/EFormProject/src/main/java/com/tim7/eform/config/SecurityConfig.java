@@ -15,8 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.tim7.eform.jwt.AuthEntryPointJwt;
-import com.tim7.eform.service.UserDetailsService;
-import com.tim7.eform.service.UserService;
+import com.tim7.eform.jwt.AuthTokenFilter;
+import com.tim7.eform.service.UserDetailsServiceImplements;
+
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +25,7 @@ import com.tim7.eform.service.UserService;
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
-	UserDetailsService userDetailsService;
+	UserDetailsServiceImplements userDetailsServiceImplements;
 	@Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
 	@Bean
@@ -34,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userDetailsServiceImplements).passwordEncoder(passwordEncoder());
 	}
 	
 	@Bean
@@ -52,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	protected void configure(HttpSecurity http) throws Exception{
 		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
 		.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-		.and().authorizeRequests().antMatchers("/api/auth/**").permitAll().anyRequest().authenticated();
+		.and().authorizeRequests().antMatchers("/**").permitAll().anyRequest().authenticated();
 		
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}

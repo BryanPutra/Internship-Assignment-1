@@ -1,0 +1,53 @@
+package com.tim7.eform.jwt;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.userdetails.*;
+
+import com.tim7.eform.repository.UserRepository;
+import com.tim7.eform.service.UserDetailsServiceImplements;
+@ComponentScan({"com.tim7.eform.jwt"})
+public class AuthTokenFilter extends OncePerRequestFilter{
+	@Autowired
+	private JwtUtils jwtUtils;
+	@Autowired
+	private UserDetailsServiceImplements userDetailsServiceImplements;
+	private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+		
+		try {
+			String jwt = parseJwt(request);
+			if(jwt != null && jwtUtils.validateJwtToken(jwt)) {
+				String username = jwtUtils.getUserNameFromJwtToken(jwt);
+				UserDetails userDetails = userDetailsServiceImplements.loadUserByUsername(username);
+				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, 
+						null);
+			}
+		}catch (Exception e) {
+			logger.error("Cannot set user authentication: {}",e);
+		}
+		filterChain.doFilter(request, response);
+		
+	}
+	
+	private String parseJwt(HttpServletRequest request) {
+		String jwt = jwtUtils.getJwtFromCookies(request);
+		return jwt;
+	}
+}

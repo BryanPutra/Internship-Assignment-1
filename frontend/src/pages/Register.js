@@ -1,7 +1,5 @@
-const Register = ( {navigation} ) => {
-    return ( 
-        <View>lel</View>
-    );
+const Register = () => {
+    return (  );
 }
  
 export default Register;

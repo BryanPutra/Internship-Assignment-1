@@ -1,19 +1,41 @@
 import React, { Component } from "react";
-import { Platform, StyleSheet, View } from "react-native";
-import Navigation from "./src/navigation/Navigation";
-// const instructions = Platform.select({
-//   ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
-//   android:
-//     "Double tap R on your keyboard to reload,\n" +
-//     "Shake or press menu button for dev menu",
+import { Platform, StyleSheet, Text, View } from "react-native";
+import { createAppContainer } from 'react-navigation';
+// import { createStackNavigator } from 'react-navigation-stack';
+import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+//pages
+import MainMenu from "./src/pages/MainMenu";
+import Login from "./src/pages/Login";
+import Register from "./src/pages/Login";
+
+const instructions = Platform.select({
+  ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
+  android:
+    "Double tap R on your keyboard to reload,\n" +
+    "Shake or press menu button for dev menu",
+});
+
+const Stack = createStackNavigator();
+
+// const AppNavigator = createStackNavigator({
+//   Home: {
+//     screen: HomeScreen,
+//   },
 // });
+// const RootAppContainer = createAppContainer(AppNavigator);
 
 export default class App extends Component<Props> {
   render() {
     return (
-      <View style={styles.container}>
-        <Navigation />
-      </View>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Register" component={Register} />
+        </Stack.Navigator>
+      </NavigationContainer>
     );
   }
 }
@@ -21,6 +43,8 @@ export default class App extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FBFC',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F5FCFF",
   },
 });

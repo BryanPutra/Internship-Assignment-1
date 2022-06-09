@@ -12,8 +12,7 @@ const AccountCreationTitle = ({text}) => {
 const styles = StyleSheet.create({
     container:{
         marginVertical: 15,
-        width: '100%',
-        alignItems: "center"
+        width: '100%'
     },
     text: {
         fontWeight: 'bold',

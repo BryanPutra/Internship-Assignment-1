@@ -1,5 +1,6 @@
 import React, { Component, useState } from "react";
 import { StyleSheet, Text, View, Pressable, Button } from "react-native";
+import { theme, container } from "../styles/main.styles";
 
 const AccountCreationTitle = ({text}) => {
     return (
@@ -13,12 +14,12 @@ const styles = StyleSheet.create({
     container:{
         marginVertical: 15,
         width: '100%',
-        alignItems: "center"
     },
     text: {
+        color: theme.black,
         fontWeight: 'bold',
         letterSpacing: 0.2,
-        fontSize: 20,
+        fontSize: theme.fontSize30,
     }
   })
  

@@ -7,8 +7,10 @@ let theme = {
   black: '#090809',
   white: '#FFFFFF',
   grey: '#ccc',
-  darkGrey: '	#A9A9A9',
+  darkGrey: '#A9A9A9',
+  textDarkGrey: '#9E9E9E',
   whiteGrey: '#f9f8fd',
+  paleGrey: '#f2f2f2',
   activityIndicatorColor: '#FA3F70',
   // fontSizes
   fontSizeXS: 10,
@@ -29,8 +31,14 @@ let theme = {
   fontWeightBold: '700',
   fontWeightSuperBold: '900',
   padding: 20,
+  margin4: 4,
+  margin8: 8,
+  marginHalfContainer: 12,
+  margin16: 16,
+  margin20: 20,
   marginContainer: 24,
-  marginHalfContainer: 12
+  margin28: 28,
+  margin32: 32
 }
 
 const container = {

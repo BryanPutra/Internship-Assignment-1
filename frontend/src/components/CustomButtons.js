@@ -10,7 +10,7 @@ const CustomButtons = ({
   fgColor,
 }) => {
   return (
-    <View>
+    <View style={{width: "100%"}}>
       <Pressable
         onPress={onPress}
         style={[
@@ -43,7 +43,15 @@ const styles = StyleSheet.create({
   },
 
   container_TERTIARY: {
-    elevation: 0
+    elevation: 0,
+    padding: 0,
+    marginVertical: 15
+  },
+
+  container_TERTIARY2: {
+    elevation: 0,
+    padding: 0,
+    marginVertical: 15
   },
 
   text: {
@@ -53,12 +61,18 @@ const styles = StyleSheet.create({
   },
 
   text_SECONDARY: {
-    color: theme.red,
+    color: theme.textDarkGrey,
   },
 
   text_TERTIARY: {
     color: theme.pink,
+    marginTop: 10
   },
+  text_TERTIARY2: {
+    alignSelf: 'flex-end',
+    color: theme.pink,
+    marginTop: -15
+  }
 });
 
 export default CustomButtons;

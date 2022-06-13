@@ -50,7 +50,7 @@ const Inputs = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 8,
+    marginVertical: theme.margin4,
   },
 
   inputContainer: {
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     borderColor: theme.darkGrey,
     width: "100%",
     padding: 8,
-    marginHorizontal: theme.marginHalfContainer
+    marginHorizontal: theme.margin8
   },
 });
 

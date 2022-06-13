@@ -40,7 +40,6 @@ const Login = () => {
     navigation.navigate("MainMenu");
   };
   const onForgotPressed = () => {
-    // switch to forgot password menu
     navigation.navigate("ForgotPassword");
   };
 
@@ -57,7 +56,7 @@ const Login = () => {
       <View style={[container.padding, styles.mainContainer]}>
         <Image
           source={LoginImage}
-          style={[styles.loginImage, { height: height * 0.3 }]}
+          style={[styles.loginImage, { height: height * 0.3, width: width * 0.8 }]}
           resizeMode="contain"
         />
         <AccountCreationTitle text="Login" />
@@ -69,6 +68,7 @@ const Login = () => {
           iconName="alternate-email"
         />
         <Inputs
+          style={styles.passInput}
           name="password"
           placeholder="Password"
           secureTextEntry
@@ -83,9 +83,10 @@ const Login = () => {
           iconName="lock"
         />
         <Buttons
+          style={styles.forgotPass}
           text="Forgot Password?"
           onPress={onForgotPressed}
-          type="TERTIARY"
+          type="TERTIARY2"
         />
         <View style={container.centerFlex}>
           <Buttons text="Login" onPress={onLoginPressed} />
@@ -93,8 +94,9 @@ const Login = () => {
           <Buttons
             text="Login with Google"
             onPress={onLoginGoogle}
-            bgColor={theme.grey}
+            bgColor={theme.paleGrey}
             fgColor={theme.whiteGrey}
+            type="SECONDARY"
           />
           <Buttons
             text="Dont have an account? Register here"
@@ -110,14 +112,25 @@ const Login = () => {
 const styles = StyleSheet.create({
   mainContainer: {
     flexDirection: "column",
-    padding: 25,
+    padding: 30,
+    backgroundColor: theme.white
   },
 
   loginImage: {
     flex: 1,
   },
 
-  orDividier: {},
+  forgotPass: {
+    
+  },
+
+  passInput: {
+
+  },
+
+  orDividier: {
+    margin: theme.margin16,
+  },
 });
 
 export default Login;

@@ -6,22 +6,31 @@ const CustomButtons = ({
   onPress,
   text,
   type = "PRIMARY",
+  textType = "DIFF",
+  containerType = "DIFF",
   bgColor,
   fgColor,
 }) => {
   return (
-    <View style={{width: "100%"}}>
       <Pressable
         onPress={onPress}
         style={[
           styles.container,
-          styles[`container_${type}`],
+          styles[`container${type}`],
+          styles[`container${containerType}`],
           bgColor ? { backgroundColor: bgColor } : {},
         ]}
       >
-        <Text style={[styles.text, styles[`text_${type}`]]}>{text}</Text>
+        <Text
+          style={[
+            styles.text,
+            styles[`text${type}`],
+            styles[`text${textType}`],
+          ]}
+        >
+          {text}
+        </Text>
       </Pressable>
-    </View>
   );
 };
 
@@ -30,28 +39,30 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 15,
     alignItems: "center",
-    borderRadius: 8,
     elevation: 4,
+    borderRadius: 8,
   },
 
-  container_PRIMARY: {
+  containerDIFF: {
+
+  },
+
+  containerPRIMARY: {
     backgroundColor: theme.pink,
   },
 
-  container_SECONDARY: {
-      
-  },
+  containerSECONDARY: {},
 
-  container_TERTIARY: {
+  containerTERTIARY: {
     elevation: 0,
     padding: 0,
-    marginVertical: 15
+    marginVertical: theme.margin16,
   },
 
-  container_TERTIARY2: {
+  containerAccountSwitchScreen: {
     elevation: 0,
     padding: 0,
-    marginVertical: 15
+    width: 'auto'
   },
 
   text: {
@@ -60,19 +71,24 @@ const styles = StyleSheet.create({
     color: theme.whiteGrey,
   },
 
-  text_SECONDARY: {
+  textDIFF: {
+
+  },
+
+  textSECONDARY: {
     color: theme.textDarkGrey,
   },
 
-  text_TERTIARY: {
-    color: theme.pink,
-    marginTop: 10
+  textTERTIARY: {
+    color: theme.pink
   },
-  text_TERTIARY2: {
-    alignSelf: 'flex-end',
+
+  textTERTIARY2: {
+    alignSelf: "flex-end",
     color: theme.pink,
-    marginTop: -15
-  }
+    marginTop: -16,
+  },
+
 });
 
 export default CustomButtons;

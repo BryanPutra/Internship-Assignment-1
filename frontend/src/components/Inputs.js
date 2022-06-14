@@ -24,7 +24,7 @@ const Inputs = ({
       }) => (
         <>
           <View style={[styles.container, container.centerFlex]}>
-              <View style={styles.inputContainer}>
+              <View style={[styles.inputContainer, {borderColor: error ? theme.red : theme.darkGrey}]}>
                   <Icon name= {iconName} size = {theme.fontSizeXL} color={theme.grey}/>
                 <TextInput
                 value={value}
@@ -38,7 +38,7 @@ const Inputs = ({
           </View>
           <Text></Text>
           {error && (
-            <Text style={{ color: theme.red, alignSelf: "stretch" }}>
+            <Text style={{ color: theme.red, alignSelf: "stretch", marginTop: -16}}>
               {error.message || "Error"}
             </Text>
           )}
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: theme.darkGrey,
     width: "100%",
-    padding: 8,
+    padding: 4,
     marginHorizontal: theme.margin8
   },
 });

@@ -5,7 +5,6 @@ import {
   Text,
   View,
   Pressable,
-  Button,
   Image,
   ScrollView,
   useWindowDimensions,
@@ -17,10 +16,12 @@ import { theme, container } from "../styles/main.styles";
 import { useForm, Controller } from "react-hook-form";
 
 // imports from local files
+import MainContainer from "../components/MainContainer";
 import Inputs from "../components/Inputs";
 import Buttons from "../components/CustomButtons";
 import LoginImage from "../assets/images/login.png";
 import AccountCreationTitle from "../components/AccountCreationTitle";
+import ButtonInText from "../components/ButtonInText";
 
 const Login = () => {
   const { height, width } = useWindowDimensions();
@@ -53,10 +54,10 @@ const Login = () => {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={[container.padding, styles.mainContainer]}>
+      <MainContainer>
         <Image
           source={LoginImage}
-          style={[styles.loginImage, { height: height * 0.3, width: width * 0.8 }]}
+          style={{ height: height * 0.3, width: width * 0.8 }}
           resizeMode="contain"
         />
         <AccountCreationTitle text="Login" />
@@ -68,7 +69,6 @@ const Login = () => {
           iconName="alternate-email"
         />
         <Inputs
-          style={styles.passInput}
           name="password"
           placeholder="Password"
           secureTextEntry
@@ -83,10 +83,11 @@ const Login = () => {
           iconName="lock"
         />
         <Buttons
-          style={styles.forgotPass}
           text="Forgot Password?"
           onPress={onForgotPressed}
-          type="TERTIARY2"
+          type="DIFF"
+          containerType="TERTIARY"
+          textType="TERTIARY2"
         />
         <View style={container.centerFlex}>
           <Buttons text="Login" onPress={onLoginPressed} />
@@ -98,38 +99,22 @@ const Login = () => {
             fgColor={theme.whiteGrey}
             type="SECONDARY"
           />
-          <Buttons
-            text="Dont have an account? Register here"
-            onPress={onRegisterPressed}
-            type="TERTIARY"
-          />
+          <ButtonInText onPress={onRegisterPressed} text="Don't have an account? " actionText="Register Here"/>
+
         </View>
-      </View>
+      </MainContainer>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flexDirection: "column",
-    padding: 30,
-    backgroundColor: theme.white
-  },
-
-  loginImage: {
-    flex: 1,
-  },
-
-  forgotPass: {
-    
-  },
-
-  passInput: {
-
-  },
-
   orDividier: {
     margin: theme.margin16,
+  },
+
+  accountBottomContainer: {
+    flexDirection: "row",
+    marginTop: theme.margin16,
   },
 });
 

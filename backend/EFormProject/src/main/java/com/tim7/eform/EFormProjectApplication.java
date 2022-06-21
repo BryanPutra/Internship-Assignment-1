@@ -51,7 +51,7 @@ public class EFormProjectApplication implements CommandLineRunner{
 	    		encoder.encode("12345"),
 	    		createdDate
 	    		);
-		//sequence.getNextSequence(Customer.SEQUENCE_NAME)
+		
 		User c2 = new User((long)2,"270135", 
 	    		"Budi Aja",
 	    		"Susanti Aja",

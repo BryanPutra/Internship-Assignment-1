@@ -36,8 +36,9 @@ public class LoginController {
 	
 	@PostMapping("/login")
 	public ResponseEntity<?>authenticateUser(@Valid @RequestBody LoginRequest loginRequest){
+		//has been modified to login using email & password instead of username & password
 		Authentication authentication = authenticationManager.authenticate(
-										new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
+										new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
 																				loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		UserDetailsImplements userDetails = (UserDetailsImplements) authentication.getPrincipal();

@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, ActivityIndicator } from "react-native";
-import { theme } from '../styles/main.styles'
+import { theme } from "../styles/main.styles";
+import { useAuth } from "../context/authContext";
+import { login, register, loadJWT } from "../utils/authServices";
+import CookieManager from "react-native-cookies";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 //pages
 import Login from "../pages/Login";
@@ -12,14 +16,25 @@ import ForgotPassword from "../pages/ForgotPassword";
 
 const Stack = createNativeStackNavigator();
 
+const client = async () => {
+  await CookieManager.clearAll();
+  const cookie = await AsyncStorage.getItem("cookie");
+  return await fetch("api/data", {
+    headers: {
+      cookie: cookie,
+    },
+  });
+};
+
 const Navigation = () => {
   const [currentUser, setCurrentUser] = useState(undefined);
   const [test, setTest] = useState(true);
+  const { authenticated } = useAuth();
 
   if (currentUser !== undefined) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator color={theme.activityIndicatorColor}/>
+        <ActivityIndicator color={theme.activityIndicatorColor} />
       </View>
     );
   }

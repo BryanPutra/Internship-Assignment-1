@@ -26,17 +26,10 @@ import ButtonInText from "../components/ButtonInText";
 
 const Login = () => {
   const { height, width } = useWindowDimensions();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isValid },
-  } = useForm({ mode: "onBlur" });
+  const { control, handleSubmit, watch } = useForm();
+  const passwordValue = watch("password");
 
   const emailRegex =
     /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -66,7 +59,10 @@ const Login = () => {
           name="email"
           placeholder="Email ID"
           control={control}
-          rules={{ required: "Email is required" }}
+          rules={{
+            required: "Email is required",
+            pattern: { value: emailRegex, message: "Invalid email detected" },
+          }}
           iconName="alternate-email"
         />
         <Inputs
@@ -87,7 +83,6 @@ const Login = () => {
           iconName="supervised-user-circle"
         />
         <Inputs
-          style={styles.passInput}
           name="password"
           placeholder="Password"
           secureTextEntry
@@ -101,8 +96,20 @@ const Login = () => {
           }}
           iconName="lock"
         />
+        <Inputs
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          secureTextEntry
+          control={control}
+          rules={{
+            required: "Password is required",
+            validate: (value) =>
+              value === passwordValue ? true : "Password do not match",
+          }}
+          iconName="lock"
+        />
         <View style={container.centerFlex}>
-          <Buttons text="Sign Up" onPress={onSignUpPressed} />
+          <Buttons text="Sign Up" onPress={handleSubmit(onSignUpPressed)} />
           <ButtonInText
             onPress={onLoginPressed}
             text="Already have an account? "

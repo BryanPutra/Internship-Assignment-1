@@ -5,8 +5,6 @@ import { View, ActivityIndicator } from "react-native";
 import { theme } from "../styles/main.styles";
 import { useAuth } from "../context/authContext";
 import { login, register, loadJWT } from "../utils/authServices";
-import CookieManager from "react-native-cookies";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 //pages
 import Login from "../pages/Login";
@@ -16,22 +14,33 @@ import ForgotPassword from "../pages/ForgotPassword";
 
 const Stack = createNativeStackNavigator();
 
-const client = async () => {
-  await CookieManager.clearAll();
-  const cookie = await AsyncStorage.getItem("cookie");
-  return await fetch("api/data", {
-    headers: {
-      cookie: cookie,
-    },
-  });
-};
-
 const Navigation = () => {
-  const [currentUser, setCurrentUser] = useState(undefined);
-  const [test, setTest] = useState(true);
-  const { authenticated } = useAuth();
+  const { setAuthState, authState } = useAuth();
+  const [status, setStatus] = useState('Loading');
 
-  if (currentUser !== undefined) {
+  const loadJWT = useCallback(async () => {
+    try {
+      const value = getTokenCookie();
+      setAuthState({
+        accessToken: value || null,
+        authenticated: value !== null,
+      });
+      setStatus('Success');
+    } catch (err) {
+      setStatus('Error');
+      console.log(`Get token error: ${err.message}`);
+      setAuthState({
+        accessToken: null,
+        authenticated: false,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    loadJWT();
+  }, [loadJWT]);
+
+  if (status === 'Loading') {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator color={theme.activityIndicatorColor} />
@@ -39,23 +48,13 @@ const Navigation = () => {
     );
   }
 
-  // const checkUser = async () => {
-  //   try {
-  //     // check if a user is still logged in or their session has expired
-  //   } catch (e) {
-  //     setCurrentUser(null);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   checkUser();
-  // }, []);
-
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!test ? (
+        {authState?.authenticated ==! ? (
+          <>
           <Stack.Screen name="MainMenu" component={MainMenu} />
+          </>
         ) : (
           <>
             <Stack.Screen name="Login" component={Login} />

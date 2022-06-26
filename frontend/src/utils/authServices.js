@@ -4,13 +4,15 @@ import Alert from "react-native";
 import * as Keychain from "react-native-keychain";
 import useAuth from "../context/authContext";
 import { useNavigation } from "@react-navigation/native";
+import CookieManager from "react-native-cookies";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 let portHost = "8000";
 let publicURL = `http://localhost:${portHost}/api/auth/`;
 let authenticationURL = `http://localhost:${portHost}/api/auth/`;
 let authorizationURL = `http://localhost:${portHost}/api/auth/`;
 
-const { setAuthenticated } = useAuth();
+const { setAuthState, setCurrentUser } = useAuth();
 const navigation = useNavigation();
 
 // for public or unprotected api calls
@@ -31,49 +33,64 @@ const authenticationAxios = axios.create({
   withCredentials: true,
 });
 
-authorizeAxios.interceptors.request.use((config) => {
-  config.headers.Authorization = token ? `Bearer ${token}` : "";
-  return config;
-}
-(error) => {
-  Promise.reject(error)
-});
-
-const getCookie = async () => {
+const getTokenCookie = async () => {
   await CookieManager.clearAll();
   const cookie = await AsyncStorage.getItem("cookie");
   return cookie;
 };
 
-const loadJWT = useCallback(async () => {
-  try {
-    const value = await Keychain.getGenericPassword();
-    const jwt = JSON.parse(value.password);
-    setAuthenticated(true);
-  } catch (err) {
-    console.log(`Keychain Error: ${err.message}`);
-    setAuthenticated(false);
-  }
-}, []);
+// implementation of storing access token without cookies
+// authorizeAxios.interceptors.request.use(async (config) => {
+//   token = await AsyncStorage.getItem('cookie');
+//   config.headers.Authorization = token ? `Bearer ${token}` : "";
+//   return config;
+// }
+// (error) => {
+//   Promise.reject(error)
+// });
+
+authorizeAxios.interceptors.request.use(async (config) => {
+  cookie = getTokenCookie();
+  config.headers.Cookie = cookie ? cookie : "";
+  return config;
+});
 
 const register = async (data) => {
   try {
     const response = await authenticationAxios.post("/register", data);
     login(data);
-    setAuthenticated(true);
-  } catch (err) {}
+  } catch (err) {
+    Alert.alert("Failed to register", err.response.data.message);
+  }
 };
 
 const login = async (data) => {
   try {
     const response = await authenticationAxios.post("/login", data);
-    const jwtCookie = await AsyncStorage.getItem("cookie");
-
-    setAuthenticated(true);
+    setCurrentUser(response.data.username);
+    const jwtCookie = getTokenCookie();
+    setAuthState({
+      accessToken: value || null,
+      authenticated: value !== null,
+    });
     navigation.navigate("MainMenu");
   } catch (err) {
-    Alert.alert("Failed to login", error.response.data.message);
+    Alert.alert("Failed to login", err.response.data.message);
   }
 };
 
-export { loadJWT, login, register };
+const logout = async () => {
+  try {
+    await AsyncStorage.clear();
+    setAuthState({
+      accessToken: null,
+      authenticated: false,
+    });
+    setCurrentUser(undefined);
+  } catch (err) {
+    Alert.alert("Failed  to logout", err.message);
+    console.log(err);
+  }
+};
+
+export { login, register, logout, getTokenCookie };

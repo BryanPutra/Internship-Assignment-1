@@ -1,31 +1,29 @@
 import React, { useContext, useEffect, useState } from "react";
-const AuthContext = createContext();
 
+const AuthContext = createContext();
 const useAuth = () => {
   return useContext(AuthContext);
 }
 
 const AuthProvider = ({ children }) => {
-  const [authenticated, setAuthenticated] = useState(false);
 
-  // const [authState, setAuthState] = useState({
-  //   accessToken: null,
-  //   authenticated: null,
-  // });
-  
+  const [authState, setAuthState] = useState({
+    accessToken: null,
+    authenticated: null,
+  });
+
+  const [currentUser, setCurrentUser] = useState(undefined);
+
   const getAccessToken = () => {
     return authState.accessToken;
   };
 
-  const logout = async () => {
-    await Keychain.resetGenericPassword();
-    setAuthenticated(false);
-  };
-
   const value = {
-    authenticated,
-    setAuthenticated,
-    logout,
+    authState,
+    currentUser,
+    setAuthState,
+    setCurrentUser,
+    getAccessToken
   };
 
   return (

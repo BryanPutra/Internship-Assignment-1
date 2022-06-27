@@ -1,29 +1,22 @@
 package com.tim7.eform.model;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Document("users")
+@Document(collection = "users")
 public class User {
 	
-	@Transient
-	public static final String SEQUENCE_NAME = "customers_sequence";
-	
 	@Id
-	private Long id;
+	private String id;
     private String cifCode;
-    //private String title;
     private String fullName;
     private String mothersMaiden;
     private String gender;
@@ -31,28 +24,40 @@ public class User {
     private String username;
     private String email;
     private String password;
-    private Date createdDate;
     
-	public User(Long id, String cifCode, String fullName, String mothersMaiden, String gender, Date birthDate, String username,
-			String email, String password, Date createdDate) {
+    private Set<Role> roles = new HashSet<>();
+//    private String role;
+    
+    private Date createdDate;
+
+	public User(String username, String email, String password) {
 		super();
-		this.id = id;
-		this.cifCode = cifCode;
-		this.fullName = fullName;
-		this.mothersMaiden = mothersMaiden;
-		this.gender = gender;
-		this.birthDate = birthDate;
 		this.username = username;
 		this.email = email;
 		this.password = password;
-		this.createdDate = createdDate;
 	}
 
-	public Long getId() {
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
+
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+//	public String getRole() {
+//		return role;
+//	}
+//
+//	public void setRole(String role) {
+//		this.role = role;
+//	}
+
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -132,7 +137,7 @@ public class User {
 	public String toString() {
 		return "User [id=" + id + ", cifCode=" + cifCode + ", fullName=" + fullName + ", mothersMaiden=" + mothersMaiden
 				+ ", gender=" + gender + ", birthDate=" + birthDate + ", username=" + username + ", email=" + email
-				+ ", password=" + password + ", createdDate=" + createdDate + "]";
+				+ ", password=" + password + ", roles=" + roles + ", createdDate=" + createdDate + "]";
 	}
 
 	

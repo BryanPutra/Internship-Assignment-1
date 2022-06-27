@@ -16,7 +16,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.*;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
 import com.tim7.eform.repository.UserRepository;
 import com.tim7.eform.service.UserDetailsServiceImplements;
@@ -34,10 +36,12 @@ public class AuthTokenFilter extends OncePerRequestFilter{
 		try {
 			String jwt = parseJwt(request);
 			if(jwt != null && jwtUtils.validateJwtToken(jwt)) {
-				String username = jwtUtils.getUserNameFromJwtToken(jwt);
-				UserDetails userDetails = userDetailsServiceImplements.loadUserByUsername(username);
+				String email = jwtUtils.getEmailFromJwtToken(jwt);
+				UserDetails userDetails = userDetailsServiceImplements.loadUserByUsername(email);
 				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, 
-						null);
+						null, userDetails.getAuthorities());
+				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 		}catch (Exception e) {
 			logger.error("Cannot set user authentication: {}",e);

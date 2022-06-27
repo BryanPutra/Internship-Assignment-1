@@ -15,7 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { theme, container } from "../styles/main.styles";
 import { useForm, Controller } from "react-hook-form";
 
-// imports from local files
+// imports local components
 import MainContainer from "../components/MainContainer";
 import Inputs from "../components/Inputs";
 import Buttons from "../components/CustomButtons";
@@ -23,23 +23,24 @@ import LoginImage from "../assets/images/login.png";
 import AccountCreationTitle from "../components/AccountCreationTitle";
 import ButtonInText from "../components/ButtonInText";
 
+// import utils
+import { login, register } from "../utils/authServices";
+
 const Login = () => {
   const { height, width } = useWindowDimensions();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
-  } = useForm({ mode: "onBlur" });
+    formState: { errors },
+  } = useForm();
 
   const onLoginPressed = () => {
-    // switch to main menu, request auth
-    navigation.navigate("MainMenu");
+    login()
   };
+
   const onForgotPressed = () => {
     navigation.navigate("ForgotPassword");
   };
@@ -49,7 +50,7 @@ const Login = () => {
   };
 
   const onRegisterPressed = () => {
-    navigation.navigate("Register");
+    register();
   };
 
   return (
@@ -90,7 +91,10 @@ const Login = () => {
           textType="TERTIARY2"
         />
         <View style={container.centerFlex}>
-          <Buttons text="Login" onPress={onLoginPressed} />
+          <Buttons
+            text={loading ? "Logging In..." : "Login"}
+            onPress={handleSubmit(onLoginPressed)}
+          />
           <Text style={styles.orDividier}>OR</Text>
           <Buttons
             text="Login with Google"
@@ -99,8 +103,11 @@ const Login = () => {
             fgColor={theme.whiteGrey}
             type="SECONDARY"
           />
-          <ButtonInText onPress={onRegisterPressed} text="Don't have an account? " actionText="Register Here"/>
-
+          <ButtonInText
+            onPress={onRegisterPressed}
+            text="Don't have an account? "
+            actionText="Register Here"
+          />
         </View>
       </MainContainer>
     </ScrollView>

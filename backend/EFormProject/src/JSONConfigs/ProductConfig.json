@@ -1,0 +1,19 @@
+{ "products": [
+    {
+        "product": "savings",
+        "requirementList": [
+        	"ktpPhoto",
+        	"ktpFormA",
+        	"ktpFormB",
+       		"ktpFormC"
+        ]
+    },
+    {
+        "product": "P2",
+        "requirementList": ""
+    },
+    {
+        "product": "P3",
+        "requirementList": ""
+    }	]
+}

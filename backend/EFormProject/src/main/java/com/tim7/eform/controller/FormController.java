@@ -1,13 +1,21 @@
 package com.tim7.eform.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.tim7.eform.bo.FormDataBO;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -20,9 +28,20 @@ public class FormController {
 		return "Project EForm Tim 7";
 	}
 	
+	//Map formData should have:
+	// - productCode
+	// - userDetails (id, email, cif)
+	
 	@PostMapping("/getFormData")
 	@PreAuthorize("hasRole('USER')")
-	public String getFormData() {
-		return "Project EForm Tim 7";
+	public ResponseEntity<Map> getFormData(@RequestBody final Map formData) {
+		Map returnMap = new HashMap<>();
+		String id = (String)formData.get("id");
+		String productCode = (String)formData.get("productCode");
+		//String ktpId = (String)formData.get("ktpId");
+		
+		returnMap = FormDataBO.getinstance().getRegistrationData(id, productCode);
+		
+		return new ResponseEntity<Map>(returnMap,HttpStatus.OK);
 	}
 }

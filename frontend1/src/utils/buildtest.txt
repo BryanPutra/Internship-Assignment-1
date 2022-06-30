@@ -1,0 +1,4 @@
+rm -rf node_modules (bash)
+yarn
+cd android
+./gradlew clean

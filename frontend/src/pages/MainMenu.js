@@ -17,6 +17,8 @@ import { theme, container } from "../styles/main.styles";
 import Logo from "../assets/images/logoSimobi.png";
 
 const MainMenu = () => {
+  const { height, width } = useWindowDimensions();
+
   const onSettingsPressed = () => {
     console.log(testPostAuth.data)
   };

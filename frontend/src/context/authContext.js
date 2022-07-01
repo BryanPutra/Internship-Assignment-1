@@ -1,18 +1,58 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, createContext } from "react";
 
-const AuthContext = React.createContext();
+const AuthContext = createContext();
 const useAuth = () => {
   return useContext(AuthContext);
 }
 
 const AuthProvider = ({ children }) => {
-
+  
   const [authState, setAuthState] = useState({
     accessToken: null,
     authenticated: null,
   });
 
-  const [currentUser, setCurrentUser] = useState(undefined);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const login = async data => {
+    try {
+      const {setAuthState, setCurrentUser} = useAuth();
+      const response = await authenticationAxios.post('/login', data);
+      setCurrentUser(response.data.username);
+      const jwtCookie = response.headers.get('set-cookie');
+      await AsyncStorage.setItem('jwtCookie', jwtCookie);
+      setAuthState({
+        accessToken: jwtCookie || null,
+        authenticated: jwtCookie !== null,
+      });
+      navigation.navigate('MainMenu');
+    } catch (err) {
+      Alert.alert('Failed to login', err.response.data.message);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await AsyncStorage.clear();
+      setAuthState({
+        accessToken: null,
+        authenticated: false,
+      });
+      setCurrentUser(null);
+    } catch (err) {
+      Alert.alert('Failed  to logout', err.message);
+      console.log(err);
+    }
+  };
+
+  const register = async data => {
+    try {
+      const response = await authenticationAxios.post('/register', data);
+      login(data);
+    } catch (err) {
+      Alert.alert('Failed to register', err.response.data.message);
+    }
+  };
 
   const getAccessToken = () => {
     return authState.accessToken;
@@ -23,12 +63,15 @@ const AuthProvider = ({ children }) => {
     currentUser,
     setAuthState,
     setCurrentUser,
-    getAccessToken
+    getAccessToken,
+    login,
+    logout,
+    register
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }

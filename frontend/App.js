@@ -2,12 +2,15 @@ import {Component} from 'react';
 import * as React from 'react';
 import {Platform, StyleSheet, View} from 'react-native';
 import Navigation from './src/navigation/Navigation';
+import {AuthProvider} from './src/context/authContext';
 
 const App: () => Node = () => {
-  return (
-    <View style={styles.container}>
-      <Navigation />
-    </View>
+return (
+    <AuthProvider>
+      <View style={styles.container}>
+        <Navigation />
+      </View>
+    </AuthProvider>
   );
 };
 

@@ -1,27 +1,27 @@
 import * as React from 'react';
-import { useState, useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, ActivityIndicator } from "react-native";
-import { theme } from "../styles/main.styles";
-import { AuthProvider, useAuth } from "../context/authContext";
-import { login, register, loadJWT } from "../utils/authServices";
+import {useState, useEffect, useCallback} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {View, ActivityIndicator} from 'react-native';
+import {theme} from '../styles/main.styles';
+import {useAuth} from '../context/authContext';
+import authServices from '../utils/authServices';
 
 //pages
-import Login from "../pages/Login";
-import MainMenu from "../pages/MainMenu";
-import Register from "../pages/Register";
-import ForgotPassword from "../pages/ForgotPassword";
+import Login from '../pages/Login';
+import MainMenu from '../pages/MainMenu';
+import Register from '../pages/Register';
+import ForgotPassword from '../pages/ForgotPassword';
 
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
-  const { setAuthState, authState } = useAuth();
+  const {setAuthState, authState} = useAuth();
   const [status, setStatus] = useState('Loading');
 
   const loadJWT = useCallback(async () => {
     try {
-      const value = getTokenCookie();
+      const value = authServices.getTokenCookie();
       setAuthState({
         accessToken: value || null,
         authenticated: value !== null,
@@ -43,7 +43,7 @@ const Navigation = () => {
 
   if (status === 'Loading') {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <ActivityIndicator color={theme.activityIndicatorColor} />
       </View>
     );
@@ -51,22 +51,19 @@ const Navigation = () => {
 
   return (
     <NavigationContainer>
-      <AuthProvider>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {authState?.authenticated ? (
-            <>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        {authState?.authenticated ? (
+          <>
             <Stack.Screen name="MainMenu" component={MainMenu} />
-            </>
-          ) : (
-            <>
-              <Stack.Screen name="Login" component={Login} />
-              <Stack.Screen name="Register" component={Register} />
-              <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-            </>
-          )}
-        </Stack.Navigator>
-      </AuthProvider>
-      
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Register" component={Register} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+          </>
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };

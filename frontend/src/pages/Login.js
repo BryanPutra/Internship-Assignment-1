@@ -22,14 +22,16 @@ import Buttons from "../components/CustomButtons";
 import LoginImage from "../assets/images/login.png";
 import AccountCreationTitle from "../components/AccountCreationTitle";
 import ButtonInText from "../components/ButtonInText";
+import { useAuth } from "../context/authContext";
 
 // import utils
-import { login, register } from "../utils/authServices";
+// import { login, register } from "../utils/authServices";
 
 const Login = () => {
   const { height, width } = useWindowDimensions();
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+  const { login } = useAuth();
 
   const {
     control,
@@ -38,7 +40,8 @@ const Login = () => {
   } = useForm();
 
   const onLoginPressed = () => {
-    login()
+    login();
+    navigation.navigate("MainMenu")
   };
 
   const onForgotPressed = () => {

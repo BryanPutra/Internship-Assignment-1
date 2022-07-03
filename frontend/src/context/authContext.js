@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState, createContext } from "react";
+import { useAxios } from "./axiosContext";
 
 const AuthContext = createContext();
 const useAuth = () => {
@@ -6,10 +7,10 @@ const useAuth = () => {
 }
 
 const AuthProvider = ({ children }) => {
-  
+  const {testAxios, getTokenCookie, authenticationAxios} = useAxios();
   const [authState, setAuthState] = useState({
     accessToken: null,
-    authenticated: null,
+    authenticated: false,
   });
 
   const [currentUser, setCurrentUser] = useState(null);
@@ -45,6 +46,15 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const testPostAuth = async data => {
+    try {
+      const response = await testAxios.get('/home');
+      return response;
+    } catch (err) {
+      Alert.alert('Failed to fetch', err.response.data.message);
+    }
+  };
+
   const register = async data => {
     try {
       const response = await authenticationAxios.post('/register', data);
@@ -66,7 +76,8 @@ const AuthProvider = ({ children }) => {
     getAccessToken,
     login,
     logout,
-    register
+    register,
+    testPostAuth
   };
 
   return (

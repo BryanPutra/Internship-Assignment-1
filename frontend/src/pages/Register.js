@@ -23,7 +23,7 @@ import SignUpImage from "../assets/images/register.png";
 import AccountCreationTitle from "../components/AccountCreationTitle";
 import MainContainer from "../components/MainContainer";
 import ButtonInText from "../components/ButtonInText";
-import authServices from "../utils/authServices";
+import { useAuth } from "../context/authContext";
 
 const Login = () => {
   const { height, width } = useWindowDimensions();
@@ -31,6 +31,7 @@ const Login = () => {
   const navigation = useNavigation();
   const { control, handleSubmit, watch } = useForm();
   const passwordValue = watch("password");
+  const {register} = useAuth();
 
   const emailRegex =
     /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -40,7 +41,7 @@ const Login = () => {
   };
 
   const onSignUpPressed = async () => {
-    await authServices.register();
+    register();
   };
 
   return (

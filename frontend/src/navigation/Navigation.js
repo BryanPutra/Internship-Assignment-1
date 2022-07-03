@@ -5,7 +5,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {View, ActivityIndicator} from 'react-native';
 import {theme} from '../styles/main.styles';
 import {useAuth} from '../context/authContext';
-import authServices from '../utils/authServices';
+import {useAxios} from '../context/axiosContext';
 
 //pages
 import Login from '../pages/Login';
@@ -17,11 +17,12 @@ const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
   const {setAuthState, authState} = useAuth();
+  const {getTokenCookie} = useAxios();
   const [status, setStatus] = useState('Loading');
 
   const loadJWT = useCallback(async () => {
     try {
-      const value = authServices.getTokenCookie();
+      const value = getTokenCookie();
       setAuthState({
         accessToken: value || null,
         authenticated: value !== null,
@@ -52,7 +53,7 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        {authState?.authenticated ? (
+      {authState?.authenticated === true ? (
           <>
             <Stack.Screen name="MainMenu" component={MainMenu} />
           </>

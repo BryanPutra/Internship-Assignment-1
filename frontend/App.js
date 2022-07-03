@@ -3,14 +3,17 @@ import * as React from 'react';
 import {Platform, StyleSheet, View} from 'react-native';
 import Navigation from './src/navigation/Navigation';
 import {AuthProvider} from './src/context/authContext';
+import {AxiosProvider} from './src/context/axiosContext';
 
 const App: () => Node = () => {
-return (
-    <AuthProvider>
-      <View style={styles.container}>
-        <Navigation />
-      </View>
-    </AuthProvider>
+  return (
+    <AxiosProvider>
+      <AuthProvider>
+        <View style={styles.container}>
+          <Navigation />
+        </View>
+      </AuthProvider>
+    </AxiosProvider>
   );
 };
 

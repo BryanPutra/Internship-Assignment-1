@@ -10,13 +10,13 @@ import {
 } from "react-native";
 import MainContainer from "../components/MainContainer";
 import ClickableIcons from "../components/ClickableIcons";
-import { logout } from "../utils/authServices";
 import { useNavigation } from "@react-navigation/native";
-import { testPostAuth } from "../utils/authServices";
 import { theme, container } from "../styles/main.styles";
 import Logo from "../assets/images/logoSimobi.png";
+import { useAuth } from "../context/authContext";
 
 const MainMenu = () => {
+  const {logout, testPostAuth} = useAuth();
   const { height, width } = useWindowDimensions();
 
   const onSettingsPressed = () => {

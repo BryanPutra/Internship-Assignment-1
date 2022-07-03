@@ -24,9 +24,6 @@ import AccountCreationTitle from "../components/AccountCreationTitle";
 import ButtonInText from "../components/ButtonInText";
 import { useAuth } from "../context/authContext";
 
-// import utils
-// import { login, register } from "../utils/authServices";
-
 const Login = () => {
   const { height, width } = useWindowDimensions();
   const [loading, setLoading] = useState(false);
@@ -41,7 +38,7 @@ const Login = () => {
 
   const onLoginPressed = () => {
     login();
-    navigation.navigate("MainMenu")
+    navigation.navigate("MainMenu");
   };
 
   const onForgotPressed = () => {

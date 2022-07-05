@@ -17,9 +17,9 @@ const styles = StyleSheet.create({
     },
     text: {
         color: theme.black,
-        fontWeight: 'bold',
+        fontWeight: theme.fontWeightMedium,
         letterSpacing: 0.2,
-        fontSize: theme.fontSize30,
+        fontSize: theme.fontSizeExtraXL,
     }
   })
  

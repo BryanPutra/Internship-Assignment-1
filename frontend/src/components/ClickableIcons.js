@@ -9,10 +9,11 @@ import {
   useWindowDimensions,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { theme } from "../styles/main.styles";
 
 const ClickableIcons = ({ iconName, onPress, color, fontSize }) => {
   return (
-    <Pressable onPress={onPress}>
+    <Pressable style={{padding: theme.margin8}} onPress={onPress}>
       <Icon name={iconName} size={fontSize} color={color} />
     </Pressable>
   );

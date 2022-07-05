@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState, createContext } from "react";
 import { useAxios } from "./axiosContext";
+import Alert from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthContext = createContext();
 const useAuth = () => {
@@ -26,7 +28,6 @@ const AuthProvider = ({ children }) => {
         accessToken: jwtCookie || null,
         authenticated: jwtCookie !== null,
       });
-      navigation.navigate('MainMenu');
     } catch (err) {
       Alert.alert('Failed to login', err.response.data.message);
     }
@@ -58,7 +59,7 @@ const AuthProvider = ({ children }) => {
   const register = async data => {
     try {
       const response = await authenticationAxios.post('/register', data);
-      login(data);
+      login(response.data);
     } catch (err) {
       Alert.alert('Failed to register', err.response.data.message);
     }

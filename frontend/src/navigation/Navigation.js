@@ -22,7 +22,7 @@ const Navigation = () => {
 
   const loadJWT = useCallback(async () => {
     try {
-      const value = getTokenCookie();
+      const value = Object.values(getTokenCookie())[2] === null ? null : getTokenCookie();
       setAuthState({
         accessToken: value || null,
         authenticated: value !== null,

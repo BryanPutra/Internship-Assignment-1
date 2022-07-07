@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState, createContext} from 'react';
 import {useAxios} from './axiosContext';
-import Alert from 'react-native';
+import Alert, { AsyncStorage } from 'react-native';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 const AuthContext = createContext();
@@ -55,12 +55,14 @@ const AuthProvider = ({children}) => {
     }
   };
 
-  const testPostAuth = async data => {
+  const testPostAuth = async () => {
     try {
       const response = await testAxios.get('/home');
+      console.log(response);
       return response;
     } catch (err) {
-      Alert.alert('Failed to fetch', err.response.data.message);
+      console.log(err);
+      Alert.alert('Failed to fetch', err.response.message);
     }
   };
 

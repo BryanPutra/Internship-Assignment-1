@@ -15,7 +15,7 @@ let portHost = '8000';
 // let authenticationURL = `http://localhost:${portHost}/api/auth/`;
 let authorizationURL = `http://localhost:${portHost}/api/auth`;
 let authenticationURL = 'https://a9dc-180-241-240-164.ap.ngrok.io/api/auth';
-let testURL = 'https://a9dc-180-241-240-164.ap.ngrok.io';
+let testURL = 'https://a9dc-180-241-240-164.ap.ngrok.io/api/form';
 // bambangaja@gmail.com
 // 12345
 
@@ -48,7 +48,14 @@ const AxiosProvider = ({children}) => {
   });
 
   authorizeAxios.interceptors.request.use(async config => {
-    cookie = getTokenCookie();
+    const cookie = await getTokenCookie();
+    config.headers.cookie = cookie ? cookie : '';
+    return config;
+  });
+
+  testAxios.interceptors.request.use(async config => {
+    const cookie = await getTokenCookie();
+    console.log(cookie);
     config.headers.cookie = cookie ? cookie : '';
     return config;
   });

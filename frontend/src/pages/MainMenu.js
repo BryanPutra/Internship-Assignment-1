@@ -22,8 +22,8 @@ const MainMenu = () => {
   const {logout, testPostAuth} = useAuth();
   const {height, width} = useWindowDimensions();
 
-  const onSettingsPressed = () => {
-    console.log(testPostAuth.data);
+  const onSettingsPressed = async () => {
+    await testPostAuth();
   };
 
   return (

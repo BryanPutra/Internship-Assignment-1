@@ -14,7 +14,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {theme, container} from '../styles/main.styles';
 
-const AccountCardContainer = ({children}) => {
+const ProductCardContainer = ({children}) => {
     return (
         <ScrollView>
             {children}
@@ -22,4 +22,4 @@ const AccountCardContainer = ({children}) => {
     );
 }
  
-export default AccountCardContainer;
+export default ProductCardContainer;

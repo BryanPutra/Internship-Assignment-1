@@ -1,41 +1,49 @@
-import React, { useContext, useEffect, useState, createContext } from "react";
-import { useAxios } from "./axiosContext";
+import React, {useContext, useEffect, useState, createContext} from 'react';
+import {useAxios} from './axiosContext';
 import Alert from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 const AuthContext = createContext();
 const useAuth = () => {
   return useContext(AuthContext);
-}
+};
 
-const AuthProvider = ({ children }) => {
+const AuthProvider = ({children}) => {
   const {testAxios, getTokenCookie, authenticationAxios} = useAxios();
   const [authState, setAuthState] = useState({
     accessToken: null,
     authenticated: false,
   });
-
   const [currentUser, setCurrentUser] = useState(null);
 
   const login = async data => {
-    try {
-      const {setAuthState, setCurrentUser} = useAuth();
+    try { 
       const response = await authenticationAxios.post('/login', data);
-      setCurrentUser(response.data.username);
-      const jwtCookie = response.headers.get('set-cookie');
-      await AsyncStorage.setItem('jwtCookie', jwtCookie);
+      const jwtCookie = response.headers['set-cookie'][0];
+      console.log(jwtCookie);
+      const userDetails = response.data;
+      console.log(userDetails);
+      console.log(userDetails.username);
+      setCurrentUser(userDetails.username);
+      await EncryptedStorage.setItem(
+        'userDetails',
+        JSON.stringify(userDetails),
+      );
+      await EncryptedStorage.setItem('jwtCookie', jwtCookie);
       setAuthState({
         accessToken: jwtCookie || null,
         authenticated: jwtCookie !== null,
       });
     } catch (err) {
+      console.log("login error");
+      console.log(err);
       Alert.alert('Failed to login', err.response.data.message);
     }
   };
 
   const logout = async () => {
     try {
-      await AsyncStorage.clear();
+      await EncryptedStorage.clear();
       setAuthState({
         accessToken: null,
         authenticated: false,
@@ -59,7 +67,7 @@ const AuthProvider = ({ children }) => {
   const register = async data => {
     try {
       const response = await authenticationAxios.post('/register', data);
-      login(response.data);
+      await login(response.data);
     } catch (err) {
       Alert.alert('Failed to register', err.response.data.message);
     }
@@ -78,14 +86,10 @@ const AuthProvider = ({ children }) => {
     login,
     logout,
     register,
-    testPostAuth
+    testPostAuth,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
 
-export {useAuth, AuthProvider}
+export {useAuth, AuthProvider};

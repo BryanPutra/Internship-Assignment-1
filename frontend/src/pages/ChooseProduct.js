@@ -16,7 +16,7 @@ import {theme, container} from '../styles/main.styles';
 const ChooseProduct = () => {
     return ( 
         <View>
-
+          
         </View>
     );
 }

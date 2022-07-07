@@ -2,11 +2,10 @@ import React from "react";
 import { theme } from "../styles/main.styles";
 import { StyleSheet, View, useWindowDimensions, ScrollView } from "react-native";
 
-const MainContainer = (childComponents) => {
-  const { height, width } = useWindowDimensions();
+const MainContainer = (childComponents, type) => {
 
   return (
-    <View style={[styles.mainContainer]}>
+    <View style={[styles.mainContainer, styles[`mainContainer${type}`]]}>
       {childComponents.children}
     </View>
   );
@@ -18,8 +17,8 @@ const styles = StyleSheet.create({
     padding: theme.marginContainer,
     backgroundColor: theme.white,
   },
-  elementsFit: {
-
+  mainContainerSECONDARY: {
+    backgroundColor: theme.paleGrey,
   },
 
 });

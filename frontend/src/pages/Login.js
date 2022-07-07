@@ -36,8 +36,8 @@ const Login = () => {
     formState: {errors},
   } = useForm();
 
-  const onLoginPressed = data => {
-    login(data);
+  const onLoginPressed = async data => {
+    await login(data);
   };
 
   const onForgotPressed = () => {
@@ -79,7 +79,7 @@ const Login = () => {
           rules={{
             required: 'Password is required',
             minLength: {
-              value: 8,
+              value: 5,
               message: 'Password should be minimum 8 characters long',
             },
           }}

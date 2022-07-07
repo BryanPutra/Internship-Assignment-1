@@ -16,7 +16,7 @@ import Logo from '../assets/images/logoSimobi1.png';
 import {useAuth} from '../context/authContext';
 import AccountCreationTitle from '../components/AccountCreationTitle';
 import AccountCard from '../components/AccountCard';
-import AccountCardContainer from '../components/AccountCardContainer';
+import AccountCardContainer from '../components/ProductCardContainer';
 
 const MainMenu = () => {
   const {logout, testPostAuth} = useAuth();
@@ -28,7 +28,7 @@ const MainMenu = () => {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <MainContainer>
+      <MainContainer type="SECONDARY">
         {/* top container */}
         <View style={styles.topContainer}>
           <View style={{flex: 1}}>

@@ -16,6 +16,11 @@ import ForgotPassword from '../pages/ForgotPassword';
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
+
+  const screenNames = {
+    
+  }
+
   const {setAuthState, authState} = useAuth();
   const {getTokenCookie} = useAxios();
   const [status, setStatus] = useState('Loading');

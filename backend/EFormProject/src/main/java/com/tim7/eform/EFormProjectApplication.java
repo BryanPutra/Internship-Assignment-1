@@ -15,6 +15,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.tim7.eform.bo.FormDataBO;
 import com.tim7.eform.model.EnumRole;
 import com.tim7.eform.model.Role;
 import com.tim7.eform.model.User;
@@ -47,6 +48,9 @@ public class EFormProjectApplication implements CommandLineRunner{
 		for(User c : users) {
 			System.out.println(c.toString());
 		}
+		System.out.println(FormDataBO.getinstance().getRegistrationData(null, "savings", null));
+		System.out.println(FormDataBO.getinstance().getProductRequirementsFromFile("savings"));
+		
 	}
 	
 	public void populateDummyData() throws ParseException {

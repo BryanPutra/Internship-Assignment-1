@@ -1,0 +1,150 @@
+{
+	"categoryList":[
+		{
+			"category" : "ktp",
+			"page" : [
+				{
+					"pageCode" : "ktp-1",
+					"fields" : [
+						{
+							"fieldCode" : "ktp-1-1",
+							"component" : "camera"
+						}
+					]
+				},
+				{
+					"pageCode" : "ktp-2",
+					"pageTitle" : "Data KTP",
+					"fields" : [
+						{
+							"fieldCode" : "ktp-2-1",
+							"component" : "textField",
+							"fieldname" : "ktpId",
+							"label" : "NIK",
+							"maxLength" : 16,
+							"placeholder" : "Nomor Induk Kartu Tanda Penduduk | NIK",
+							"dbKey" : "ktpId"
+						},
+						{
+							"fieldCode" : "ktp-2-2",
+							"component" : "textField",
+							"fieldName" : "ktpName",
+							"label" : "NAMA",
+							"placeholder" : "Nama sesuai KTP",
+							"dbKey" : "fullName"
+						},
+						{
+							"fieldCode" : "ktp-2-3",
+							"component" : "Calendar",
+							"fieldname" : "birthDate",
+							"label" : "Tanggal Lahir",
+							"dbKey" : "birthDate"
+						},
+						{
+							"fieldCode" : "ktp-2-4",
+							"component" : "TextField",
+							"fieldname" : "birthPlace",
+							"label" : "Tempat Lahir",
+							"dbKey" : "birthPlace"
+						},
+						{
+							"fieldCode" : "ktp-2-5",
+							"component" : "TextField",
+							"fieldname" : "maritalStatusKtp",
+							"label" : "Status Pernikahan",
+							"dbKey" : "maritalStatusKtp"
+						},
+						{
+							"fieldCode" : "ktp-2-6",
+							"component" : "TextField",
+							"fieldname" : "religionKtp",
+							"label" : "Agama",
+							"dbKey" : "maritalStatusKtp"
+						},
+						{
+							"fieldCode" : "ktp-2-7",
+							"component" : "GenderPicker",
+							"fieldname" : "genderKtp",
+							"label" : "Gender",
+							"dbKey" : "genderKtp"
+						},
+						{
+							"fieldCode" : "ktp-2-8",
+							"component" : "TextField",
+							"fieldname" : "motherMaidenName",
+							"label" : "Nama Ibu Kandung",
+							"dbKey" : "motherMaidenKtp"
+						}
+					]			
+				},
+				{
+					"pageCode" : "ktp-3",
+					"pageTitle" : "Data KTP",
+					"fields" : [
+						{
+							"fieldCode" : "ktp-3-1",
+							"component" : "textField",
+							"fieldname" : "streetAddressKtp",
+							"label" : "Alamat",
+							"placeholder" : "Alamat sesuai KTP",
+							"dbKey" : "streetAddressKtp"
+						},
+						{
+							"fieldCode" : "ktp-3-2",
+							"component" : "NumberPicker",
+							"fieldName" : "rtKtp",
+							"label" : "RT",
+							"placeholder" : "Nomor RT alamat",
+							"dbKey" : "rtKtp"
+						},
+						{
+							"fieldCode" : "ktp-3-3",
+							"component" : "NumberPicker",
+							"fieldName" : "rwKtp",
+							"label" : "RW",
+							"placeholder" : "Nomor RW alamat",
+							"dbKey" : "rwKtp"
+						},
+						{
+							"fieldCode" : "ktp-3-4",
+							"component" : "ProvincePicker",
+							"fieldName" : "provinceKtp",
+							"label" : "Provinsi",
+							"dbKey" : "provinceKtp"
+						},
+						{
+							"fieldCode" : "ktp-3-5",
+							"component" : "CityPicker",
+							"fieldName" : "cityKtp",
+							"label" : "Kota",
+							"dbKey" : "cityKtp"
+						},
+						{
+							"fieldCode" : "ktp-3-6",
+							"component" : "DistrictPicker",
+							"fieldName" : "districtKtp",
+							"label" : "Kabupaten",
+							"dbKey" : "districtKtp"
+						},
+						{
+							"fieldCode" : "ktp-3-7",
+							"component" : "subDistrictPicker",
+							"fieldName" : "subDistrictKtp",
+							"label" : "Kecamatan",
+							"dbKey" : "subDistrictKtp"
+						},
+						{
+							"fieldCode" : "ktp-3-8",
+							"component" : "TextField",
+							"fieldName" : "cityKtp",
+							"maxLength" : 5,
+							"label" : "Kode Pos",
+							"dbKey" : "PostalCodeKtp"
+						}
+					]			
+				}
+				
+			]
+		}	
+	]
+}

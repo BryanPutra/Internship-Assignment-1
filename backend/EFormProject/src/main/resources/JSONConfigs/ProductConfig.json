@@ -1,0 +1,42 @@
+{ "productList": [
+    {
+        "product" : "savings",
+        "requirementList" : [
+        	{
+        		"requirement" : "ktp",
+        		"requirementDetails" : [
+        			"ktp-1",
+        			"ktp-2",
+       				"ktp-3" 
+        		]
+        	}
+        ]
+    },
+    {
+        "product": "P2",
+        "requirementList" : [
+        	{
+        		"requirement" : "ktp",
+        		"requirementDetails" : [
+					"ktp-1",
+        			"ktp-2",
+       				"ktp-3" 
+        		]
+        	}
+        ]
+    },
+    {
+        "product": "P3",
+        "requirementList" : [
+        	{
+        		"requirement" : "ktp",
+        		"requirementDetails" : [
+					"ktp-1",
+        			"ktp-2",
+       				"ktp-3" 
+        		]
+        	}
+        ]
+    }	
+    ]
+}

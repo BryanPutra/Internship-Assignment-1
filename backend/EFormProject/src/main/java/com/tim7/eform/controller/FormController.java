@@ -40,7 +40,7 @@ public class FormController {
 		String productCode = (String)formData.get("productCode");
 		//String ktpId = (String)formData.get("ktpId");
 		
-		returnMap = FormDataBO.getinstance().getRegistrationData(id, productCode);
+		returnMap = FormDataBO.getinstance().getRegistrationData(id, productCode, null);
 		
 		return new ResponseEntity<Map>(returnMap,HttpStatus.OK);
 	}

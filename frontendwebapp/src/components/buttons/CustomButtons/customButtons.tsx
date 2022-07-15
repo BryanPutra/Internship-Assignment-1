@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 interface ICustomButtonsProps {
+  
 }
 
 const CustomButtons: React.FunctionComponent<ICustomButtonsProps> = (props) => {

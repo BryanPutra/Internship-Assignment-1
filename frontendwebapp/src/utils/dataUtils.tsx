@@ -1,0 +1,1 @@
+export const clearArray = (array: any[]) => {while (array.length > 0) {array.pop()}};

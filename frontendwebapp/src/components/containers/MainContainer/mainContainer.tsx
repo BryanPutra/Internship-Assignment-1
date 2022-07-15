@@ -2,12 +2,13 @@ import * as React from 'react';
 
 interface IMainContainerProps {
     containerType: string;
+    children: React.ReactNode;
 }
 
-const MainContainer: React.FunctionComponent<IMainContainerProps> = (props, {children}) => {
+const MainContainer: React.FunctionComponent<IMainContainerProps> = (props) => {
   return (
-    <div className={`flex flex-col p-6 ${props.containerType === 'secondary' ? 'bg-gray-200' : 'bg-white'}`}>
-        {children}
+    <div className={`flex p-7 justify-center flex-col w-screen ${props.containerType === 'secondary' ? 'bg-whiteGrey' : 'bg-white'}`}>
+      {props.children}
     </div>
   );
 };

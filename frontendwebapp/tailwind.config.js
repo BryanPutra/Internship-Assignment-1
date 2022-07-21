@@ -13,6 +13,7 @@ module.exports = withMT({
       pink: "#FA3F70",
       calmPink: "#FF8E8E",
       softPink: "#FED3E0",
+      lightPink: "#FDEFF4",
       black: "#090809",
       white: "#FFFFFF",
       grey: "#ccc",

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import MainContainer from "components/containers/MainContainer";
 import AuthTitle from "components/titles/AuthTitle";
@@ -14,6 +14,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { AlternateEmail, Lock } from "@mui/icons-material";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useAuth } from "context/authContext";
 
 interface ILoginFormInputs {
@@ -27,28 +28,41 @@ const schema = yup.object().shape({
 });
 
 const Login: React.FunctionComponent = () => {
-  const { userDetails, login } = useAuth();
+  const { login, authState, setAuthState } = useAuth();
   const methods = useForm<ILoginFormInputs>({ resolver: yupResolver(schema) });
+  const errors = methods.formState.errors;
+
   const [isLoading, setIsLoading] = useState(false);
+
   const onLoginPressed: SubmitHandler<ILoginFormInputs> = async (
     data: ILoginFormInputs
   ) => {
     setIsLoading(true);
     await login(data);
     setIsLoading(false);
-    // move to mainmenu
   };
+
   const loginWithGoogle = () => {};
-  const errors = methods.formState.errors;
+  
+  const bruh = () => {
+    setAuthState(true);
+    console.log(authState);
+    router.replace("/mainmenu");
+  }
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (authState) {
+      router.back();
+      return
+    }
+    router.prefetch("/mainmenu");
+  }, []);
 
   return (
     <MainContainer containerType="primary">
-      <Image
-        src={imageLogo}
-        alt="Login Pic"
-        layout="responsive"
-        blurDataURL="URL"
-      />
+      <Image src={imageLogo} alt="Login Pic" layout="responsive" />
       <AuthTitle text="Login" textSize="text-4xl" />
       <FormProvider {...methods}>
         <form
@@ -80,7 +94,7 @@ const Login: React.FunctionComponent = () => {
               <ButtonInText
                 content="Forgot Password?"
                 putEnd={true}
-                color="pink"
+                color="text-pink"
               />
             </a>
           </Link>
@@ -93,7 +107,7 @@ const Login: React.FunctionComponent = () => {
           <div> OR </div>
         </div>
         <button
-          onClick={loginWithGoogle}
+          onClick={bruh}
           type="button"
           className="bg-paleGrey font-semibold py-3 flex flex-row text-textDarkGrey w-full rounded-lg shadow-md align-center justify-center"
         >

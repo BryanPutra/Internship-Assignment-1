@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
 import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
@@ -18,6 +18,8 @@ import AuthTitle from "components/titles/AuthTitle";
 import Link from "next/link";
 import ButtonInText from "components/buttons/ButtonInText";
 import SubmitButton from "components/buttons/SubmitButton";
+import {useAuth} from 'context/authContext';
+import {useRouter} from 'next/router';
 
 interface IRegisterFormInputs {
   email: string;
@@ -48,6 +50,18 @@ const Register: React.FunctionComponent = () => {
     await console.log(data);
     setIsLoading(false);
   };
+  
+  const {authState} = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Prefetch the dashboard page
+    if (authState) {
+      router.back();
+      return
+    }
+    router.prefetch("/mainmenu")
+  }, []);
 
   const errors = methods.formState.errors;
   return (

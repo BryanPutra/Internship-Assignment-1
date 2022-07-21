@@ -4,26 +4,33 @@ import { useContext, useState, createContext } from "react";
 import { useAxios } from "./axiosContext";
 import * as errorUtils from "utils/errorUtils";
 import * as dataUtils from "utils/dataUtils";
+import { useRouter } from 'next/router';
 
 interface IAuthContext {
   authState: boolean;
   setAuthState: React.Dispatch<React.SetStateAction<boolean>>;
-  userDetails: Object;
+  userDetails: User[];
+  setUserDetails?: React.Dispatch<React.SetStateAction<User[]>>;
   login: (data: Object) => Promise<any>;
   logout: () => Promise<any>;
+  testPostAuth: () => Promise<any>,
 }
 
 interface User {
+  id: string;
   username: string;
   email: string;
+  roles: string[];
 }
 
 const authContextDefault: IAuthContext = {
   authState: false,
   setAuthState: () => {},
-  userDetails: {},
+  userDetails: [],
+  setUserDetails: () => {},
   login: async () => {},
   logout: async () => {},
+  testPostAuth: async () => {},
 };
 
 const AuthContext = createContext<IAuthContext>(authContextDefault);
@@ -38,24 +45,40 @@ interface IAuthProviderProps {
 
 const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
   const [authState, setAuthState] = useState(false);
-  const { authenticationAxios } = useAxios();
-  const userDetails: User[] = [];
+  const [userDetails, setUserDetails] = useState<User[]>([]);
+  const { authenticationAxios, testAxios } = useAxios();
+  const router = useRouter();
+
+  //bambangaja@gmail.com
+  //12345
 
   const login = async (data: Object) => {
     try {
       const response = await authenticationAxios.post("/login", data);
-      userDetails.push(response.data as User);
+      setUserDetails(users => [...users, response.data]);
       setAuthState(true);
       alert("Logged in successfully");
+      router.push("/mainmenu");
     } catch (err) {
       alert(`Failed to login, ${errorUtils.getErrorMessage(err)}`);
     }
   };
 
+  const testPostAuth = async () => {
+    try {
+      const response = await testAxios.get('/home');
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+      alert(`Failed to fetch, ${errorUtils.getErrorMessage(err)}`);
+    }
+  }
+
   const logout = async () => {
     try {
       setAuthState(false);
       dataUtils.clearArray(userDetails);
+      router.replace("/auth/login");
     } catch (err) {
       alert(`Failed to logout, ${errorUtils.getErrorMessage(err)}`);
     }
@@ -75,7 +98,8 @@ const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
     setAuthState,
     userDetails,
     login,
-    logout
+    logout,
+    testPostAuth
   };
   return (
     <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>

@@ -5,8 +5,8 @@ import axios from "axios";
 
 const portHostClient = "3000";
 const authorizationURL = `http://localhost:${portHostClient}/api/auth`;
-const authenticationURL = "https://a9dc-180-241-240-164.ap.ngrok.io/api/auth";
-const testURL = "https://a9dc-180-241-240-164.ap.ngrok.io/api/form";
+const authenticationURL = "https://b776-180-241-243-138.ap.ngrok.io/api/auth";
+const testURL = "https://b776-180-241-243-138.ap.ngrok.io/api/form";
 
 interface IAxiosContext {
     authenticationAxios: AxiosInstance;
@@ -31,19 +31,22 @@ interface IAxiosProviderProps {
 }
 
 const AxiosProvider: React.FunctionComponent<IAxiosProviderProps> = (props) => {
+
   const authenticationAxios: AxiosInstance = axios.create({
     baseURL: authenticationURL,
-    withCredentials: true,
+    // headers: {'Access-Control-Allow-Origin': '*'}
   });
 
   const authorizationAxios: AxiosInstance = axios.create({
     baseURL: authorizationURL,
     withCredentials: true,
+    // headers: {'Access-Control-Allow-Origin': '*'}
   });
 
   const testAxios: AxiosInstance = axios.create({
     baseURL: testURL,
     withCredentials: true,
+    // headers: {'Access-Control-Allow-Origin': '*'}
   });
 
   const value = {

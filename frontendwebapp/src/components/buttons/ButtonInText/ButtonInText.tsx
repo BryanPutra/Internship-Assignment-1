@@ -17,7 +17,7 @@ const ButtonInText: React.FunctionComponent<IButtonInTextProps> = (props) => {
         props.putEnd ? "self-end" : ""
       } normal-case font-bold px-0 ${
         props.type !== "secondary" ? "mt-3 py-3" : "py-0"
-      } text-${props.color}`}
+      } ${props.color}`}
       onClick={props.onClicked}
       variant="text"
     >

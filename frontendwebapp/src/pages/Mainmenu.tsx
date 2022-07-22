@@ -18,11 +18,15 @@ import {
   ShoppingBag,
   AccountBalanceWallet,
   SignalCellularAlt,
-  VolunteerActivism
+  VolunteerActivism,
 } from "@mui/icons-material";
+
 import BalanceCard from "components/cards/BalanceCard";
 import CardContainer from "components/cards/CardContainer";
 import PayIconButton from "components/buttons/PayIconButton";
+import CardDetail from "components/details/CardDetail";
+import SavingsCard from "components/cards/SavingsCard";
+import MainMenuTitle from "components/titles/MainMenuTitle";
 
 interface IMainMenuProps {}
 
@@ -151,7 +155,7 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
 
       {/* pay container */}
       <CardContainer>
-        <div className="font-semibold">Pay or Top Up</div>
+        <MainMenuTitle name="Pay or Top Up" />
         <div className="flex flex-row flex-wrap items-center justify-between">
           {payIcons.map((payIcon: IPayIcons) => {
             return (
@@ -169,9 +173,14 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
 
       {/* products container */}
       <CardContainer>
-      <div className="font-semibold">Products</div>
-      <div></div>
-
+        <MainMenuTitle name="Products" />
+        <div></div>
+        <CardDetail />
+      </CardContainer>
+      <CardContainer>
+        <div className="font-semibold">FUCK YOU</div>
+        <div></div>
+        <SavingsCard />
       </CardContainer>
 
       {/* navigation footer */}

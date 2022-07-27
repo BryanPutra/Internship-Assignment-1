@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tim7.eform.bo.FormDataBO;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(value="/api/form")
 public class FormController {
@@ -40,7 +39,7 @@ public class FormController {
 		String productCode = (String)formData.get("productCode");
 		//String ktpId = (String)formData.get("ktpId");
 		
-		returnMap = FormDataBO.getinstance().getRegistrationData(id, productCode, null);
+		//returnMap = FormDataBO.getinstance().getRegistrationData(id, productCode, null);
 		
 		return new ResponseEntity<Map>(returnMap,HttpStatus.OK);
 	}

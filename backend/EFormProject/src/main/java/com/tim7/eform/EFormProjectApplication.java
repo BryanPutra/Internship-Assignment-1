@@ -7,12 +7,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.tim7.eform.bo.FormDataBO;
@@ -40,19 +42,20 @@ public class EFormProjectApplication implements CommandLineRunner{
 
 	public void run(String... args) throws Exception {
 		
-	//[!] Do not run unless dummy data is changed
-		//populateDummyData();
+		//User Fetch
+		//String email = "bambangaja@gmail.com";
+		//User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
+		//System.out.println(user.getGenderKtp());
 		
-		System.out.println("************");
-		List<User> users = userRepository.findAll();
-		for(User c : users) {
-			System.out.println(c.toString());
-		}
-		System.out.println(FormDataBO.getinstance().getRegistrationData(null, "savings", null));
-		System.out.println(FormDataBO.getinstance().getProductRequirementsFromFile("savings"));
+		//getRegistrationData(id, productCode, currentPage, previousPage, isBack)
+		//System.out.println(FormDataBO.getinstance().getRegistrationData(null, "savings", null, null, null));
+		System.out.println(FormDataBO.getinstance().getRegistrationData(null, "savings", "ktp-1", "Home",false));
+		//System.out.println(FormDataBO.getinstance().getProductRequirementsFromFile("savings"));
+		//System.out.println();
 		
 	}
 	
+	//[!] Do not run unless dummy data is changed
 	public void populateDummyData() throws ParseException {
 //		SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd-MM-yyyy");
 //		SimpleDateFormat fullDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -87,5 +90,12 @@ public class EFormProjectApplication implements CommandLineRunner{
 		userRepository.save(c1);
 		userRepository.save(c2);
 	}
-
+	
+	//display all user
+	public void viewUser() {
+		List<User> users = userRepository.findAll();
+		for(User c : users) {
+			System.out.println(c.toString());
+		}
+	}
 }

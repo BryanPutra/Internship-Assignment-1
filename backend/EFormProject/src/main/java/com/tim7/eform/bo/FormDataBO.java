@@ -2,8 +2,6 @@ package com.tim7.eform.bo;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,19 +9,27 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.FileSystemUtils;
+import org.springframework.data.mongodb.core.aggregation.StringOperators.ToUpper;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import com.tim7.eform.model.User;
+import com.tim7.eform.repository.UserRepository;
 
 public class FormDataBO {
 	
 	public static Logger log = Logger.getLogger(FormDataBO.class);
 	
+	@Autowired
+	private UserRepository userRepository;
+	
 	private static FormDataBO instance = null;
+	
 	public static synchronized FormDataBO getinstance() {
 		if(instance == null) {
 			instance = new FormDataBO();
@@ -31,28 +37,118 @@ public class FormDataBO {
 		return instance;
 	}
 	
-	public Map getRegistrationData(String id, String productCode, String currentPage) {
+	public Map getRegistrationData(String id, String productCode, String currentPage, String prevPage, boolean isBack) {
 		Map returnMap = new HashMap();
-		Map requirementMap = new HashMap();
-		List requirementList = new LinkedList();
-		List requirementName = new LinkedList();
+		System.out.println(getNextPage(productCode, currentPage, prevPage, isBack));
 		
-		requirementMap = getProductRequirementsFromFile(productCode);
-		requirementList = (List)requirementMap.get("requirementList");
-		
-		System.out.println(requirementList.get(0));
-//		if(currentPage.isEmpty()) {
-//			
-//		}
 		
 		return returnMap;
 	}
 	
-	public Map getAutofillData(String id, String productCode) {
+	public Map getNextPage(String productCode, String currentPage, String prevPage, boolean isBack) {
+		Map returnMap = new HashMap();
+		String nextPage=null;
+		String currentRequirement = null;
+		
+		Map productConfigMap = new HashMap();
+		Map pageConfigMap = new HashMap();
+		
+		List productRequirementList = new LinkedList();
+		List productPageList = new LinkedList();
+		
+		List pageNameList = new LinkedList();
+		List pageFieldList = new LinkedList();
+		boolean isDone = false; 
+		
+		productConfigMap = getProductRequirementsFromFile(productCode);
+		productRequirementList = (List) productConfigMap.get("requirementList");
+		//If user is entering a new form
+		if(currentPage == null) {
+			Map targetRequirementMap = (Map)productRequirementList.get(0);
+			productPageList = (List)targetRequirementMap.get("pageList");
+			nextPage = (String)productPageList.get(0);
+			return returnMap;
+		}else {
+			//Check if user is going back to the previous page
+			if(isBack == true){
+				currentPage = prevPage;
+				if(currentPage.equals("Home")) {
+					returnMap.put("isHome", true);
+					return returnMap;
+				}
+			}
+			for(int i = 0 ; i < productRequirementList.size() ; i++) {
+				Map targetRequirementMap = (Map)productRequirementList.get(i);
+				currentRequirement = (String)targetRequirementMap.get("requirement");
+				/*		Check If user's current page contains the requirement name on the current index
+						If true, do another loop to find the precise position of the pageName, 
+							e.g: where is precisely ktp-2 located inside the list,
+						   	and what is the next and previous element of the list						*/
+				if(currentPage.contains(currentRequirement)) {
+					productPageList = (List)targetRequirementMap.get("pageList");
+					int pageListLength = productPageList.size();
+					
+					for(int j = 0 ; j < pageListLength ; j++) {
+						//If found a match between "currentPage" and current element of "productPageList"
+						//e.g: ktp-2 = ktp-2
+						if(currentPage.equals(productPageList.get(j))) {
+							if(j == productPageList.size()-1) {
+								//Check if the current index points at last element of a "pageList"
+								//and last element of "requirementList"
+								if(i != productRequirementList.size()-1) {
+									targetRequirementMap = (Map)productRequirementList.get(i+1);
+									productPageList = (List)targetRequirementMap.get("pageList");
+									nextPage = (String)productPageList.get(0);
+								}else {
+									isDone = true;
+									return returnMap;
+								}
+							}else {
+								nextPage = (String) productPageList.get(j+1);
+								if(j>0) {
+									prevPage = (String) productPageList.get(j-1);
+								}else {
+									prevPage = "Home";
+								}
+							}
+//							System.out.println("Current Page: "+currentPage+", Found at: "+productCode+" > "+currentRequirement+" > index:"+j);
+//							System.out.println("Next Page: " + nextPage);
+//							System.out.println("Prev Page: " + prevPage);
+						}
+					}
+					break;
+				}
+			}
+		}
+		
+		pageConfigMap = getPageDetailsFromFile(currentRequirement);
+		pageNameList = (List)pageConfigMap.get("page");
+		int pageNameListSize = pageNameList.size();
+		
+		for(int i = 0 ; i < pageNameListSize ; i++) {
+			Map targetPage = (Map)pageNameList.get(i);
+			String targetPageName = (String) targetPage.get("pageCode");
+			if(nextPage.equals(targetPageName)) {
+				returnMap.put("fields", targetPage.get("fields"));
+				break;
+			}
+		}
+		
+		//TODO: fetch autofill data for already existing data
+		//TODO: build the return map combining pageDetails and autofill data according to the nextPage requested by user
+		returnMap.put("isDone", isDone);
+		returnMap.put("nextPage", nextPage);
+		returnMap.put("prevPage", currentPage);
+		return returnMap;
+	}
+	
+	public Map getAutofillData(String id, String productCode, String pageCode) {
 		Map returnMap = new HashMap<>();
 		
 		
-		
+		String email = "bambangaja@gmail.com";
+		User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
+		System.out.println(user.getGenderKtp());
 		
 		return returnMap;
 	}
@@ -68,7 +164,6 @@ public class FormDataBO {
 			String content = new String(Files.readAllBytes(file.toPath()));
 			data = new JSONObject(content);
 		}catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 			log.error("getProductRequirementsFromFile" + e);
 		}
@@ -97,7 +192,7 @@ public class FormDataBO {
 		JSONObject data = null;
 		
 		try {
-			File file = new ClassPathResource("JSONConfigs/ProductConfig.json").getFile();
+			File file = new ClassPathResource("JSONConfigs/PageConfig.json").getFile();
 			String content = new String(Files.readAllBytes(file.toPath()));
 			data = new JSONObject(content);
 		}catch (Exception e) {
@@ -105,9 +200,9 @@ public class FormDataBO {
 			log.error("getPageDetailsFromFile" + e);
 		}
 		
-		int dataLength = data.getJSONArray("categoryList").length();
+		int dataLength = data.getJSONArray("requirementList").length();
 		for(int i = 0 ; i < dataLength ; i++) {
-			JSONArray jsonArrayTemp = data.getJSONArray("categoryList");
+			JSONArray jsonArrayTemp = data.getJSONArray("requirementList");
 			pageList.add(toMap((JSONObject)jsonArrayTemp.get(i)));
 		}
 		
@@ -115,7 +210,7 @@ public class FormDataBO {
 		for(int i = 0 ; i < pageListLength ; i++) {
 			Map tempMap = (Map)pageList.get(i);
 			String categoryCode = requirementName.substring(0,3);
-			if(categoryCode.equalsIgnoreCase((String)tempMap.get("category"))) {
+			if(categoryCode.equalsIgnoreCase((String)tempMap.get("requirement"))) {
 				returnMap = tempMap;
 				break;
 			}

@@ -4,11 +4,19 @@
         "requirementList" : [
         	{
         		"requirement" : "ktp",
-        		"requirementDetails" : [
+        		"pageList" : [
         			"ktp-1",
         			"ktp-2",
-       				"ktp-3" 
+       				"ktp-3"
         		]
+        	},
+        	{
+				"requirement" : "income",
+        		"pageList" : [
+        			"income-1",
+        			"income-2",
+       				"income-3"
+        		]       	
         	}
         ]
     },

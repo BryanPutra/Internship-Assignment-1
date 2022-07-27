@@ -1,7 +1,7 @@
 {
-	"categoryList":[
+	"requirementList":[
 		{
-			"category" : "ktp",
+			"requirement" : "ktp",
 			"page" : [
 				{
 					"pageCode" : "ktp-1",

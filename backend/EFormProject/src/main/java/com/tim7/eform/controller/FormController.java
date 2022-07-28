@@ -35,10 +35,15 @@ public class FormController {
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Map> getFormData(@RequestBody final Map formData) {
 		Map returnMap = new HashMap<>();
+		Map formMap = new HashMap();
 		String id = (String)formData.get("id");
 		String productCode = (String)formData.get("productCode");
-		//String ktpId = (String)formData.get("ktpId");
-		
+		String currentPage = (String)formData.get("currentPage");
+		String prevPage = (String) formData.get("prevPage");
+		Boolean isBack = (Boolean) formData.get("isBack");
+		System.out.println(productCode);
+		formMap = FormDataBO.getinstance().getRegistrationData(id, productCode, currentPage, prevPage, isBack);
+		returnMap.put("formMap", formMap);
 		//returnMap = FormDataBO.getinstance().getRegistrationData(id, productCode, null);
 		
 		return new ResponseEntity<Map>(returnMap,HttpStatus.OK);

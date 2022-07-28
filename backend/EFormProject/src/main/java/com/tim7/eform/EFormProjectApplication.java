@@ -14,6 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -23,7 +27,7 @@ import com.tim7.eform.model.Role;
 import com.tim7.eform.model.User;
 import com.tim7.eform.repository.RoleRepository;
 import com.tim7.eform.repository.UserRepository;
-
+import com.tim7.eform.config.MongoConfig;
 
 @SpringBootApplication
 public class EFormProjectApplication implements CommandLineRunner{
@@ -43,15 +47,18 @@ public class EFormProjectApplication implements CommandLineRunner{
 	public void run(String... args) throws Exception {
 		
 		//User Fetch
-		//String email = "bambangaja@gmail.com";
-		//User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
-		//System.out.println(user.getGenderKtp());
+		String email = "bambangaja@gmail.com";
+		User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
+		System.out.println(user.getClass());
+		
+		//FormDataBO.getinstance().getAutofillData(null,null,null);
 		
 		//getRegistrationData(id, productCode, currentPage, previousPage, isBack)
 		//System.out.println(FormDataBO.getinstance().getRegistrationData(null, "savings", null, null, null));
-		System.out.println(FormDataBO.getinstance().getRegistrationData(null, "savings", "ktp-1", "Home",false));
+		//System.out.println(FormDataBO.getinstance().getRegistrationData(null, "savings", "ktp-1", "Home",false));
 		//System.out.println(FormDataBO.getinstance().getProductRequirementsFromFile("savings"));
 		//System.out.println();
+		System.out.println(FormDataBO.getinstance().getRegistrationData(null,"savings","ktp-1","Home", false));
 		
 	}
 	

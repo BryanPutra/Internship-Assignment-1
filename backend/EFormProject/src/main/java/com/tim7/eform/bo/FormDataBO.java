@@ -39,9 +39,11 @@ public class FormDataBO {
 	
 	public Map getRegistrationData(String id, String productCode, String currentPage, String prevPage, boolean isBack) {
 		Map returnMap = new HashMap();
-		System.out.println(getNextPage(productCode, currentPage, prevPage, isBack));
-		
-		
+		Map nextPageMap = new HashMap();
+		//System.out.println(getNextPage(productCode, currentPage, prevPage, isBack));
+		//nextPageMap = getNextPage(productCode,currentPage,prevPage,isBack);
+		returnMap = getNextPage(productCode,currentPage,prevPage,isBack);
+		//returnMap.put("nextPageMap", nextPageMap);
 		return returnMap;
 	}
 	
@@ -64,10 +66,11 @@ public class FormDataBO {
 		productRequirementList = (List) productConfigMap.get("requirementList");
 		//If user is entering a new form
 		if(currentPage == null) {
+			System.out.println("current page is null");
 			Map targetRequirementMap = (Map)productRequirementList.get(0);
+			currentRequirement = (String)targetRequirementMap.get("requirement");
 			productPageList = (List)targetRequirementMap.get("pageList");
 			nextPage = (String)productPageList.get(0);
-			return returnMap;
 		}else {
 			//Check if user is going back to the previous page
 			if(isBack == true){
@@ -145,10 +148,9 @@ public class FormDataBO {
 	public Map getAutofillData(String id, String productCode, String pageCode) {
 		Map returnMap = new HashMap<>();
 		
-		
 		String email = "bambangaja@gmail.com";
 		User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
-		System.out.println(user.getGenderKtp());
+		//System.out.println(user);
 		
 		return returnMap;
 	}

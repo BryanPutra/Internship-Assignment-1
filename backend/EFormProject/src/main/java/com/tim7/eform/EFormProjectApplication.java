@@ -14,20 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.tim7.eform.bo.FormDataBO;
+import com.tim7.eform.bo.MongoQuery;
 import com.tim7.eform.model.EnumRole;
 import com.tim7.eform.model.Role;
 import com.tim7.eform.model.User;
 import com.tim7.eform.repository.RoleRepository;
 import com.tim7.eform.repository.UserRepository;
-import com.tim7.eform.config.MongoConfig;
+
+import lombok.SneakyThrows;
 
 @SpringBootApplication
 public class EFormProjectApplication implements CommandLineRunner{
@@ -38,7 +36,8 @@ public class EFormProjectApplication implements CommandLineRunner{
 	private RoleRepository roleRepository;
 	@Autowired
 	PasswordEncoder encoder;
-	@Autowired
+	
+	private static MongoQuery query;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(EFormProjectApplication.class, args);
@@ -47,18 +46,21 @@ public class EFormProjectApplication implements CommandLineRunner{
 	public void run(String... args) throws Exception {
 		
 		//User Fetch
+		
 		String email = "bambangaja@gmail.com";
 		User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
-		System.out.println(user.getClass());
+		String emailGet = User.get("id", user, User.class);
+		System.out.println(user.getEmail());
+		System.out.println("user id:"+emailGet);
 		
-		//FormDataBO.getinstance().getAutofillData(null,null,null);
+//		FormDataBO.getinstance().getAutofillData("bambangaja@gmail.com");
 		
-		//getRegistrationData(id, productCode, currentPage, previousPage, isBack)
-		//System.out.println(FormDataBO.getinstance().getRegistrationData(null, "savings", null, null, null));
-		//System.out.println(FormDataBO.getinstance().getRegistrationData(null, "savings", "ktp-1", "Home",false));
-		//System.out.println(FormDataBO.getinstance().getProductRequirementsFromFile("savings"));
-		//System.out.println();
-		System.out.println(FormDataBO.getinstance().getRegistrationData(null,"savings","ktp-1","Home", false));
+		
+		
+		
+		
+		
+//		System.out.println(FormDataBO.getinstance().getRegistrationData(null,"savings","ktp-1","Home", false));
 		
 	}
 	
@@ -104,5 +106,11 @@ public class EFormProjectApplication implements CommandLineRunner{
 		for(User c : users) {
 			System.out.println(c.toString());
 		}
+	}
+	
+	@SneakyThrows
+	@SuppressWarnings({"unchecked"})
+	public static <T> T get(String fieldName, Object instance, Class<?> instanceClass) throws Exception{
+	    return (T) instanceClass.getDeclaredField(fieldName).get(instance);
 	}
 }

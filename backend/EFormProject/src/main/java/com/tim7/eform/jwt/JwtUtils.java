@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.WebUtils;
 
 import com.tim7.eform.service.UserDetailsImplements;
@@ -28,12 +30,21 @@ public class JwtUtils {
 	@Value("tim7Cookie")
 	private String jwtCookie;
 	
+	//Not in use
 	public String getJwtFromCookies(HttpServletRequest request) {
 		Cookie cookie = WebUtils.getCookie(request, jwtCookie);
 		if(cookie != null) {
+			System.out.println("cookie: "+cookie.getValue());
 			return cookie.getValue();
 		}
 		return null;
+	}
+	
+	//Currently used
+	public String getJwtFromHeaders(HttpServletRequest request) {
+		
+		System.out.println("Header: "+ request.getHeader("Authorization"));
+		return request.getHeader("Authorization");
 	}
 	
 	public ResponseCookie generateJwtCookie(UserDetailsImplements userPrincipal) {

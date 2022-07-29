@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 
 @Document(collection = "users")
 public class User {
@@ -247,7 +248,11 @@ public class User {
 		this.createdDate = createdDate;
 	}
 
-
+	@SneakyThrows
+	@SuppressWarnings({"unchecked"})
+	public static <T> T get(String fieldName, Object instance, Class<?> instanceClass) throws Exception{
+	    return (T) instanceClass.getDeclaredField(fieldName).get(instance);
+	}
 //	public String getRole() {
 //		return role;
 //	}

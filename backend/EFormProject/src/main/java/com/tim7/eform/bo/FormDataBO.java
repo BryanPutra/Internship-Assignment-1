@@ -8,29 +8,34 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.mongodb.core.aggregation.StringOperators.ToUpper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 
 import com.tim7.eform.model.User;
 import com.tim7.eform.repository.UserRepository;
+import com.tim7.eform.service.UserDetailsServiceImplements;
 
-public class FormDataBO {
-	
-	public static Logger log = Logger.getLogger(FormDataBO.class);
+public class FormDataBO{
 	
 	@Autowired
-	private UserRepository userRepository;
+	public UserRepository userRepository;
+	
+	public static Logger log = Logger.getLogger(FormDataBO.class);
 	
 	private static FormDataBO instance = null;
 	
 	public static synchronized FormDataBO getinstance() {
+		
 		if(instance == null) {
 			instance = new FormDataBO();
 		}
@@ -51,20 +56,18 @@ public class FormDataBO {
 		Map returnMap = new HashMap();
 		String nextPage=null;
 		String currentRequirement = null;
-		
 		Map productConfigMap = new HashMap();
 		Map pageConfigMap = new HashMap();
-		
 		List productRequirementList = new LinkedList();
 		List productPageList = new LinkedList();
-		
 		List pageNameList = new LinkedList();
 		List pageFieldList = new LinkedList();
 		boolean isDone = false; 
 		
 		productConfigMap = getProductRequirementsFromFile(productCode);
 		productRequirementList = (List) productConfigMap.get("requirementList");
-		//If user is entering a new form
+		
+//		If user is entering a new form
 		if(currentPage == null) {
 			System.out.println("current page is null");
 			Map targetRequirementMap = (Map)productRequirementList.get(0);
@@ -72,7 +75,7 @@ public class FormDataBO {
 			productPageList = (List)targetRequirementMap.get("pageList");
 			nextPage = (String)productPageList.get(0);
 		}else {
-			//Check if user is going back to the previous page
+//		Check if user is going back to the previous page
 			if(isBack == true){
 				currentPage = prevPage;
 				if(currentPage.equals("Home")) {
@@ -139,19 +142,25 @@ public class FormDataBO {
 		
 		//TODO: fetch autofill data for already existing data
 		//TODO: build the return map combining pageDetails and autofill data according to the nextPage requested by user
+		//TODO: create new class to specialize in getting query results from mongodb then return it as a List or Map
 		returnMap.put("isDone", isDone);
 		returnMap.put("nextPage", nextPage);
 		returnMap.put("prevPage", currentPage);
 		return returnMap;
 	}
 	
-	public Map getAutofillData(String id, String productCode, String pageCode) {
-		Map returnMap = new HashMap<>();
+	public Map getAutofillData(String email) throws UsernameNotFoundException {
 		
-		String email = "bambangaja@gmail.com";
-		User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
-		//System.out.println(user);
-		
+		Map returnMap = new HashMap();
+
+		//User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
+		try {
+			User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
+			//User user = userRepository.findUserByEmail(email);
+			returnMap.put("user", user.getEmail());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return returnMap;
 	}
 	
@@ -256,4 +265,5 @@ public class FormDataBO {
 	    }
 	    return list;
 	}
+	
 }

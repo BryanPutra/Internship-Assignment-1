@@ -28,7 +28,7 @@ const schema = yup.object().shape({
 });
 
 const Login: React.FunctionComponent = () => {
-  const { login, authState, setAuthState } = useAuth();
+  const { login, authState, setAuthState, testPostAuth } = useAuth();
   const methods = useForm<ILoginFormInputs>({ resolver: yupResolver(schema) });
   const errors = methods.formState.errors;
 
@@ -107,7 +107,7 @@ const Login: React.FunctionComponent = () => {
           <div> OR </div>
         </div>
         <button
-          onClick={bruh}
+          onClick={testPostAuth}
           type="button"
           className="bg-paleGrey font-semibold py-3 flex flex-row text-textDarkGrey w-full rounded-lg shadow-md align-center justify-center"
         >

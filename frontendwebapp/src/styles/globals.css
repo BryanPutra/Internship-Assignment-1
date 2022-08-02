@@ -19,3 +19,12 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.pagingDots {
+  top: 1.8rem !important; 
+}
+
+.carouselContainer{
+  display: flex !important;
+  gap: 2rem !important;
+}

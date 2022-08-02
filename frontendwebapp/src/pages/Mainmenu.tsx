@@ -5,6 +5,7 @@ import SimobiLogo from "../../public/assets/images/logoSimobi2.png";
 import { useAuth } from "context/authContext";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import Carousel from "nuka-carousel";
 // import * as routeUtils from "utils/routeUtils";
 
 import {
@@ -27,6 +28,7 @@ import PayIconButton from "components/buttons/PayIconButton";
 import CardDetail from "components/details/CardDetail";
 import SavingsCard from "components/cards/SavingsCard";
 import MainMenuTitle from "components/titles/MainMenuTitle";
+import ProductCard from "components/cards/ProductCard";
 
 interface IMainMenuProps {}
 
@@ -38,8 +40,23 @@ interface IPayIcons {
   linkTo: string;
 }
 
+// interface DefaultControlsConfig {
+
+// }
+
 const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
   const { logout, testPostAuth, userDetails } = useAuth();
+
+const frameStyle = {
+  gap: '12'
+}
+
+  const productList = [{
+    productName: "Credit Card",
+    color: "red",
+    pageLink: "/creditCard"
+  },
+]
 
   const payIcons = [
     {
@@ -156,7 +173,7 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
       {/* pay container */}
       <CardContainer>
         <MainMenuTitle name="Pay or Top Up" />
-        <div className="flex flex-row flex-wrap items-center justify-between">
+        <div className="flex flex-row flex-wrap items-baseline justify-between">
           {payIcons.map((payIcon: IPayIcons) => {
             return (
               <PayIconButton
@@ -172,13 +189,40 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
       </CardContainer>
 
       {/* products container */}
-      <CardContainer>
+      <CardContainer additionalStyles=" pb-10">
         <MainMenuTitle name="Products" />
         <div></div>
-        <CardDetail />
+        <Carousel
+          slidesToShow={1}
+          disableEdgeSwiping={true}
+          defaultControlsConfig={{
+            containerClassName: "carouselContainer",
+            nextButtonStyle: { display: "none" },
+            prevButtonStyle: { display: "none" },
+            pagingDotsStyle: { marginLeft: 8, fill: "pink" },
+            pagingDotsContainerClassName: "pagingDots",
+          }}
+        >
+          {/* {productList.map((payIcon: IPayIcons) => {
+            return (
+              <PayIconButton
+                name={payIcon.name}
+                icon={payIcon.icon}
+                color={payIcon.color}
+                bgColor={payIcon.bgColor}
+                linkTo={payIcon.linkTo}
+              />
+            );
+          })} */}
+          <ProductCard />
+          <ProductCard />
+          <ProductCard />
+        </Carousel>
+        {/* <CardDetail /> */}
       </CardContainer>
       <CardContainer>
-        <div className="font-semibold">FUCK YOU</div>
+        <MainMenuTitle name="FUCK YOU" />
+
         <div></div>
         <SavingsCard />
       </CardContainer>

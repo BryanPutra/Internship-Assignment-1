@@ -18,7 +18,7 @@ const PayIconButton: React.FunctionComponent<IPayIconButtonProps> = (props) => {
         <div className={`p-4 ${props.bgColor} rounded-3xl mb-2`}>
           <svg className={`w-7 h-7 ${props.color}`}>{props.icon}</svg>
         </div>
-        <div className="text-sm">{props.name}</div>
+        <div className="text-sm text-center">{props.name}</div>
       </a>
     </Link>
   );

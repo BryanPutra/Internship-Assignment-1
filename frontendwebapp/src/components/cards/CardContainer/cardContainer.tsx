@@ -1,4 +1,6 @@
+import { type } from 'os';
 import * as React from 'react';
+import { StringLocale } from 'yup/lib/locale';
 
 interface ICardContainerProps {
     children: React.ReactNode;

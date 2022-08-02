@@ -2019,6 +2019,11 @@ normalize-range@^0.1.2:
   resolved "https://registry.yarnpkg.com/normalize-range/-/normalize-range-0.1.2.tgz#2d10c06bdfd312ea9777695a4d28439456b75942"
   integrity sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==
 
+nuka-carousel@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/nuka-carousel/-/nuka-carousel-5.2.0.tgz#b236e5a633e3ef3abbd7ab21942615fda3eabef8"
+  integrity sha512-mBMS7eXxsb54L87jPTSMst5Ow53u6Ocf28SDY36+THH7RuZ7aJxo8CQAuO8Bov8MkSTGALV+8P7TcaOqnkPYLA==
+
 object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"

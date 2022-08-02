@@ -1,24 +1,25 @@
-import { Axios, AxiosInstance, AxiosRequestConfig } from "axios";
+import { AxiosInstance } from "axios";
 import * as React from "react";
 import { createContext, useContext } from "react";
 import axios from "axios";
 
 const portHostClient = "3000";
-const authorizationURL = `http://localhost:${portHostClient}/api/auth`;
-const authenticationURL = "https://b776-180-241-243-138.ap.ngrok.io/api/auth";
-const testURL = "https://b776-180-241-243-138.ap.ngrok.io/api/form";
+const apiURL = "https://f37d-36-72-88-33.ap.ngrok.io/api"
+const authorizationURL = "https://f37d-36-72-88-33.ap.ngrok.io/api/form";
+const authenticationURL = "https://f37d-36-72-88-33.ap.ngrok.io/api/auth";
+const testURL = "https://f37d-36-72-88-33.ap.ngrok.io/api/form";
 
 interface IAxiosContext {
-    authenticationAxios: AxiosInstance;
-    authorizationAxios: AxiosInstance;
-    testAxios: AxiosInstance;
+  authenticationAxios: AxiosInstance;
+  authorizationAxios: AxiosInstance;
+  testAxios: AxiosInstance;
 }
 
 const axiosContextDefault: IAxiosContext = {
-    authenticationAxios: axios.create(),
-    authorizationAxios: axios.create(),
-    testAxios: axios.create()
-}
+  authenticationAxios: axios.create(),
+  authorizationAxios: axios.create(),
+  testAxios: axios.create(),
+};
 
 const AxiosContext = createContext<IAxiosContext>(axiosContextDefault);
 
@@ -31,22 +32,29 @@ interface IAxiosProviderProps {
 }
 
 const AxiosProvider: React.FunctionComponent<IAxiosProviderProps> = (props) => {
-
   const authenticationAxios: AxiosInstance = axios.create({
     baseURL: authenticationURL,
-    // headers: {'Access-Control-Allow-Origin': '*'}
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   const authorizationAxios: AxiosInstance = axios.create({
     baseURL: authorizationURL,
     withCredentials: true,
-    // headers: {'Access-Control-Allow-Origin': '*'}
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   const testAxios: AxiosInstance = axios.create({
     baseURL: testURL,
     withCredentials: true,
-    // headers: {'Access-Control-Allow-Origin': '*'}
+    headers: {
+      "Content-Type": "application/json",
+    },
+
   });
 
   const value = {

@@ -12,9 +12,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     <AxiosProvider>
       <AuthProvider>
         <ThemeProvider>
-          {/* <Protected> */}
+          <Protected>
             <Component {...pageProps} />
-          {/* </Protected> */}
+          </Protected>
         </ThemeProvider>
       </AuthProvider>
     </AxiosProvider>

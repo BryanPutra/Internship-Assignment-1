@@ -6,7 +6,7 @@ interface IMainMenuTitleProps {
 
 const MainMenuTitle: React.FunctionComponent<IMainMenuTitleProps> = (props) => {
   return (
-    <div className="text-lg font-semibold">{props.name}</div>
+    <div className="text-lg font-semibold mb-2">{props.name}</div>
   );
 };
 

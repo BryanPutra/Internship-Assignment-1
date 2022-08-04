@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 
 import com.tim7.eform.model.User;
-import com.tim7.eform.repository.UserRepository;
-import com.tim7.eform.service.UserDetailsServiceImplements;
+import com.tim7.eform.repository.CustomUserRepository;
+
+import lombok.SneakyThrows;
 
 public class FormDataBO{
 	
 	@Autowired
-	public UserRepository userRepository;
+	CustomUserRepository repository;
 	
 	public static Logger log = Logger.getLogger(FormDataBO.class);
 	
@@ -42,13 +44,21 @@ public class FormDataBO{
 		return instance;
 	}
 	
-	public Map getRegistrationData(String id, String productCode, String currentPage, String prevPage, boolean isBack) {
+	public Map getRegistrationData(String email, String productCode, String currentPage, String prevPage, boolean isBack, Map userMap) {
 		Map returnMap = new HashMap();
 		Map nextPageMap = new HashMap();
-		//System.out.println(getNextPage(productCode, currentPage, prevPage, isBack));
-		//nextPageMap = getNextPage(productCode,currentPage,prevPage,isBack);
-		returnMap = getNextPage(productCode,currentPage,prevPage,isBack);
-		//returnMap.put("nextPageMap", nextPageMap);
+		List fieldNameList = new LinkedList();
+		Map autofillMap = new HashMap();
+		
+		
+		nextPageMap = getNextPage(productCode,currentPage,prevPage,isBack);
+		fieldNameList = (List) nextPageMap.get("fieldNameList");
+		nextPageMap.remove("fieldNameList");
+		
+		autofillMap = getAutofillData(email, fieldNameList, userMap);
+		
+		returnMap.put("nextPageMap", nextPageMap);
+		
 		return returnMap;
 	}
 	
@@ -58,10 +68,14 @@ public class FormDataBO{
 		String currentRequirement = null;
 		Map productConfigMap = new HashMap();
 		Map pageConfigMap = new HashMap();
+		Map fieldMap = new HashMap();
+		
 		List productRequirementList = new LinkedList();
 		List productPageList = new LinkedList();
 		List pageNameList = new LinkedList();
-		List pageFieldList = new LinkedList();
+		List fieldList = new LinkedList();
+		List fieldNameList = new LinkedList();
+		
 		boolean isDone = false; 
 		
 		productConfigMap = getProductRequirementsFromFile(productCode);
@@ -136,31 +150,35 @@ public class FormDataBO{
 			String targetPageName = (String) targetPage.get("pageCode");
 			if(nextPage.equals(targetPageName)) {
 				returnMap.put("fields", targetPage.get("fields"));
+				fieldList = (List) targetPage.get("fields");
+				Map targetFieldMap = new HashMap();
+				for(int j = 0 ; j < fieldList.size() ; j++) {
+					targetFieldMap = (Map)fieldList.get(j);
+					fieldNameList.add((String)targetFieldMap.get("fieldName"));
+				}
 				break;
 			}
 		}
 		
-		//TODO: fetch autofill data for already existing data
-		//TODO: build the return map combining pageDetails and autofill data according to the nextPage requested by user
-		//TODO: create new class to specialize in getting query results from mongodb then return it as a List or Map
 		returnMap.put("isDone", isDone);
 		returnMap.put("nextPage", nextPage);
 		returnMap.put("prevPage", currentPage);
+		returnMap.put("fieldNameList", fieldNameList);
+		
 		return returnMap;
 	}
 	
-	public Map getAutofillData(String email) throws UsernameNotFoundException {
-		
+	public Map getAutofillData(String email, List fieldList, Map userMap) throws UsernameNotFoundException {
 		Map returnMap = new HashMap();
-
-		//User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
-		try {
-			User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
-			//User user = userRepository.findUserByEmail(email);
-			returnMap.put("user", user.getEmail());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		/*	1. Cari user dari DB pake email, extract field/column "collectedData" dari user
+			2. Compare collectedData smaa fieldList, kalau salah satu index ada yang sama, ambil data dari user sesuai fieldnya.
+				cth:	collectedData 	= [fullname, ktpGender]
+		     			fieldList 		= [fullname, ktpGender, ktpMaritalStatus]
+						[Output] = user's ktpName, user's ktpGender
+					
+			3. Ambil data dari userMap sesuai output No.2
+			4. Put hasil ke returnMap, cth>> returnMap.put("fullname", userMap.get("fullname"));
+		*/
 		return returnMap;
 	}
 	
@@ -264,6 +282,12 @@ public class FormDataBO{
 	        list.add(value);
 	    }
 	    return list;
+	}
+	
+	@SneakyThrows
+	@SuppressWarnings({"unchecked"})
+	public static <T> T get(String fieldName, Object instance, Class<?> instanceClass) throws Exception{
+	    return (T) instanceClass.getDeclaredField(fieldName).get(instance);
 	}
 	
 }

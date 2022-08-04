@@ -19,61 +19,53 @@
 						{
 							"fieldCode" : "ktp-2-1",
 							"component" : "textField",
-							"fieldname" : "ktpId",
+							"fieldName" : "ktpId",
 							"label" : "NIK",
 							"maxLength" : 16,
-							"placeholder" : "Nomor Induk Kartu Tanda Penduduk | NIK",
-							"dbKey" : "ktpId"
+							"placeholder" : "Nomor Induk Kartu Tanda Penduduk | NIK"
 						},
 						{
 							"fieldCode" : "ktp-2-2",
 							"component" : "textField",
-							"fieldName" : "ktpName",
+							"fieldName" : "fullName",
 							"label" : "NAMA",
-							"placeholder" : "Nama sesuai KTP",
-							"dbKey" : "fullName"
+							"placeholder" : "Nama sesuai KTP"
 						},
 						{
 							"fieldCode" : "ktp-2-3",
 							"component" : "Calendar",
-							"fieldname" : "birthDate",
-							"label" : "Tanggal Lahir",
-							"dbKey" : "birthDate"
+							"fieldName" : "birthDate",
+							"label" : "Tanggal Lahir"
 						},
 						{
 							"fieldCode" : "ktp-2-4",
 							"component" : "TextField",
-							"fieldname" : "birthPlace",
-							"label" : "Tempat Lahir",
-							"dbKey" : "birthPlace"
+							"fieldName" : "birthPlace",
+							"label" : "Tempat Lahir"
 						},
 						{
 							"fieldCode" : "ktp-2-5",
 							"component" : "TextField",
-							"fieldname" : "maritalStatusKtp",
-							"label" : "Status Pernikahan",
-							"dbKey" : "maritalStatusKtp"
+							"fieldName" : "maritalStatusKtp",
+							"label" : "Status Pernikahan"
 						},
 						{
 							"fieldCode" : "ktp-2-6",
 							"component" : "TextField",
-							"fieldname" : "religionKtp",
-							"label" : "Agama",
-							"dbKey" : "maritalStatusKtp"
+							"fieldName" : "religionKtp",
+							"label" : "Agama"
 						},
 						{
 							"fieldCode" : "ktp-2-7",
 							"component" : "GenderPicker",
-							"fieldname" : "genderKtp",
-							"label" : "Gender",
-							"dbKey" : "genderKtp"
+							"fieldName" : "genderKtp",
+							"label" : "Gender"
 						},
 						{
 							"fieldCode" : "ktp-2-8",
 							"component" : "TextField",
-							"fieldname" : "motherMaidenName",
-							"label" : "Nama Ibu Kandung",
-							"dbKey" : "motherMaidenKtp"
+							"fieldName" : "motherMaidenKtp",
+							"label" : "Nama Ibu Kandung"
 						}
 					]			
 				},
@@ -84,62 +76,54 @@
 						{
 							"fieldCode" : "ktp-3-1",
 							"component" : "textField",
-							"fieldname" : "streetAddressKtp",
+							"fieldName" : "streetAddressKtp",
 							"label" : "Alamat",
-							"placeholder" : "Alamat sesuai KTP",
-							"dbKey" : "streetAddressKtp"
+							"placeholder" : "Alamat sesuai KTP"
 						},
 						{
 							"fieldCode" : "ktp-3-2",
 							"component" : "NumberPicker",
 							"fieldName" : "rtKtp",
 							"label" : "RT",
-							"placeholder" : "Nomor RT alamat",
-							"dbKey" : "rtKtp"
+							"placeholder" : "Nomor RT alamat"
 						},
 						{
 							"fieldCode" : "ktp-3-3",
 							"component" : "NumberPicker",
 							"fieldName" : "rwKtp",
 							"label" : "RW",
-							"placeholder" : "Nomor RW alamat",
-							"dbKey" : "rwKtp"
+							"placeholder" : "Nomor RW alamat"
 						},
 						{
 							"fieldCode" : "ktp-3-4",
 							"component" : "ProvincePicker",
 							"fieldName" : "provinceKtp",
-							"label" : "Provinsi",
-							"dbKey" : "provinceKtp"
+							"label" : "Provinsi"
 						},
 						{
 							"fieldCode" : "ktp-3-5",
 							"component" : "CityPicker",
 							"fieldName" : "cityKtp",
-							"label" : "Kota",
-							"dbKey" : "cityKtp"
+							"label" : "Kota"
 						},
 						{
 							"fieldCode" : "ktp-3-6",
 							"component" : "DistrictPicker",
 							"fieldName" : "districtKtp",
-							"label" : "Kabupaten",
-							"dbKey" : "districtKtp"
+							"label" : "Kabupaten"
 						},
 						{
 							"fieldCode" : "ktp-3-7",
 							"component" : "subDistrictPicker",
 							"fieldName" : "subDistrictKtp",
-							"label" : "Kecamatan",
-							"dbKey" : "subDistrictKtp"
+							"label" : "Kecamatan"
 						},
 						{
 							"fieldCode" : "ktp-3-8",
 							"component" : "TextField",
-							"fieldName" : "cityKtp",
+							"fieldName" : "postalCodeKtp",
 							"maxLength" : 5,
-							"label" : "Kode Pos",
-							"dbKey" : "PostalCodeKtp"
+							"label" : "Kode Pos"
 						}
 					]			
 				}

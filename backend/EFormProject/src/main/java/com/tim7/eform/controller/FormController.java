@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +24,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.tim7.eform.bo.FormDataBO;
 import com.tim7.eform.model.User;
+import com.tim7.eform.repository.CustomUserRepository;
 import com.tim7.eform.repository.UserRepository;
 
 @RestController
@@ -31,6 +34,8 @@ public class FormController {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	CustomUserRepository repo;
 	
 	@GetMapping("/home")
 	@PreAuthorize("hasRole('USER')")
@@ -49,15 +54,29 @@ public class FormController {
 	@PostMapping("/getFormData")
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Map> getFormData(@RequestHeader(value="Authorization", required = true) String basicAuth, @RequestBody final Map formData) {
-		Map returnMap = new HashMap<>();
+		Map returnMap = new HashMap();
 		Map formMap = new HashMap();
+		Map userMap = new HashMap();
 		String id = (String)formData.get("id");
+		String email = (String)formData.get("email");
 		String productCode = (String)formData.get("productCode");
 		String currentPage = (String)formData.get("currentPage");
 		String prevPage = (String) formData.get("prevPage");
 		Boolean isBack = (Boolean) formData.get("isBack");
-		System.out.println(productCode);
-		//formMap = FormDataBO.getinstance().getRegistrationData(id, productCode, currentPage, prevPage, isBack);
+		Boolean isSubmit = (Boolean) formData.get("isSubmit");
+		
+		if(isSubmit) {
+			Map inputData = new HashMap();
+			inputData = (Map) formData.get("inputData");
+			
+			//submit user data preferably validated
+			
+		}
+		
+		
+		User user = userRepository.findUserByEmail(email);
+		userMap.put("user", user);
+		formMap = FormDataBO.getinstance().getRegistrationData(email, productCode, currentPage, prevPage, isBack, userMap);
 		returnMap.put("formMap", formMap);
 		//returnMap = FormDataBO.getinstance().getRegistrationData(id, productCode, null);
 		
@@ -69,10 +88,16 @@ public class FormController {
 	public ResponseEntity<Map> getAutofillData(@RequestBody final Map formData){
 		Map returnMap = new HashMap<>();
 		Map userMap = new HashMap<>();
+		Map testInsert = new HashMap();
 		
-		String email = (String)formData.get("email");
-		userMap = FormDataBO.getinstance().getAutofillData(email);
-		returnMap.put("user", userMap);
+//		String email = (String)formData.get("email");
+//		userMap = FormDataBO.getinstance().getAutofillData(email);
+//		returnMap.put("user", userMap);
+		
+		String email = "bambangaja@gmail.com";
+		Query query;
+		
+		
 		
 		return new ResponseEntity<Map>(returnMap,HttpStatus.OK);
 	}

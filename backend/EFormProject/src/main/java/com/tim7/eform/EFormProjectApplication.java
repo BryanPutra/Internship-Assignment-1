@@ -14,20 +14,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.tim7.eform.bo.FormDataBO;
-import com.tim7.eform.bo.MongoQuery;
 import com.tim7.eform.model.EnumRole;
 import com.tim7.eform.model.Role;
 import com.tim7.eform.model.User;
+import com.tim7.eform.mongo.MongoQuery;
+import com.tim7.eform.repository.CustomUserRepository;
 import com.tim7.eform.repository.RoleRepository;
 import com.tim7.eform.repository.UserRepository;
 
 import lombok.SneakyThrows;
 
 @SpringBootApplication
+@EnableMongoRepositories
 public class EFormProjectApplication implements CommandLineRunner{
 
 	@Autowired
@@ -36,8 +39,8 @@ public class EFormProjectApplication implements CommandLineRunner{
 	private RoleRepository roleRepository;
 	@Autowired
 	PasswordEncoder encoder;
-	
-	private static MongoQuery query;
+	@Autowired
+	CustomUserRepository repo;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(EFormProjectApplication.class, args);
@@ -48,15 +51,15 @@ public class EFormProjectApplication implements CommandLineRunner{
 		//User Fetch
 		
 		String email = "bambangaja@gmail.com";
-		User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
-		String emailGet = User.get("id", user, User.class);
-		System.out.println(user.getEmail());
-		System.out.println("user id:"+emailGet);
-		
+		//User user = userRepository.findByEmail(email);//.orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
+		//String emailGet = User.get("id", user, User.class);
+		//System.out.println(user.getEmail());
+		//System.out.println("user id:"+emailGet);
+//		MongoQuery mongo = new MongoQuery();
+//		
 //		FormDataBO.getinstance().getAutofillData("bambangaja@gmail.com");
 		
-		
-		
+		repo.insertTest();
 		
 		
 		

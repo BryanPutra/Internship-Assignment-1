@@ -20,7 +20,6 @@ public class User {
 	private String id;
     private String cifCode;
     
-    
     private String ktpId;
     private String fullName;
     private Date birthDate;

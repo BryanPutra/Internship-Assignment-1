@@ -47,24 +47,14 @@ public class EFormProjectApplication implements CommandLineRunner{
 	}
 
 	public void run(String... args) throws Exception {
-		
 		//User Fetch
-		
 		String email = "bambangaja@gmail.com";
-		//User user = userRepository.findByEmail(email);//.orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
 		//String emailGet = User.get("id", user, User.class);
-		//System.out.println(user.getEmail());
-		//System.out.println("user id:"+emailGet);
-//		MongoQuery mongo = new MongoQuery();
-//		
+		//User user = userRepository.findByEmail(email);//.orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
+
 //		FormDataBO.getinstance().getAutofillData("bambangaja@gmail.com");
-		
-		repo.insertTest();
-		
-		
-		
 //		System.out.println(FormDataBO.getinstance().getRegistrationData(null,"savings","ktp-1","Home", false));
-		
+		User user1 = userRepository.findUserByEmail(email);
 	}
 	
 	//[!] Do not run unless dummy data is changed

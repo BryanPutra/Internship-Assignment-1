@@ -69,10 +69,12 @@ public class FormController {
 			Map inputData = new HashMap();
 			inputData = (Map) formData.get("inputData");
 			
-			//submit user data preferably validated
-			
+			if(userRepository.existsByEmail(email)) {
+				User user = userRepository.findUserByEmail(email);				
+			}
+
+			//submit user data preferably validated			
 		}
-		
 		
 		User user = userRepository.findUserByEmail(email);
 		userMap.put("user", user);

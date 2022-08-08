@@ -2,6 +2,7 @@ package com.tim7.eform.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -57,6 +58,7 @@ public class FormController {
 		Map returnMap = new HashMap();
 		Map formMap = new HashMap();
 		Map userMap = new HashMap();
+		
 		String id = (String)formData.get("id");
 		String email = (String)formData.get("email");
 		String productCode = (String)formData.get("productCode");
@@ -67,12 +69,24 @@ public class FormController {
 		
 		if(isSubmit) {
 			Map inputData = new HashMap();
-			inputData = (Map) formData.get("inputData");
+			Map autofillData = new HashMap();
 			
-			if(userRepository.existsByEmail(email)) {
-				User user = userRepository.findUserByEmail(email);				
+			
+			
+			inputData = (Map) formData.get("inputData");
+			autofillData = (Map) formData.get("autofillData");
+			Set inputDataKey = inputData.keySet();
+			Set autofillKey = autofillData.keySet();
+			
+			//if user input is different from the autofill data, then submit the user input
+			if(!inputDataKey.equals(autofillKey)) {
+				if(userRepository.existsByEmail(email)) {
+					User user = userRepository.findUserByEmail(email);
+				}
+				
 			}
-
+			
+			
 			//submit user data preferably validated			
 		}
 		

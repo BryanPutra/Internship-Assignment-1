@@ -16,7 +16,7 @@ const ChooseProductCard: React.FunctionComponent<IChooseProductCardProps> = (
   const [isHeld, setIsHeld] = useState(false);
   const router = useRouter();
   const { setCreatingProductName} = useMain();
-
+  
   return (
     <div
       onTouchStart={() => {

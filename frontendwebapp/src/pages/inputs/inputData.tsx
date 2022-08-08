@@ -55,7 +55,7 @@ const InputData: React.FunctionComponent<IInputDataProps> = (props) => {
               </svg>
             </a>
           </Link>
-          <div className="text-xl font-semibold">Registration</div>
+          <div className="text-xl font-semibold">{`Registration: ${creatingProductName}`}</div>
         </div>
       </div>
       <div className="flex flex-col justify-center gap-5 p-5 bg-white">

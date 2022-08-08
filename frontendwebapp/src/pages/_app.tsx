@@ -5,17 +5,20 @@ import "tailwindcss/tailwind.css";
 import { AuthProvider } from "context/authContext";
 import { AxiosProvider } from "context/axiosContext";
 import { ThemeProvider } from "@material-tailwind/react";
+import { MainProvider } from "context/mainContext";
 import Protected from "components/customRoute/Protected";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <AxiosProvider>
       <AuthProvider>
-        <ThemeProvider>
-          <Protected>
+        <MainProvider>
+          <ThemeProvider>
+            {/* <Protected> */}
             <Component {...pageProps} />
-          </Protected>
-        </ThemeProvider>
+            {/* </Protected> */}
+          </ThemeProvider>
+        </MainProvider>
       </AuthProvider>
     </AxiosProvider>
   );

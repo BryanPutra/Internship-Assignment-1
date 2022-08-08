@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 interface IMainContainerProps {
-    containerType: string;
+    containerType?: string;
     children: React.ReactNode;
 }
 

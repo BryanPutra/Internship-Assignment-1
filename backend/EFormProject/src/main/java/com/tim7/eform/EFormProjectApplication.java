@@ -47,14 +47,9 @@ public class EFormProjectApplication implements CommandLineRunner{
 	}
 	
 	public void run(String... args) throws Exception {
-		//User Fetch
-		String email = "bambangaja@gmail.com";
-		//String emailGet = User.get("id", user, User.class);
-		//User user = userRepository.findByEmail(email);//.orElseThrow(() -> new UsernameNotFoundException("User not found with Email: "+email));
-
-//		FormDataBO.getinstance().getAutofillData("bambangaja@gmail.com");
-//		System.out.println(FormDataBO.getinstance().getRegistrationData(null,"savings","ktp-1","Home", false));
-		User user1 = userRepository.findUserByEmail(email);
+		MongoQuery mq = new MongoQuery();
+		mq.test();
+		
 	}
 	
 	//[!] Do not run unless dummy data is changed
@@ -101,6 +96,8 @@ public class EFormProjectApplication implements CommandLineRunner{
 		}
 	}
 	
+	//String emailGet = User.get("id", user, User.class);
+
 	@SneakyThrows
 	@SuppressWarnings({"unchecked"})
 	public static <T> T get(String fieldName, Object instance, Class<?> instanceClass) throws Exception{

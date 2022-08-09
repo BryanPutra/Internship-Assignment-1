@@ -1,5 +1,7 @@
 package com.tim7.eform.mongo;
 
+import static com.mongodb.client.model.Filters.eq;
+
 import java.util.List;
 
 import org.bson.Document;
@@ -17,21 +19,24 @@ import org.springframework.context.annotation.ComponentScan;
 
 import com.mongodb.Mongo;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.tim7.eform.model.User;
 import com.tim7.eform.repository.CustomUserRepository;
 import com.tim7.eform.repository.UserRepository;
 
-@RestController
-@RequestMapping(value="/api/form")
 public class MongoQuery {
+	String uri = "mongodb://localhost:27017";
 	
-	@Autowired
-	private CustomUserRepository repository;
-	
-	@GetMapping("/test")
+
 	public void test() {
-		String email = "bambangaja@gmail.com"; 
-		Document doc = repository.findUser(email);
-		
+		String email = "bambangaja@gmail.com";
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+	        MongoDatabase database = mongoClient.getDatabase("eform_project");
+	        MongoCollection<Document> collection = database.getCollection("users");
+	        Document doc = collection.find(eq("email", email)).first();
+	        System.out.println(doc.toJson());
+	    }
 	}
 }

@@ -3,6 +3,7 @@ import * as React from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import InputDataButton from "components/buttons/InputDataButton";
 import MainContainer from "components/containers/MainContainer";
+import RegistrationHeader from "components/headers/RegistrationHeader";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { useMain } from "context/mainContext";
 
@@ -14,7 +15,7 @@ const InputData: React.FunctionComponent<IInputDataProps> = (props) => {
   const inputDataDetails = [
     {
       inputName: "Identity Card (KTP)",
-      goToPage: "/mainmenu",
+      goToPage: "/inputs/takePhoto",
       isActive: true,
       isFilled: true,
     },
@@ -46,18 +47,7 @@ const InputData: React.FunctionComponent<IInputDataProps> = (props) => {
 
   return (
     <MainContainer containerType="secondary">
-      <div className="flex flex-col items-stretch px-5 py-4 bg-pink text-whiteGrey">
-        <div className="flex flex-row gap-5 justify-start items-center">
-          <Link href="/products/chooseProduct">
-            <a className="">
-              <svg className=" w-8 h-8">
-                <ArrowBackIcon />
-              </svg>
-            </a>
-          </Link>
-          <div className="text-xl font-semibold">{`Registration: ${creatingProductName}`}</div>
-        </div>
-      </div>
+      <RegistrationHeader creatingProductName={creatingProductName} goToPage="/products/chooseProduct"/>
       <div className="flex flex-col justify-center gap-5 p-5 bg-white">
         <div className="text-lg font-bold">Please input your data below:</div>
         {inputDataDetails.map((inputDetail) => {

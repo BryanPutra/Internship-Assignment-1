@@ -23,7 +23,7 @@ const SavingsCard: React.FunctionComponent<ISavingsCardProps> = (props) => {
   };
 
   return (
-    <div className="flex flex-col p-4 bg-gradient-to-bl from-pink to-softPink via-red rounded-lg text-whiteGrey">
+    <div className="flex flex-col p-4 bg-gradient-to-bl from-pink to-softPink via-red shadow-md rounded-lg text-whiteGrey">
       <div>Tabungan Simas Payroll</div>
       <div className="py-4 text-2xl">IDR 2500000</div>
       <div>

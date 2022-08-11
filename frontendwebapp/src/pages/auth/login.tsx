@@ -31,6 +31,7 @@ const Login: React.FunctionComponent = () => {
   const { login, authState, setAuthState, testPostAuth } = useAuth();
   const methods = useForm<ILoginFormInputs>({ resolver: yupResolver(schema) });
   const errors = methods.formState.errors;
+  const [isHeld, setIsHeld] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -109,7 +110,13 @@ const Login: React.FunctionComponent = () => {
         <button
           onClick={testPostAuth}
           type="button"
-          className="bg-paleGrey font-semibold py-3 flex flex-row text-textDarkGrey w-full rounded-lg shadow-md align-center justify-center"
+          onTouchStart={() => {
+            setIsHeld(true);
+          }}
+          onTouchEnd={() => {
+            setIsHeld(false);
+          }}
+          className={`${isHeld ? "!bg-grey" : "!bg-paleGrey"} font-semibold py-3 flex flex-row text-textDarkGrey w-full rounded-lg shadow-md align-center justify-center`}
         >
           Login with Google
         </button>

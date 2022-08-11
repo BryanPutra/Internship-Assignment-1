@@ -1,4 +1,3 @@
-import MainContainer from "components/containers/MainContainer";
 import * as React from "react";
 import Image from "next/image";
 import SimobiLogo from "../../public/assets/images/logoSimobi2.png";
@@ -22,6 +21,7 @@ import {
   VolunteerActivism,
 } from "@mui/icons-material";
 
+import MainContainer from "components/containers/MainContainer";
 import BalanceCard from "components/cards/BalanceCard";
 import CardContainer from "components/cards/CardContainer";
 import PayIconButton from "components/buttons/PayIconButton";
@@ -29,6 +29,8 @@ import CardDetail from "components/details/CardDetail";
 import SavingsCard from "components/cards/SavingsCard";
 import MainMenuTitle from "components/titles/MainMenuTitle";
 import ProductCard from "components/cards/ProductCard";
+
+import { useMain } from "context/mainContext";
 
 interface IMainMenuProps {}
 
@@ -46,17 +48,32 @@ interface IPayIcons {
 
 const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
   const { logout, testPostAuth, userDetails } = useAuth();
+  const { setProductSectionSelected } = useMain();
 
-const frameStyle = {
-  gap: '12'
-}
+  const frameStyle = {
+    gap: "12",
+  };
 
-  const productList = [{
-    productName: "Credit Card",
-    color: "red",
-    pageLink: "/creditCard"
-  },
-]
+  const productList = [
+    {
+      productName: 'Credit Card',
+      color: "black",
+      // function setCreditCardPressed on product section
+      // on Link clicked, perform the above function
+    },
+    {
+      productName: 'Savings',
+      color: "",
+      // function setCreditCardPressed on product section
+      // on Link clicked, perform the above function
+    },
+    {
+      productName: 'Loan',
+      color: "lightBlue",
+      // function setCreditCardPressed on product section
+      // on Link clicked, perform the above function
+    },
+  ];
 
   const payIcons = [
     {
@@ -117,6 +134,12 @@ const frameStyle = {
     },
   ];
 
+  const productSelectedValues = {
+    'Credit Card': 'credit',
+    'Savings': 'savings',
+    'Loan': 'loan'
+  }
+
   // const testPostAuths = async () => {
   //   try {
   //     const response = axios.get(
@@ -149,7 +172,7 @@ const frameStyle = {
       </div>
 
       {/* ownership container */}
-      <CardContainer additionalStyles="relative -inset-y-32 -mb-32">
+      <CardContainer additionalStyles="relative -inset-y-32 -mb-28">
         <div className="flex flex-row justify-between font-semibold">
           <div>Your main balance</div>
           <div className="">Rp.500.000,00</div>
@@ -203,28 +226,34 @@ const frameStyle = {
             pagingDotsContainerClassName: "pagingDots",
           }}
         >
-          {/* {productList.map((payIcon: IPayIcons) => {
+          {productList.map((product) => {
             return (
-              <PayIconButton
-                name={payIcon.name}
-                icon={payIcon.icon}
-                color={payIcon.color}
-                bgColor={payIcon.bgColor}
-                linkTo={payIcon.linkTo}
-              />
+              <div onClick={() => {
+                switch(product.productName){
+                  case 'Credit Card': setProductSectionSelected('credit');
+                  break;
+                  case 'Savings': setProductSectionSelected('savings');
+                  break;
+                  case 'Loan' : setProductSectionSelected('loan');
+                  break;
+                }
+              }}>
+                <ProductCard
+                  productName={product.productName}
+                  color={product.color}
+                />
+              </div>
             );
-          })} */}
-          <ProductCard />
-          <ProductCard />
-          <ProductCard />
+          })}
         </Carousel>
         {/* <CardDetail /> */}
       </CardContainer>
       <CardContainer>
-        <MainMenuTitle name="FUCK YOU" />
+        <MainMenuTitle name="Hellow" />
 
         <div></div>
         <SavingsCard />
+        <CardDetail />
       </CardContainer>
 
       {/* navigation footer */}

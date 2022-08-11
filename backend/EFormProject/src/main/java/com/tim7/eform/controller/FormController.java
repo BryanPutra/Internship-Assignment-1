@@ -1,9 +1,12 @@
 package com.tim7.eform.controller;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
@@ -25,6 +28,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.tim7.eform.bo.FormDataBO;
 import com.tim7.eform.model.User;
+import com.tim7.eform.mongo.MongoQuery;
 import com.tim7.eform.repository.CustomUserRepository;
 import com.tim7.eform.repository.UserRepository;
 
@@ -54,13 +58,15 @@ public class FormController {
 	
 	@PostMapping("/getFormData")
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<Map> getFormData(@RequestHeader(value="Authorization", required = true) String basicAuth, @RequestBody final Map formData) {
+	public ResponseEntity<Map> getFormData(/*@RequestHeader(value="Authorization", required = true) String basicAuth, */@RequestBody final Map formData) {
 		Map returnMap = new HashMap();
 		Map formMap = new HashMap();
 		Map userMap = new HashMap();
 		
 		String id = (String)formData.get("id");
 		String email = (String)formData.get("email");
+		String cif = (String)formData.get("cif");
+		String ktpId = (String)formData.get("ktpId");
 		String productCode = (String)formData.get("productCode");
 		String currentPage = (String)formData.get("currentPage");
 		String prevPage = (String) formData.get("prevPage");
@@ -71,17 +77,28 @@ public class FormController {
 			Map inputData = new HashMap();
 			Map autofillData = new HashMap();
 			
-			
-			
 			inputData = (Map) formData.get("inputData");
 			autofillData = (Map) formData.get("autofillData");
-			Set inputDataKey = inputData.keySet();
-			Set autofillKey = autofillData.keySet();
+			List inputDataKey = new LinkedList(inputData.keySet());
+			List autofillKey = new LinkedList(autofillData.keySet());
+			
+			List inputDataValue = new LinkedList(inputData.values());
+			List autofillValue = new LinkedList(autofillData.values());
 			
 			//if user input is different from the autofill data, then submit the user input
-			if(!inputDataKey.equals(autofillKey)) {
+			if(!inputDataKey.equals(autofillKey) || !inputDataValue.equals(autofillValue)) {
+				System.out.println("Found input difference");
 				if(userRepository.existsByEmail(email)) {
-					User user = userRepository.findUserByEmail(email);
+					MongoQuery mq = new MongoQuery();
+					Document userDoc = mq.getUser(email, cif, ktpId);
+					int length = inputDataKey.size();
+					
+					for(int i = 0 ; i < length ; i++) {
+						String currentInputKey = (String)inputDataKey.get(i);
+						userDoc.append(currentInputKey, inputData.get(currentInputKey));
+					}
+					mq.updateUser(email, cif, ktpId, userDoc);
+					returnMap.put("submitStatus", "OK");
 				}
 				
 			}

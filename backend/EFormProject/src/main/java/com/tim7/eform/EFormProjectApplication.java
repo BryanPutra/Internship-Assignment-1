@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -48,7 +49,12 @@ public class EFormProjectApplication implements CommandLineRunner{
 	
 	public void run(String... args) throws Exception {
 		MongoQuery mq = new MongoQuery();
-		mq.test();
+		//mq.insertNewUser("bambangaja@gmail.com", "Bambang aja", encoder.encode("12345"));
+		Document newUser = mq.getUser("bambangaja@gmail.com", null, null);
+		
+		newUser.append("fullname", "Test1");
+		
+		mq.updateUser("bambangaja@gmail.com", null, null, newUser);
 		
 	}
 	

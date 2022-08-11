@@ -66,25 +66,27 @@ public class MongoQuery {
 		try (MongoClient mongoClient = MongoClients.create(uri)) {
 	        MongoDatabase database = mongoClient.getDatabase("eform_project");
 	        MongoCollection<Document> collection = database.getCollection("users");
-	        collection.updateOne(eq(fieldName,filterVal), updatedDoc);
+	        collection.replaceOne(eq(fieldName,filterVal), updatedDoc);
+	        
 	    }
 	}
 	
 	public void insertNewUser(String email, String fullName, String password) {
 		Set<Role> roles = new HashSet<>();
 		
-		User newUser = new User(
-	    		fullName,
-	    		email,
-	    		encoder.encode(password)
-	    		);
+		Document newUser = new Document();
+		//String encPass = encoder.encode(password);
 		
-		Role userRole = roleRepository.findByName(EnumRole.ROLE_USER)
-				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-		roles.add(userRole);
-		newUser.setRoles(roles);
 		
-		repo.save(newUser);
+		newUser.append("email", email);
+		newUser.append("fullname", fullName);
+		newUser.append("password", password);
+		
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+	        MongoDatabase database = mongoClient.getDatabase("eform_project");
+	        MongoCollection<Document> collection = database.getCollection("users");
+	        collection.insertOne(newUser);
+	    }
 	}
 	
 	private Map filterSelection(String email, String cif, String ktpId) {

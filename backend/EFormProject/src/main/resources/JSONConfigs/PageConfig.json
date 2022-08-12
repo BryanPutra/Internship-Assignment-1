@@ -82,39 +82,39 @@
 						},
 						{
 							"fieldCode" : "ktp-3-2",
-							"component" : "NumberPicker",
+							"component" : "Picker",
 							"fieldName" : "rtKtp",
 							"label" : "RT",
 							"placeholder" : "Nomor RT alamat"
 						},
 						{
 							"fieldCode" : "ktp-3-3",
-							"component" : "NumberPicker",
+							"component" : "Picker",
 							"fieldName" : "rwKtp",
 							"label" : "RW",
 							"placeholder" : "Nomor RW alamat"
 						},
 						{
 							"fieldCode" : "ktp-3-4",
-							"component" : "ProvincePicker",
+							"component" : "Picker",
 							"fieldName" : "provinceKtp",
 							"label" : "Provinsi"
 						},
 						{
 							"fieldCode" : "ktp-3-5",
-							"component" : "CityPicker",
+							"component" : "Picker",
 							"fieldName" : "cityKtp",
 							"label" : "Kota"
 						},
 						{
 							"fieldCode" : "ktp-3-6",
-							"component" : "DistrictPicker",
+							"component" : "Picker",
 							"fieldName" : "districtKtp",
 							"label" : "Kabupaten"
 						},
 						{
 							"fieldCode" : "ktp-3-7",
-							"component" : "subDistrictPicker",
+							"component" : "Picker",
 							"fieldName" : "subDistrictKtp",
 							"label" : "Kecamatan"
 						},

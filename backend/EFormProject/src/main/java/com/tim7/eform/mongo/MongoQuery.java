@@ -77,7 +77,6 @@ public class MongoQuery {
 		Document newUser = new Document();
 		//String encPass = encoder.encode(password);
 		
-		
 		newUser.append("email", email);
 		newUser.append("fullname", fullName);
 		newUser.append("password", password);

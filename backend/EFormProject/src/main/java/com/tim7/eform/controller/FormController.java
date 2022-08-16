@@ -100,7 +100,9 @@ public class FormController {
 					mq.updateUser(email, cif, ktpId, userDoc);
 					returnMap.put("submitStatus", "OK");
 				}
-				
+			}else if(inputDataKey.equals(autofillKey) && inputDataValue.equals(autofillValue)) {
+				System.out.println("Input is same as autofill data");
+				//do nothing..
 			}
 			
 			

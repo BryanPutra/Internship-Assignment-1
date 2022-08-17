@@ -1,15 +1,19 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
+import Image, { StaticImageData } from "next/image";
+import Link from "next/link";
+import { useRouter } from 'next/router';
+
+//local
 import creditPlatinum from "../../../public/assets/images/creditplatinum.png";
 import creditSecure from "../../../public/assets/images/creditsecure.png";
-import Image, { StaticImageData } from "next/image";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MainContainer from "components/containers/MainContainer";
 import SectionButton from "components/buttons/SectionButton";
-import Link from "next/link";
 import ChooseProductCard from "components/cards/ChooseProductCard";
 import { useMain } from "context/mainContext";
-import { useRouter } from 'next/router';
+
+//libs
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 interface IChooseProductProps {}
 
@@ -20,9 +24,9 @@ interface productInfo {
 }
 
 const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
-  const [creditSelected, setCreditSelected] = useState(false);
-  const [savingsSelected, setSavingsSelected] = useState(false);
-  const [loanSelected, setLoanSelected] = useState(false);
+  const [creditSelected, setCreditSelected] = useState<boolean>(false);
+  const [savingsSelected, setSavingsSelected] = useState<boolean>(false);
+  const [loanSelected, setLoanSelected] = useState<boolean>(false);
   const router = useRouter();
 
   const { productSectionSelected, setProductSectionSelected } = useMain();

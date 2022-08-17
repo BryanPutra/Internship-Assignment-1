@@ -5,13 +5,15 @@ import { useState } from "react";
 interface ISubmitButtonProps {
   name: string;
   isLoading: boolean;
+  isDisabled?: boolean;
 }
 
 const SubmitButton: React.FunctionComponent<ISubmitButtonProps> = (props) => {
-  const [isHeld, setIsHeld] = useState(false);
+  const [isHeld, setIsHeld] = useState<boolean>(false);
 
   return (
     <button
+    disabled={props.isDisabled}
       onTouchStart={() => {
         setIsHeld(true);
       }}

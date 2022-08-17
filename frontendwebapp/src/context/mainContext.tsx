@@ -1,10 +1,14 @@
-import { AxiosInstance, AxiosPromise } from "axios";
 import * as React from "react";
 import { useContext, useState, createContext } from "react";
-import { useAxios } from "./axiosContext";
+import { useRouter } from "next/router";
+
+//local
 import * as errorUtils from "utils/errorUtils";
 import * as dataUtils from "utils/dataUtils";
-import { useRouter } from "next/router";
+
+//libs
+import { AxiosInstance, AxiosPromise } from "axios";
+import { useAxios } from "./axiosContext";
 
 interface IMainContext {
   productSectionSelected: string;
@@ -31,8 +35,9 @@ interface IMainProviderProps {
 }
 
 const MainProvider: React.FunctionComponent<IMainProviderProps> = (props) => {
-  const [productSectionSelected, setProductSectionSelected] = useState("");
-  const [creatingProductName, setCreatingProductName] = useState("");
+  const [productSectionSelected, setProductSectionSelected] = useState<string>("");
+  const [creatingProductName, setCreatingProductName] = useState<string>("");
+
   const value = {
     productSectionSelected,
     setProductSectionSelected,

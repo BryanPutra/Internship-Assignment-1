@@ -42,7 +42,7 @@ const Register: React.FunctionComponent = () => {
   const methods = useForm<IRegisterFormInputs>({
     resolver: yupResolver(schema),
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const onRegisterPressed: SubmitHandler<IRegisterFormInputs> = async (
     data: IRegisterFormInputs
   ) => {

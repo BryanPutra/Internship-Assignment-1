@@ -1,11 +1,15 @@
-import Link from "next/link";
 import * as React from "react";
+import Link from "next/link";
+
+//local
+import MainContainer from "components/containers/MainContainer";
+import { useMain } from "context/mainContext";
+import RegistrationHeader from "components/headers/RegistrationHeader";
+
+//libs
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import InputDataButton from "components/buttons/InputDataButton";
-import MainContainer from "components/containers/MainContainer";
-import RegistrationHeader from "components/headers/RegistrationHeader";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { useMain } from "context/mainContext";
 
 interface IInputDataProps {}
 
@@ -21,7 +25,7 @@ const InputData: React.FunctionComponent<IInputDataProps> = (props) => {
     },
     {
       inputName: "Selfie + Identity Card (KTP)",
-      goToPage: "/mainmenu",
+      goToPage: "/inputs/takePhoto",
       isActive: true,
       isFilled: false,
     },
@@ -39,8 +43,8 @@ const InputData: React.FunctionComponent<IInputDataProps> = (props) => {
     },
     {
       inputName: "Form Input",
-      goToPage: "",
-      isActive: false,
+      goToPage: "/inputs/inputForm",
+      isActive: true,
       isFilled: false,
     },
   ];

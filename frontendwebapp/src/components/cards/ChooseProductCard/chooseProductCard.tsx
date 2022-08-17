@@ -13,7 +13,7 @@ interface IChooseProductCardProps {
 const ChooseProductCard: React.FunctionComponent<IChooseProductCardProps> = (
   props
 ) => {
-  const [isHeld, setIsHeld] = useState(false);
+  const [isHeld, setIsHeld] = useState<boolean>(false);
   const router = useRouter();
   const { setCreatingProductName} = useMain();
   

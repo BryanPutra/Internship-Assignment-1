@@ -44,7 +44,7 @@ interface IAuthProviderProps {
 }
 
 const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
-  const [authState, setAuthState] = useState(false);
+  const [authState, setAuthState] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<User[]>([]);
   const { authenticationAxios, testAxios } = useAxios();
   const router = useRouter();

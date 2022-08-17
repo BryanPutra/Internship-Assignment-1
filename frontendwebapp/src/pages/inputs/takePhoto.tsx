@@ -1,20 +1,20 @@
-import { Height } from "@mui/icons-material";
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
-import Webcam from "react-webcam";
+import Image from "next/image";
+import { useRouter } from "next/router";
+
+//local
 import RegistrationHeader from "components/headers/RegistrationHeader";
+import * as errorUtils from "utils/errorUtils";
+import { useMain } from "context/mainContext";
+import RefreshIcon from "@mui/icons-material/Refresh";
+
+//lib
+// import Webcam from "react-webcam";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import UploadIcon from "@mui/icons-material/Upload";
 import FlipCameraIosIcon from "@mui/icons-material/FlipCameraIos";
-import Image from "next/image";
-import MainContainer from "components/containers/MainContainer";
-import { useMain } from "context/mainContext";
 import axios from "axios";
-import * as errorUtils from "utils/errorUtils";
-import { useRouter } from "next/router";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import { resolve } from "node:path/win32";
-import { value } from "@material-tailwind/react/types/components/chip";
 
 interface ITakePhotoProps {}
 
@@ -78,9 +78,15 @@ const TakePhoto: React.FunctionComponent<ITakePhotoProps> = (props) => {
   const { creatingProductName } = useMain();
   const router = useRouter();
   // const {};
-  const [source, setSource] = useState("");
-  const [imageBase64, setImageBase64] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [source, setSource] = useState<string>("");
+  const [imageBase64, setImageBase64] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const reset = () => {
+    setSource("");
+    setImageBase64("");
+    setIsLoading(false);
+  };
 
   const convertBlobToBase64 = (blob: Blob) =>
     new Promise<string | null>((resolve, reject) => {
@@ -92,23 +98,22 @@ const TakePhoto: React.FunctionComponent<ITakePhotoProps> = (props) => {
       reader.readAsDataURL(blob);
     });
 
-  const uploadImage = () => {
-    if (!imageBase64) return;
-    console.log(imageBase64);
-    console.log(typeof imageBase64);
-    // const imageData = new FormData();
-    // imageData.append("ktpImage", source);
+  const test = () => {
+    setIsLoading(true);
+  };
 
-    // try {
-    //   setLoading(true);
-    //   const response = await axios.post("/asd", imageData);
-    //   console.log(response);
-    //   alert("Uploaded image successfully");
-    //   setLoading(false);
-    //   router.back();
-    // } catch (err) {
-    //   alert(`Failed to upload image, ${errorUtils.getErrorMessage(err)}`);
-    // }
+  const uploadImage = async () => {
+    if (!imageBase64) return;
+    try {
+      setIsLoading(true);
+      const response = await axios.post("/asd", imageBase64);
+      console.log(response);
+      reset();
+      alert("Uploaded image successfully");
+      router.back();
+    } catch (err) {
+      alert(`Failed to upload image, ${errorUtils.getErrorMessage(err)}`);
+    }
   };
 
   const handleCapture = async (target: HTMLInputElement) => {
@@ -124,16 +129,89 @@ const TakePhoto: React.FunctionComponent<ITakePhotoProps> = (props) => {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col">
+    <div
+      className={`w-screen min-h-screen flex flex-col ${
+        isLoading ? "bg-black bg-opacity-20" : ""
+      }`}
+    >
       <RegistrationHeader
         creatingProductName={creatingProductName}
         goToPage="/inputs/inputData"
       />
-      {loading ? (
-        <div className="flex flex-col items-center justify-center text-2xl min-h-screen">
-          <div className="m-auto flex flex-col items-center justify-center">
+
+      <div
+        className={`flex flex-col items-center absolute justify-center text-2xl w-full h-full ${
+          !isLoading ? "hidden" : "z-50"
+        }`}
+      >
+        <div className="flex flex-col items-center justify-center">
+          <div>Uploading image...</div>
+          <svg className="animate-spin h-3/5 w-3/5" viewBox="0 0 24 24">
+            <RefreshIcon />
+          </svg>
+        </div>
+      </div>
+
+      <div
+        className={`flex flex-col justify-center items-center h-full gap-5 p-6 rounded-lg shadow-lg ${
+          isLoading ? "blur-sm" : ""
+        }`}
+      >
+        <div className="text-xl font-semibold">
+          {source
+            ? "Please make sure your credentials are clear before uploading"
+            : "Take a photo of your Identity Card"}
+        </div>
+        {source && (
+          <div className="relative w-full h-full rounded-lg">
+            <Image src={source} alt="Snap" layout="fill" />
+          </div>
+        )}
+        <div
+          className={`flex flex-row w-full items-center justify-evenly ${
+            !source ? "h-full" : ""
+          }`}
+        >
+          <input
+            accept="image/*"
+            className="hidden"
+            id="iconButtonFile"
+            type="file"
+            capture="environment"
+            onChange={(event) => handleCapture(event.target)}
+          />
+          <label
+            className={
+              !source
+                ? "flex flex-col items-center justify-center w-full h-full border-4 border-pink border-dashed rounded-2xl"
+                : ""
+            }
+            htmlFor="iconButtonFile"
+          >
+            <div className="p-4 rounded-full shadow-lg bg-whiteGrey">
+              <svg className="w-14 h-14 text-pink">
+                {source ? <FlipCameraIosIcon /> : <AddAPhotoIcon />}
+              </svg>
+            </div>
+          </label>
+          {source && (
+            <div
+              onClick={test}
+              className="p-4 rounded-full shadow-lg bg-whiteGrey"
+            >
+              <svg className="w-14 h-14 text-pink">
+                <UploadIcon />
+              </svg>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* {isLoading ? (
+        <div className="flex flex-col items-center justify-center text-2xl h-full">
+          <div className="flex flex-col items-center justify-center">
             <div>Uploading image...</div>
-            <svg className="animate-spin h-2/5 w-2/5" viewBox="0 0 24 24">
+            <svg className="animate-spin h-3/5 w-3/5" viewBox="0 0 24 24">
               <RefreshIcon />
             </svg>
           </div>
@@ -179,7 +257,7 @@ const TakePhoto: React.FunctionComponent<ITakePhotoProps> = (props) => {
             </label>
             {source && (
               <div
-                onClick={uploadImage}
+                onClick={test}
                 className="p-4 rounded-full shadow-lg bg-whiteGrey"
               >
                 <svg className="w-14 h-14 text-pink">
@@ -188,18 +266,21 @@ const TakePhoto: React.FunctionComponent<ITakePhotoProps> = (props) => {
               </div>
             )}
           </div>
-
-          {/* <Webcam
-        screenshotQuality={100}
-        videoConstraints={videoConstraints}
-        audio={false}
-        screenshotFormat="image/jpeg"
-      /> */}
-          {/* <video className="w-full h-full" ref={videoRef}></video> */}
         </div>
-      )}
+      )} */}
     </div>
   );
 };
 
 export default TakePhoto;
+{
+  /* <Webcam
+        screenshotQuality={100}
+        videoConstraints={videoConstraints}
+        audio={false}
+        screenshotFormat="image/jpeg"
+      /> */
+}
+{
+  /* <video className="w-full h-full" ref={videoRef}></video> */
+}

@@ -2,19 +2,6 @@ import * as React from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { Input } from "@material-tailwind/react";
 
-// const AuthInput: React.FunctionComponent<UseControllerProps> = (props) => {
-//     const { field, fieldState } = useController(props);
-//     return (
-//         // <Controller control={props.control} rules={props.rules} name={props.name} render={({ field: { value, onChange, onBlur }, fieldState: { error }, }) => (
-//         //     <input type={props.name} placeholder=""></input>
-//         // )} />
-//         <div className="flex-row">
-//             <FontAwesomeIcon icon="at"/>
-//             <input {...field} placeholder={props.name} />
-//         </div>
-//     );
-// };
-
 interface IAuthInputProps {
   name: string;
   type: string;

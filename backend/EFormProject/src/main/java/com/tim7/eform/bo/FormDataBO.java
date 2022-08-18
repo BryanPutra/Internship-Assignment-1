@@ -23,6 +23,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 
 import com.tim7.eform.model.User;
+import com.tim7.eform.mongo.MongoQuery;
 import com.tim7.eform.repository.CustomUserRepository;
 
 import lombok.SneakyThrows;
@@ -36,6 +37,8 @@ public class FormDataBO{
 	
 	private static FormDataBO instance = null;
 	
+	MongoQuery mq = new MongoQuery();
+	
 	public static synchronized FormDataBO getinstance() {
 		
 		if(instance == null) {
@@ -44,7 +47,7 @@ public class FormDataBO{
 		return instance;
 	}
 	
-	public Map getRegistrationData(String email, String productCode, String currentPage, String prevPage, boolean isBack, Map userMap) {
+	public Map getRegistrationData(String email, String cif, String ktpId, String productCode, String currentPage, String prevPage, boolean isBack, Map userMap) {
 		Map returnMap = new HashMap();
 		Map nextPageMap = new HashMap();
 		List fieldNameList = new LinkedList();
@@ -55,7 +58,7 @@ public class FormDataBO{
 		fieldNameList = (List) nextPageMap.get("fieldNameList");
 		nextPageMap.remove("fieldNameList");
 		
-		autofillMap = getAutofillData(email, fieldNameList, userMap);
+		autofillMap = getAutofillData(email, cif, ktpId, fieldNameList);
 		
 		returnMap.put("nextPageMap", nextPageMap);
 		
@@ -68,7 +71,7 @@ public class FormDataBO{
 		String currentRequirement = null;
 		Map productConfigMap = new HashMap();
 		Map pageConfigMap = new HashMap();
-		Map fieldMap = new HashMap();
+		Map autofillMap = new HashMap();
 		
 		List productRequirementList = new LinkedList();
 		List productPageList = new LinkedList();
@@ -164,12 +167,28 @@ public class FormDataBO{
 		returnMap.put("nextPage", nextPage);
 		returnMap.put("prevPage", currentPage);
 		returnMap.put("fieldNameList", fieldNameList);
-		
 		return returnMap;
 	}
 	
-	public Map getAutofillData(String email, List fieldList, Map userMap) throws UsernameNotFoundException {
+	public Map getAutofillData(String email, String cif, String ktpId, List fieldList) throws UsernameNotFoundException {
 		Map returnMap = new HashMap();
+		Document userDoc = new Document();
+		List collectedData = new LinkedList();
+		String fieldName;
+		
+		userDoc = mq.getUser(email, cif, ktpId);
+		collectedData = (List)userDoc.get("collectedData");
+		int lengthFieldList = fieldList.size();
+		int lengthCollected = collectedData.size();
+		for(int i = 0 ; i < lengthFieldList ; i++) {
+			for(int j = 0 ; j < lengthCollected ; j++) {
+				if(fieldList.get(i).equals(collectedData.get(j))) {
+					fieldName = (String)fieldList.get(i);
+					returnMap.put(fieldName, userDoc.get(fieldName));
+					break;
+				}
+			}
+		}
 		/*	1. Cari user dari DB pake email, extract field/column "collectedData" dari user
 			2. Compare collectedData smaa fieldList, kalau salah satu index ada yang sama, ambil data dari user sesuai fieldnya.
 				cth:	collectedData 	= [fullname, ktpGender]

@@ -62,6 +62,7 @@ public class FormController {
 		Map returnMap = new HashMap();
 		Map formMap = new HashMap();
 		Map userMap = new HashMap();
+		Map autofillMap = new HashMap();
 		
 		String id = (String)formData.get("id");
 		String email = (String)formData.get("email");
@@ -109,31 +110,11 @@ public class FormController {
 			//submit user data preferably validated			
 		}
 		
-		User user = userRepository.findUserByEmail(email);
-		userMap.put("user", user);
-		formMap = FormDataBO.getinstance().getRegistrationData(email, productCode, currentPage, prevPage, isBack, userMap);
-		returnMap.put("formMap", formMap);
-		//returnMap = FormDataBO.getinstance().getRegistrationData(id, productCode, null);
 		
+		formMap = FormDataBO.getinstance().getRegistrationData(email, cif, ktpId, productCode, currentPage, prevPage, isBack, userMap);
+	
+		returnMap.put("formMap", formMap);
 		return new ResponseEntity<Map>(returnMap,HttpStatus.OK);
 	}
 	
-	@PostMapping("/getAutofillData")
-	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<Map> getAutofillData(@RequestBody final Map formData){
-		Map returnMap = new HashMap<>();
-		Map userMap = new HashMap<>();
-		Map testInsert = new HashMap();
-		
-//		String email = (String)formData.get("email");
-//		userMap = FormDataBO.getinstance().getAutofillData(email);
-//		returnMap.put("user", userMap);
-		
-		String email = "bambangaja@gmail.com";
-		Query query;
-		
-		
-		
-		return new ResponseEntity<Map>(returnMap,HttpStatus.OK);
-	}
 }

@@ -4,10 +4,12 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { useFormContext, Controller } from "react-hook-form";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { Select, Option, Input } from "@material-tailwind/react";
-import { createTheme } from "@mui/system";
+// import { Input, Select, Option } from "@material-tailwind/react";
+// import { Input } from "@material-tailwind/react";
 import type {} from "@mui/x-date-pickers/themeAugmentation";
-import { TextField, TextFieldProps } from "@mui/material";
+// import { TextField, TextFieldProps } from "@mui/material";
+import { TextField, TextFieldProps, MenuItem, Select, InputLabel, SelectChangeEvent } from "@mui/material";
+
 import { useState } from "react";
 import moment from "moment";
 
@@ -29,7 +31,6 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
     `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
   );
   const { control } = useFormContext();
-
   const printShit = () => {
     console.log(moment(selectedDate).format("DD/MM/YYYY"));
     console.log(selectedDate);
@@ -44,36 +45,47 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
         <div className="w-full">
           {{
             textField: (
-              <Input
+              <TextField
                 className=""
+                fullWidth
                 {...field}
-                error={props.errors}
+                color="primary"
                 placeholder={props.inputPlaceholder}
                 label={props.inputLabel}
-                variant="static"
+                variant="standard"
               />
             ),
             picker: (
-              <Select {...field} variant="static" label={props.inputLabel}>
-                {props.selectItemsList?.map((item: string) => {
-                  return <Option>{item}</Option>;
-                })}
-              </Select>
+              <>
+                <InputLabel id="select">{props.inputLabel}</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="select"
+                  variant="standard"
+                  {...field}
+                >
+                  {props.selectItemsList?.map((item: string) => {
+                    return <MenuItem value={item}>{item}</MenuItem>;
+                  })}
+                </Select>
+              </>
             ),
             Calendar: (
               <LocalizationProvider dateAdapter={AdapterMoment}>
                 <DatePicker
                   label={props.inputLabel}
-                  value={selectedDate}
-                  onChange={setSelectedDate}
-                  renderInput={(props) => (
+                  // value={selectedDate}
+                  // onChange={setSelectedDate}
+                  renderInput={(props: TextFieldProps) => (
                     <TextField
+                      {...props}
                       datatype=""
                       fullWidth
                       color="info"
                       variant="standard"
                     />
                   )}
+                  {...field}
                 />
               </LocalizationProvider>
             ),

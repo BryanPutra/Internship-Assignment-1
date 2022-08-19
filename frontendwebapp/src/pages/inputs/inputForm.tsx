@@ -333,7 +333,7 @@ const InputForm: React.FunctionComponent<1> = (props) => {
                   inputName={field.fieldName}
                   inputLabel={field.label}
                   inputPlaceholder={field.placeholder}
-                  errors={errors}
+                  errors={errors2}
                   errorString={getErrorString(field)}
                   selectItemsList={selectDropDownList(field)}
                 />

@@ -50,12 +50,8 @@ public class EFormProjectApplication implements CommandLineRunner{
 	public void run(String... args) throws Exception {
 		MongoQuery mq = new MongoQuery();
 		//mq.insertNewUser("bambangaja@gmail.com", "Bambang aja", encoder.encode("12345"));
-		Document newUser = mq.getUser("bambangaja@gmail.com", null, null);
-		
-		newUser.append("fullname", "Test1");
-		
-		mq.updateUser("bambangaja@gmail.com", null, null, newUser);
-		
+
+		//mq.insertNewUser("bambangaja@gmail.com", "Bambang Aja", "12345");
 	}
 	
 	//[!] Do not run unless dummy data is changed

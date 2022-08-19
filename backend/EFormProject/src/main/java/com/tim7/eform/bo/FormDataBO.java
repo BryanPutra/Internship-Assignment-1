@@ -60,6 +60,7 @@ public class FormDataBO{
 		
 		autofillMap = getAutofillData(email, cif, ktpId, fieldNameList);
 		
+		returnMap.put("autofillMap", autofillMap);
 		returnMap.put("nextPageMap", nextPageMap);
 		
 		return returnMap;
@@ -177,18 +178,25 @@ public class FormDataBO{
 		String fieldName;
 		
 		userDoc = mq.getUser(email, cif, ktpId);
-		collectedData = (List)userDoc.get("collectedData");
-		int lengthFieldList = fieldList.size();
-		int lengthCollected = collectedData.size();
-		for(int i = 0 ; i < lengthFieldList ; i++) {
-			for(int j = 0 ; j < lengthCollected ; j++) {
-				if(fieldList.get(i).equals(collectedData.get(j))) {
-					fieldName = (String)fieldList.get(i);
-					returnMap.put(fieldName, userDoc.get(fieldName));
-					break;
+		
+		if(userDoc.containsKey("collectedData")) {
+			collectedData = (List)userDoc.get("collectedData");
+			int lengthFieldList = fieldList.size();
+			int lengthCollected = 0;
+			if(!collectedData.isEmpty()) {
+				lengthCollected = collectedData.size();
+				for(int i = 0 ; i < lengthFieldList ; i++) {
+					for(int j = 0 ; j < lengthCollected ; j++) {
+						if(fieldList.get(i).equals(collectedData.get(j))) {
+							fieldName = (String)fieldList.get(i);
+							returnMap.put(fieldName, userDoc.get(fieldName));
+							break;
+						}
+					}
 				}
-			}
+			}			
 		}
+		
 		/*	1. Cari user dari DB pake email, extract field/column "collectedData" dari user
 			2. Compare collectedData smaa fieldList, kalau salah satu index ada yang sama, ambil data dari user sesuai fieldnya.
 				cth:	collectedData 	= [fullname, ktpGender]

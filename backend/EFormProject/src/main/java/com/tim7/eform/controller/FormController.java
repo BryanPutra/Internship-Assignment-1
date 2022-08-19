@@ -1,6 +1,7 @@
 package com.tim7.eform.controller;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -92,12 +93,22 @@ public class FormController {
 				if(userRepository.existsByEmail(email)) {
 					MongoQuery mq = new MongoQuery();
 					Document userDoc = mq.getUser(email, cif, ktpId);
-					int length = inputDataKey.size();
+					List collectedData = new LinkedList();
+					collectedData = (List)userDoc.get("collectedData");
 					
+					Set updatedCollectedData = new HashSet();
+					if(userDoc.containsKey("collectedData")) {
+						updatedCollectedData = new HashSet(collectedData);
+					}
+
+					int length = inputDataKey.size();
 					for(int i = 0 ; i < length ; i++) {
 						String currentInputKey = (String)inputDataKey.get(i);
 						userDoc.append(currentInputKey, inputData.get(currentInputKey));
+						updatedCollectedData.add(currentInputKey);
 					}
+					userDoc.append("collectedData", updatedCollectedData);
+					
 					mq.updateUser(email, cif, ktpId, userDoc);
 					returnMap.put("submitStatus", "OK");
 				}
@@ -107,7 +118,7 @@ public class FormController {
 			}
 			
 			
-			//submit user data preferably validated			
+			//TODO: Input Validation	
 		}
 		
 		

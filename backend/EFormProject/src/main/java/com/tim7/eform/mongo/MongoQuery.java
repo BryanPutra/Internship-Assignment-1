@@ -10,6 +10,8 @@ import java.util.Set;
 
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.mongodb.client.MongoClient;
@@ -23,12 +25,6 @@ import com.tim7.eform.repository.RoleRepository;
 import com.tim7.eform.repository.UserRepository;;
 
 public class MongoQuery {
-	@Autowired
-	UserRepository repo;
-	@Autowired
-	PasswordEncoder encoder;
-	@Autowired
-	RoleRepository roleRepository;
 	
 	final String uri = "mongodb://localhost:27017";
 	private static String fieldName = "";
@@ -44,7 +40,7 @@ public class MongoQuery {
 	        MongoDatabase database = mongoClient.getDatabase("eform_project");
 	        MongoCollection<Document> collection = database.getCollection("users");
 	        doc = collection.find(eq(fieldName, filterVal)).first();
-	        System.out.println(doc.toJson());
+	        //System.out.println(doc.toJson());
 	    }
 		return doc;
 	}
@@ -70,16 +66,27 @@ public class MongoQuery {
 	        
 	    }
 	}
-	
+	public Set getRole() {
+		Set roles = new HashSet<>();
+		Document doc = new Document();
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+	        MongoDatabase database = mongoClient.getDatabase("eform_project");
+	        MongoCollection<Document> collection = database.getCollection("roles");
+	        doc = collection.find(eq("name", "ROLE_USER")).first();
+	    }
+		
+		roles.add(doc);
+		return roles;
+	}
 	public void insertNewUser(String email, String fullName, String password) {
 		Set<Role> roles = new HashSet<>();
-		
 		Document newUser = new Document();
 		//String encPass = encoder.encode(password);
-		
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		newUser.append("email", email);
 		newUser.append("fullname", fullName);
-		newUser.append("password", password);
+		newUser.append("password", encoder.encode(password));
+		newUser.append("roles", getRole());
 		
 		try (MongoClient mongoClient = MongoClients.create(uri)) {
 	        MongoDatabase database = mongoClient.getDatabase("eform_project");

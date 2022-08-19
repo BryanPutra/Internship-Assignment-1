@@ -76,6 +76,9 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
                   label={props.inputLabel}
                   // value={selectedDate}
                   // onChange={setSelectedDate}
+                  inputFormat="DD/MM/yyyy"
+                  openTo="year"
+                  views={["year", "month", "day"]}
                   renderInput={(props: TextFieldProps) => (
                     <TextField
                       {...props}

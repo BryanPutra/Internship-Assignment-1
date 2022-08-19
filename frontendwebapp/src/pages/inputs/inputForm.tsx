@@ -20,6 +20,7 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axios from "axios";
+import moment from "moment";
 
 interface IInputForm1Props {}
 
@@ -258,21 +259,31 @@ const InputForm: React.FunctionComponent<1> = (props) => {
     }
   };
 
-  const submitData = async (data: any) => {
+  const isFormData1 = (object: any): object is IFormData1 => {
+    return object.birthDate !== undefined;
+  }
+
+  const submitData = async (data: IFormData1 | IFormData2) => {
     try {
-      const response = await axios.post("/login", data);
+      let response;
+      if (isFormData1(data)) {
+        const formattedDate = moment(data.birthDate).format("DD-MM-YYYY");
+        console.log(formattedDate);
+        response = await axios.post("/login", {...data, birthDate: formattedDate});
+      }
+      else{
+        response = await axios.post("/login", data);
+      }
       console.log(response);
-      alert("Data submitted successfully");
-      router.push("/mainmenu");
     } catch (err) {
       alert(`Failed to submit data, ${errorUtils.getErrorMessage(err)}`);
     }
   };
 
   const onForm1Submit: SubmitHandler<IFormData1> = async (data: IFormData1) => {
-    console.log(data);
     setIsLoading(true);
     await submitData(data);
+    setKtpPageState('ktp-3');
     setIsLoading(false);
   };
 
@@ -280,6 +291,8 @@ const InputForm: React.FunctionComponent<1> = (props) => {
     console.log(data);
     setIsLoading(true);
     await submitData(data);
+    alert("Data submitted successfully");
+    router.push("/mainmenu");
     setIsLoading(false);
   };
 

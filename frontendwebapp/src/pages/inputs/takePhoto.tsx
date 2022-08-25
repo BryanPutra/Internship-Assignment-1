@@ -130,7 +130,7 @@ const TakePhoto: React.FunctionComponent<ITakePhotoProps> = (props) => {
 
   return (
     <div
-      className={`w-screen min-h-screen flex flex-col ${
+      className={`w-screen h-screen flex flex-col ${
         isLoading ? "bg-black bg-opacity-20" : ""
       }`}
     >

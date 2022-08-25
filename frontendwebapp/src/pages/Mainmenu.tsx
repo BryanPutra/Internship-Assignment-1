@@ -49,6 +49,12 @@ interface IPayIcons {
 const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
   const { logout, testPostAuth, userDetails } = useAuth();
   const { setProductSectionSelected } = useMain();
+  const {user, setUser, setCurrentPage} = useMain();
+
+  useEffect(() => {
+    setUser(userDetails[0]);
+    setCurrentPage("home");
+  }, [])
 
   const frameStyle = {
     gap: "12",

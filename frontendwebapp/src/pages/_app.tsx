@@ -9,14 +9,13 @@ import { MainProvider } from "context/mainContext";
 import Protected from "components/customRoute/Protected";
 
 function MyApp({ Component, pageProps }: AppProps) {
-
   return (
     <AxiosProvider>
       <AuthProvider>
         <MainProvider>
           <ThemeProvider>
             {/* <Protected> */}
-            <Component {...pageProps} />
+              <Component {...pageProps} />
             {/* </Protected> */}
           </ThemeProvider>
         </MainProvider>

@@ -8,7 +8,14 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 // import { Input } from "@material-tailwind/react";
 import type {} from "@mui/x-date-pickers/themeAugmentation";
 // import { TextField, TextFieldProps } from "@mui/material";
-import { TextField, TextFieldProps, MenuItem, Select, InputLabel, SelectChangeEvent } from "@mui/material";
+import {
+  TextField,
+  TextFieldProps,
+  MenuItem,
+  Select,
+  InputLabel,
+  SelectChangeEvent,
+} from "@mui/material";
 
 import { useState } from "react";
 import moment from "moment";
@@ -19,6 +26,7 @@ interface IFormCustomInputProps {
   inputName: string;
   selectItemsList?: string[];
   inputPlaceholder?: string;
+  defaultValueProp?: any;
   errors: any;
   errorString: string;
 }
@@ -41,6 +49,7 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
     <Controller
       name={props.inputName}
       control={control}
+      defaultValue={props.defaultValueProp}
       render={({ field }) => (
         <div className="w-full">
           {{
@@ -55,7 +64,7 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
                 variant="standard"
               />
             ),
-            picker: (
+            Picker: (
               <>
                 <InputLabel id="select">{props.inputLabel}</InputLabel>
                 <Select
@@ -92,7 +101,7 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
                 />
               </LocalizationProvider>
             ),
-          }[props.inputType] || (
+          }[props.inputType] ?? (
             <div className="text2xl">
               Error fetching input component from server
             </div>

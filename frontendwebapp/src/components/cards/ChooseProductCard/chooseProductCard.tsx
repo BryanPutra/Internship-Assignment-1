@@ -15,7 +15,7 @@ const ChooseProductCard: React.FunctionComponent<IChooseProductCardProps> = (
 ) => {
   const [isHeld, setIsHeld] = useState<boolean>(false);
   const router = useRouter();
-  const { setCreatingProductName} = useMain();
+  const { setCreatingProductName } = useMain();
   
   return (
     <div

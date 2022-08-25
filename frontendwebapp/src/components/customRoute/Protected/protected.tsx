@@ -1,8 +1,6 @@
 import { useAuth } from "context/authContext";
 import * as React from "react";
 import { useCallback, useEffect } from "react";
-import MainContainer from "components/containers/MainContainer";
-import RefreshIcon from "@mui/icons-material/Refresh";
 
 interface IProtectedProps {
   children: React.ReactNode;

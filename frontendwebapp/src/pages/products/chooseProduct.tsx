@@ -84,6 +84,11 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
       productDetails: "Basically kartu debit lol pakai dengan waspada",
       imageSrc: creditPlatinum,
     },
+    {
+      productTitle: "savings",
+      productDetails: "Untuk testing purposes",
+      imageSrc: creditPlatinum,
+    },
   ];
   const loanInfo: productInfo[] = [
     {

@@ -1,3 +1,5 @@
+import { useAuth } from "context/authContext";
+import { useMain } from "context/mainContext";
 import * as React from "react";
 
 interface ICardDetail {
@@ -8,10 +10,12 @@ interface ICardDetail {
 }
 
 const CardDetail: React.FunctionComponent = () => {
+
+  const {user} = useMain();
   const cardsDetails: ICardDetail[] = [
     {
       accountNumber: "014428812",
-      ownerName: "BRYAN PUTRA SUANDI",
+      ownerName: "Bryan Putra",
       amount: 2500000,
       productName: "Tabungan Simas Payroll",
     },

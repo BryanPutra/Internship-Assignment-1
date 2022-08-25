@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { useMain } from "context/mainContext";
 import RegistrationHeader from "components/headers/RegistrationHeader";
 import SubmitButton from "components/buttons/SubmitButton";
-import CustomButton from "components/buttons/CustomButtons";
 import * as errorUtils from "utils/errorUtils";
 import FormCustomInput from "components/inputs/FormCustomInput";
 
@@ -21,8 +20,81 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axios from "axios";
 import moment from "moment";
+import { useAxios } from "context/axiosContext";
 
-interface IInputForm1Props {}
+interface IInputFormsRequestPage {
+  id: string;
+  username: string;
+  email: string;
+  roles: string[];
+  productCode: string;
+  currentPage: string;
+  prevPage: string;
+  isBack: boolean;
+  isSubmit: boolean;
+}
+
+interface IInputFormsResponse {
+  formMap: {
+    autofillMap: {};
+    nextPageMap: {
+      nextPage: string;
+      prevPage: string;
+      fields: IInputField[];
+    };
+  };
+}
+
+interface IInputFormsRequestSubmitForm {
+  id: string;
+  username: string;
+  email: string;
+  roles: string[];
+  productCode: string;
+  currentPage: string;
+  prevPage: string;
+  isBack: boolean;
+  isSubmit: boolean;
+  inputData: IFormData1 | IFormData2;
+  autofillData: {};
+}
+
+interface IInputFormsRequestDataProps {
+  id: string;
+  username: string;
+  email: string;
+  roles: string[];
+  productCode: string;
+  currentPage: string;
+  prevPage: string;
+  isBack: boolean;
+  isSubmit: boolean;
+}
+
+interface IAutoFillMap {
+  ktpId?: string;
+  ktpName?: string;
+  birthDate?: string;
+  birthPlace?: string;
+  maritalStatusKtp?: string;
+  religionKtp?: string;
+  genderKtp?: string;
+  motherMaidenName?: string;
+  streetAddressKtp?: string;
+  rtKtp?: string;
+  rwKtp?: string;
+  provinceKtp?: string;
+  cityKtp?: string;
+  districtKtp?: string;
+  subDistrictKtp?: string;
+  postalCodeKtp?: string;
+}
+
+interface INextPageMap {
+  nextPage: string;
+  prevPage: string;
+  fields: IInputField[];
+}
 
 interface IFormData1 {
   ktpId: string;
@@ -40,6 +112,10 @@ interface IFormData2 {
   rtKtp: string;
   rwKtp: string;
   provinceKtp: string;
+  cityKtp: string;
+  districtKtp: string;
+  subDistrictKtp: string;
+  postalCodeKtp: string;
 }
 
 interface IInputField {
@@ -49,7 +125,7 @@ interface IInputField {
   label: string;
   maxLength?: number;
   placeholder?: string;
-  dbKey: string;
+  dbKey?: string;
 }
 
 interface IDataLists {
@@ -57,10 +133,86 @@ interface IDataLists {
   rt: string[];
   rw: string[];
   province: string[];
+  city: string[];
+  district: string[];
+  subDistrict: string[];
 }
 
-const InputForm: React.FunctionComponent<1> = (props) => {
-  const { creatingProductName } = useMain();
+const getFormDataURL: string =
+  "https://e3c6-36-72-148-241.ap.ngrok.io/api/form/getFormData";
+
+const InputForm: React.FunctionComponent = () => {
+  // initial actions
+  const {
+    creatingProductName,
+    currentPage,
+    setCurrentPage,
+    prevPage,
+    setPrevPage,
+    isBack,
+    setIsBack,
+    isSubmit,
+    setIsSubmit,
+  } = useMain();
+  const { user } = useMain();
+  const { authorizationAxios } = useAxios();
+
+  const [autofillMap, setAutoFillMap] = useState<IAutoFillMap>({});
+  const [nextPageMap, setNextPageMap] = useState<INextPageMap>({
+    nextPage: "",
+    prevPage: "",
+    fields: [],
+  });
+  const [ktpPageState, setKtpPageState] = useState<string>("");
+  const [inputFields, setInputFields] = useState<IInputField[]>([]);
+
+  const setFormStates = (responseData: IInputFormsResponse) => {
+    setInputFields(responseData.formMap.nextPageMap.fields);
+    console.log(inputFields);
+    setKtpPageState(responseData.formMap.nextPageMap.nextPage);
+    setCurrentPage(responseData.formMap.nextPageMap.nextPage);
+    setPrevPage(responseData.formMap.nextPageMap.prevPage);
+    setAutoFillMap(responseData.formMap.autofillMap);
+    setNextPageMap(responseData.formMap.nextPageMap);
+  };
+
+  useEffect(() => {
+    // getInitialProps();
+    setKtpPageState("ktp-2")
+  }, []);
+
+  const setInitialStates = () => {
+    setCurrentPage("ktp-2");
+    setPrevPage("home");
+    setIsBack(false);
+    setIsSubmit(false);
+    return
+  };
+
+  const getInitialProps = async () => {
+    setInitialStates();
+    const payload: IInputFormsRequestDataProps = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      roles: user.roles,
+      productCode: creatingProductName,
+      currentPage: currentPage,
+      prevPage: prevPage,
+      isBack: isBack,
+      isSubmit: isSubmit,
+    };
+
+    console.log(payload);
+    const initialProps = await authorizationAxios.post("/getFormData", payload);
+    const initialPropsData = initialProps.data;
+    console.log(initialPropsData);
+    setFormStates(initialPropsData);
+  };
+
+  // END initial actions
+
+  // yup validation & error message management
   const schema1 = yup.object().shape({
     ktpId: yup.string().min(5).max(16).required(),
     ktpName: yup.string().required(),
@@ -76,6 +228,10 @@ const InputForm: React.FunctionComponent<1> = (props) => {
     rtKtp: yup.string().required(),
     rwKtp: yup.string().required(),
     provinceKtp: yup.string().required(),
+    cityKtp: yup.string().required(),
+    districtKtp: yup.string().required(),
+    subDistrictKtp: yup.string().required(),
+    postalCodeKtp: yup.string().required().max(5),
   });
 
   const methods1 = useForm<IFormData1>({
@@ -126,15 +282,19 @@ const InputForm: React.FunctionComponent<1> = (props) => {
         : ""
     )?.toString()!;
   };
+  // END yup validation & error message management
 
-  const [ktpPageState, setKtpPageState] = useState<string>("ktp-2");
+  // assign hooks
+  // comment ktpPageState & replace with currentPage useMain context on testing
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
+  // END assign hooks
 
+  // lists data for select component
   const genderList: string[] = ["Male", "Female", "Undefined"];
-  const rtList: string[] = ["123123", "323234", "321"];
-  const rwList: string[] = ["123812938", "192832193", "123"];
-  const provinsiList: string[] = [
+  const rtList: string[] = ["12313", "33234", "321"];
+  const rwList: string[] = ["12381", "1928", "123"];
+  const provinceList: string[] = [
     "Jawa Timur",
     "Jawa Barat",
     "Jawa Tengah",
@@ -148,13 +308,51 @@ const InputForm: React.FunctionComponent<1> = (props) => {
     "Kalimantan Utara",
   ];
 
+  const cityList: string[] = [
+    "Jakarta",
+    "Surabaya",
+    "Yogyakarta",
+    "Semarang",
+    "Solo",
+    "Malang",
+    "Bogor",
+    "Bekasi",
+  ];
+  const districtList: string[] = [
+    "Sukomanunggal",
+    "Kebon Jeruk",
+    "Pluit",
+    "Pinang Ranti",
+    "BSD",
+    "Wiyung",
+  ];
+  const subDistrictList: string[] = [
+    "Sukomanunggal",
+    "Wiyung",
+    "Gatau jakarta",
+    "kayak apa",
+  ];
+
   const dataLists: IDataLists = {
     gender: genderList,
     rt: rtList,
     rw: rwList,
-    province: provinsiList,
+    province: provinceList,
+    city: cityList,
+    district: districtList,
+    subDistrict: subDistrictList,
+  };
+  // END lists data for select component
+
+  // autoFill values
+  const isAutoFill = (autofillMap: object): boolean => {
+    if (!autofillMap) return false;
+    if (Object.keys(autofillMap).length === 0) return false;
+    return true;
   };
 
+  // forced data for client side testing purposes
+  // change to response from getServerSide props when testing
   const inputFields1: IInputField[] = [
     {
       fieldCode: "ktp-2-1",
@@ -203,7 +401,7 @@ const InputForm: React.FunctionComponent<1> = (props) => {
     },
     {
       fieldCode: "ktp-2-7",
-      component: "picker",
+      component: "Picker",
       fieldName: "genderKtp",
       label: "Gender",
       dbKey: "genderKtp",
@@ -228,7 +426,7 @@ const InputForm: React.FunctionComponent<1> = (props) => {
     },
     {
       fieldCode: "ktp-3-2",
-      component: "picker",
+      component: "Picker",
       fieldName: "rtKtp",
       label: "RT",
       placeholder: "Nomor RT alamat",
@@ -236,7 +434,7 @@ const InputForm: React.FunctionComponent<1> = (props) => {
     },
     {
       fieldCode: "ktp-3-3",
-      component: "picker",
+      component: "Picker",
       fieldName: "rwKtp",
       label: "RW",
       placeholder: "Nomor RW alamat",
@@ -244,57 +442,115 @@ const InputForm: React.FunctionComponent<1> = (props) => {
     },
     {
       fieldCode: "ktp-3-4",
-      component: "picker",
+      component: "Picker",
       fieldName: "provinceKtp",
       label: "Provinsi",
       dbKey: "provinceKtp",
     },
+    {
+      component: "Picker",
+      fieldName: "cityKtp",
+      fieldCode: "ktp-3-5",
+      label: "Kota",
+    },
+    {
+      component: "Picker",
+      fieldName: "districtKtp",
+      fieldCode: "ktp-3-6",
+      label: "Kabupaten",
+    },
+    {
+      component: "Picker",
+      fieldName: "subDistrictKtp",
+      fieldCode: "ktp-3-7",
+      label: "Kecamatan",
+    },
+    {
+      component: "textField",
+      fieldName: "postalCodeKtp",
+      fieldCode: "ktp-3-8",
+      label: "Kode Pos",
+      maxLength: 5,
+    },
   ];
+  // END forced data for client side testing purposes
 
+  // form utils
   const selectDropDownList = (inputField: IInputField) => {
     for (let listKeyString of Object.keys(dataLists)) {
-      if (!inputField.dbKey.toLowerCase().includes(listKeyString.toLowerCase()))
-        continue;
+      if (!inputField.fieldName.includes(listKeyString)) continue;
       return dataLists[listKeyString as keyof IDataLists];
+    }
+  };
+
+  const getAutoFillValue = (
+    inputField: IInputField,
+    autofillMap: IAutoFillMap
+  ) => {
+    if (!isAutoFill(autofillMap)) return;
+    for (let listKeyString of Object.keys(autofillMap)) {
+      if (!inputField.fieldName.includes(listKeyString)) continue;
+      console.log(listKeyString);
+      return autofillMap[inputField.fieldName as keyof IAutoFillMap];
     }
   };
 
   const isFormData1 = (object: any): object is IFormData1 => {
     return object.birthDate !== undefined;
-  }
+  };
 
-  const submitData = async (data: IFormData1 | IFormData2) => {
+  const submitData = async (formData: IFormData1 | IFormData2) => {
     try {
+      const payload: IInputFormsRequestSubmitForm = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        roles: user.roles,
+        productCode: creatingProductName,
+        currentPage: currentPage,
+        prevPage: prevPage,
+        isBack: isBack,
+        isSubmit: isSubmit,
+        inputData: formData,
+        autofillData: {},
+      };
       let response;
-      if (isFormData1(data)) {
-        const formattedDate = moment(data.birthDate).format("DD-MM-YYYY");
+      if (isFormData1(formData)) {
+        const formattedDate = moment(formData.birthDate).format("DD-MM-YYYY");
         console.log(formattedDate);
-        response = await axios.post("/login", {...data, birthDate: formattedDate});
-      }
-      else{
-        response = await axios.post("/login", data);
+        response = await axios.post(getFormDataURL, {
+          ...payload,
+          inputData: { ...formData, birthDate: formattedDate },
+        });
+      } else {
+        response = await axios.post(getFormDataURL, payload);
       }
       console.log(response);
+      setFormStates(response.data);
     } catch (err) {
       alert(`Failed to submit data, ${errorUtils.getErrorMessage(err)}`);
     }
   };
 
-  const onForm1Submit: SubmitHandler<IFormData1> = async (data: IFormData1) => {
+  const onForm1Submit: SubmitHandler<IFormData1> = async (
+    formData: IFormData1
+  ) => {
     setIsLoading(true);
-    await submitData(data);
-    setKtpPageState('ktp-3');
+    await submitData(formData);
     setIsLoading(false);
   };
 
-  const onForm2Submit: SubmitHandler<IFormData2> = async (data: IFormData2) => {
-    console.log(data);
+  const onForm2Submit: SubmitHandler<IFormData2> = async (
+    formData: IFormData2
+  ) => {
     setIsLoading(true);
-    await submitData(data);
+    await submitData(formData);
     alert("Data submitted successfully");
     router.push("/mainmenu");
     setIsLoading(false);
   };
+
+  // END form utils
 
   return (
     <div className="min-h-screen mb-5 flex flex-col">
@@ -302,7 +558,7 @@ const InputForm: React.FunctionComponent<1> = (props) => {
         creatingProductName={creatingProductName}
         goToPage="/inputs/inputData"
       />
-
+      {/* ktpPageState change to currentPage during testing */}
       {ktpPageState === "ktp-2" ? (
         <FormProvider {...methods1}>
           <form
@@ -318,6 +574,7 @@ const InputForm: React.FunctionComponent<1> = (props) => {
                   inputName={field.fieldName}
                   inputLabel={field.label}
                   inputPlaceholder={field.placeholder}
+                  defaultValueProp={getAutoFillValue(field, autofillMap)}
                   errors={errors}
                   errorString={getErrorString(field)}
                   selectItemsList={selectDropDownList(field)}
@@ -346,6 +603,7 @@ const InputForm: React.FunctionComponent<1> = (props) => {
                   inputName={field.fieldName}
                   inputLabel={field.label}
                   inputPlaceholder={field.placeholder}
+                  defaultValueProp={getAutoFillValue(field, autofillMap)}
                   errors={errors2}
                   errorString={getErrorString(field)}
                   selectItemsList={selectDropDownList(field)}

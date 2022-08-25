@@ -5,18 +5,19 @@ import { useAxios } from "./axiosContext";
 import * as errorUtils from "utils/errorUtils";
 import * as dataUtils from "utils/dataUtils";
 import { useRouter } from 'next/router';
+import { useMain } from "./mainContext";
 
 interface IAuthContext {
   authState: boolean;
   setAuthState: React.Dispatch<React.SetStateAction<boolean>>;
-  userDetails: User[];
-  setUserDetails?: React.Dispatch<React.SetStateAction<User[]>>;
+  userDetails: IUser[];
+  setUserDetails?: React.Dispatch<React.SetStateAction<IUser[]>>;
   login: (data: Object) => Promise<any>;
   logout: () => Promise<any>;
   testPostAuth: () => Promise<any>,
 }
 
-interface User {
+interface IUser {
   id: string;
   username: string;
   email: string;
@@ -45,7 +46,7 @@ interface IAuthProviderProps {
 
 const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
   const [authState, setAuthState] = useState<boolean>(false);
-  const [userDetails, setUserDetails] = useState<User[]>([]);
+  const [userDetails, setUserDetails] = useState<IUser[]>([]);
   const { authenticationAxios, testAxios } = useAxios();
   const router = useRouter();
 

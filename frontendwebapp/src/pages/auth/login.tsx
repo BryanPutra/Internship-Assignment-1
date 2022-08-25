@@ -18,6 +18,7 @@ import * as yup from "yup";
 import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { AlternateEmail, Lock } from "@mui/icons-material";
+import { useMain } from "context/mainContext";
 
 interface ILoginFormInputs {
   email: string;
@@ -30,7 +31,7 @@ const schema = yup.object().shape({
 });
 
 const Login: React.FunctionComponent = () => {
-  const { login, authState, setAuthState, testPostAuth } = useAuth();
+  const { login, authState, setAuthState, testPostAuth, userDetails } = useAuth();
   const methods = useForm<ILoginFormInputs>({ resolver: yupResolver(schema) });
   const errors = methods.formState.errors;
   const [isHeld, setIsHeld] = useState<boolean>(false);
@@ -40,10 +41,6 @@ const Login: React.FunctionComponent = () => {
     data: ILoginFormInputs
   ) => {
     setIsLoading(true);
-    console.log(data);
-    console.log(data.email)
-    console.log(data.password)
-
     await login(data);
     setIsLoading(false);
   };

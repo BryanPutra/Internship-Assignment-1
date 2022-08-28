@@ -24,11 +24,5 @@ public class Role {
 	public void setName(EnumRole name) {
 		this.name = name;
 	}
-	public Role(String id, EnumRole name) {
-		super();
-		this.id = id;
-		this.name = name;
-	}
-	
-	
+		
 }

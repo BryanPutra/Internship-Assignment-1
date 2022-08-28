@@ -75,6 +75,7 @@ public class FormController {
 		Boolean isBack = (Boolean) formData.get("isBack");
 		Boolean isSubmit = (Boolean) formData.get("isSubmit");
 		
+		//TODO: Make new class to process submits in FormDataBO
 		if(isSubmit) {
 			Map inputData = new HashMap();
 			Map autofillData = new HashMap();
@@ -86,7 +87,6 @@ public class FormController {
 			
 			List inputDataValue = new LinkedList(inputData.values());
 			List autofillValue = new LinkedList(autofillData.values());
-			
 			//if user input is different from the autofill data, then submit the user input
 			if(!inputDataKey.equals(autofillKey) || !inputDataValue.equals(autofillValue)) {
 				System.out.println("Found input difference");

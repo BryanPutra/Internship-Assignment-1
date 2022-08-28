@@ -18,7 +18,7 @@
 					"fields" : [
 						{
 							"fieldCode" : "ktp-2-1",
-							"component" : "textField",
+							"component" : "textfield",
 							"fieldName" : "ktpId",
 							"label" : "NIK",
 							"maxLength" : 16,
@@ -26,7 +26,7 @@
 						},
 						{
 							"fieldCode" : "ktp-2-2",
-							"component" : "textField",
+							"component" : "textfield",
 							"fieldName" : "fullName",
 							"label" : "NAMA",
 							"placeholder" : "Nama sesuai KTP"
@@ -39,31 +39,31 @@
 						},
 						{
 							"fieldCode" : "ktp-2-4",
-							"component" : "TextField",
+							"component" : "textfield",
 							"fieldName" : "birthPlace",
 							"label" : "Tempat Lahir"
 						},
 						{
 							"fieldCode" : "ktp-2-5",
-							"component" : "TextField",
+							"component" : "textfield",
 							"fieldName" : "maritalStatusKtp",
 							"label" : "Status Pernikahan"
 						},
 						{
 							"fieldCode" : "ktp-2-6",
-							"component" : "TextField",
+							"component" : "textfield",
 							"fieldName" : "religionKtp",
 							"label" : "Agama"
 						},
 						{
 							"fieldCode" : "ktp-2-7",
-							"component" : "GenderPicker",
+							"component" : "genderpicker",
 							"fieldName" : "genderKtp",
 							"label" : "Gender"
 						},
 						{
 							"fieldCode" : "ktp-2-8",
-							"component" : "TextField",
+							"component" : "textfield",
 							"fieldName" : "motherMaidenKtp",
 							"label" : "Nama Ibu Kandung"
 						}
@@ -75,52 +75,52 @@
 					"fields" : [
 						{
 							"fieldCode" : "ktp-3-1",
-							"component" : "textField",
+							"component" : "textfield",
 							"fieldName" : "streetAddressKtp",
 							"label" : "Alamat",
 							"placeholder" : "Alamat sesuai KTP"
 						},
 						{
 							"fieldCode" : "ktp-3-2",
-							"component" : "Picker",
+							"component" : "picker",
 							"fieldName" : "rtKtp",
 							"label" : "RT",
 							"placeholder" : "Nomor RT alamat"
 						},
 						{
 							"fieldCode" : "ktp-3-3",
-							"component" : "Picker",
+							"component" : "picker",
 							"fieldName" : "rwKtp",
 							"label" : "RW",
 							"placeholder" : "Nomor RW alamat"
 						},
 						{
 							"fieldCode" : "ktp-3-4",
-							"component" : "Picker",
+							"component" : "picker",
 							"fieldName" : "provinceKtp",
 							"label" : "Provinsi"
 						},
 						{
 							"fieldCode" : "ktp-3-5",
-							"component" : "Picker",
+							"component" : "picker",
 							"fieldName" : "cityKtp",
 							"label" : "Kota"
 						},
 						{
 							"fieldCode" : "ktp-3-6",
-							"component" : "Picker",
+							"component" : "picker",
 							"fieldName" : "districtKtp",
 							"label" : "Kabupaten"
 						},
 						{
 							"fieldCode" : "ktp-3-7",
-							"component" : "Picker",
+							"component" : "picker",
 							"fieldName" : "subDistrictKtp",
 							"label" : "Kecamatan"
 						},
 						{
 							"fieldCode" : "ktp-3-8",
-							"component" : "TextField",
+							"component" : "textfield",
 							"fieldName" : "postalCodeKtp",
 							"maxLength" : 5,
 							"label" : "Kode Pos"

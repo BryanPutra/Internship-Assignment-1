@@ -105,7 +105,7 @@ public class FormDataBO{
 				Map targetRequirementMap = (Map)productRequirementList.get(i);
 				currentRequirement = (String)targetRequirementMap.get("requirement");
 				/*		Check If user's current page contains the requirement name on the current index
-						If true, do another loop to find the precise position of the pageName, 
+						If true, do another loop to find the precise position of the pageName,
 							e.g: where is precisely ktp-2 located inside the list,
 						   	and what is the next and previous element of the list						*/
 				if(currentPage.contains(currentRequirement)) {

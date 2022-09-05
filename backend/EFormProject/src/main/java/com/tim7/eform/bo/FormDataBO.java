@@ -53,7 +53,6 @@ public class FormDataBO{
 		List fieldNameList = new LinkedList();
 		Map autofillMap = new HashMap();
 		
-		
 		nextPageMap = getNextPage(productCode,currentPage,prevPage,isBack);
 		fieldNameList = (List) nextPageMap.get("fieldNameList");
 		nextPageMap.remove("fieldNameList");
@@ -72,7 +71,6 @@ public class FormDataBO{
 		String currentRequirement = null;
 		Map productConfigMap = new HashMap();
 		Map pageConfigMap = new HashMap();
-		Map autofillMap = new HashMap();
 		
 		List productRequirementList = new LinkedList();
 		List productPageList = new LinkedList();
@@ -80,6 +78,7 @@ public class FormDataBO{
 		List fieldList = new LinkedList();
 		List fieldNameList = new LinkedList();
 		
+		boolean isHome = false;
 		boolean isDone = false; 
 		
 		productConfigMap = getProductRequirementsFromFile(productCode);
@@ -96,7 +95,7 @@ public class FormDataBO{
 //		Check if user is going back to the previous page
 			if(isBack == true){
 				currentPage = prevPage;
-				if(currentPage.equals("Home")) {
+				if(currentPage.equals("home")) {
 					returnMap.put("isHome", true);
 					return returnMap;
 				}
@@ -132,7 +131,7 @@ public class FormDataBO{
 								if(j>0) {
 									prevPage = (String) productPageList.get(j-1);
 								}else {
-									prevPage = "Home";
+									prevPage = "home";
 								}
 							}
 //							System.out.println("Current Page: "+currentPage+", Found at: "+productCode+" > "+currentRequirement+" > index:"+j);
@@ -148,6 +147,14 @@ public class FormDataBO{
 		pageConfigMap = getPageDetailsFromFile(currentRequirement);
 		pageNameList = (List)pageConfigMap.get("page");
 		int pageNameListSize = pageNameList.size();
+		
+		//FieldName List
+		if(currentPage.equals("ktp-1")) {
+			nextPage = "home";
+			prevPage = "null";
+			isHome = true;
+			returnMap.put("isHome", isHome);
+		}
 		
 		for(int i = 0 ; i < pageNameListSize ; i++) {
 			Map targetPage = (Map)pageNameList.get(i);
@@ -169,6 +176,15 @@ public class FormDataBO{
 		returnMap.put("prevPage", currentPage);
 		returnMap.put("fieldNameList", fieldNameList);
 		return returnMap;
+	}
+	
+	//Call this first when user clicked on one of the product button
+	public Map getSectionData() {
+		Map returnMap = new HashMap();
+		
+		
+		
+		return returnMap; 
 	}
 	
 	public Map getAutofillData(String email, String cif, String ktpId, List fieldList) throws UsernameNotFoundException {

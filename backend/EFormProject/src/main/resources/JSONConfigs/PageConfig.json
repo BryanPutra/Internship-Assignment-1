@@ -5,6 +5,7 @@
 			"page" : [
 				{
 					"pageCode" : "ktp-1",
+					"pageTitle" : "Foto KTP",
 					"fields" : [
 						{
 							"fieldCode" : "ktp-1-1",

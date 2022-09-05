@@ -47,10 +47,9 @@ public class EFormProjectApplication implements CommandLineRunner{
 		SpringApplication.run(EFormProjectApplication.class, args);
 	}
 	
-	public void run(String... args) throws Exception {
-		MongoQuery mq = new MongoQuery();
+	public void run(String... args) throws Exception {		
+		
 		//mq.insertNewUser("bambangaja@gmail.com", "Bambang aja", encoder.encode("12345"));
-
 		//mq.insertNewUser("bambangaja@gmail.com", "Bambang Aja", "12345");
 	}
 	

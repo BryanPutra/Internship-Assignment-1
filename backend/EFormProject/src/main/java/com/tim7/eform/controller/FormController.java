@@ -53,10 +53,6 @@ public class FormController {
 		return "a";
 	}
 	
-	//Map formData should have:
-	// - productCode
-	// - userDetails (id, email, cif)
-	
 	@PostMapping("/getFormData")
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Map> getFormData(/*@RequestHeader(value="Authorization", required = true) String basicAuth, */@RequestBody final Map formData) {

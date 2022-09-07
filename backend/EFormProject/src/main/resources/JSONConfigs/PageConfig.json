@@ -9,6 +9,7 @@
 					"fields" : [
 						{
 							"fieldCode" : "ktp-1-1",
+							"fieldName" : "ktpPhoto",
 							"component" : "camera"
 						}
 					]

@@ -58,9 +58,7 @@ public class FormController {
 	public ResponseEntity<Map> getFormData(/*@RequestHeader(value="Authorization", required = true) String basicAuth, */@RequestBody final Map formData) {
 		Map returnMap = new HashMap();
 		Map formMap = new HashMap();
-		Map userMap = new HashMap();
-		Map autofillMap = new HashMap();
-		
+		System.out.println(formData);
 		String id = (String)formData.get("id");
 		String email = (String)formData.get("email");
 		String cif = (String)formData.get("cif");
@@ -70,6 +68,12 @@ public class FormController {
 		String prevPage = (String) formData.get("prevPage");
 		Boolean isBack = (Boolean) formData.get("isBack");
 		Boolean isSubmit = (Boolean) formData.get("isSubmit");
+		Boolean isFromHome = (Boolean) formData.get("isFromHome");
+
+		//validate booleans, DO NOT REMOVE
+		if(isSubmit==null) isSubmit = false;
+		if(isFromHome == null) isFromHome = false;
+		if(isBack == null) isBack = false;
 		
 		//TODO: Make new class to process submits in FormDataBO
 		if(isSubmit) {
@@ -118,7 +122,8 @@ public class FormController {
 		}
 		
 		
-		formMap = FormDataBO.getinstance().getRegistrationData(email, cif, ktpId, productCode, currentPage, prevPage, isBack, userMap);
+		
+		formMap = FormDataBO.getinstance().getRegistrationData(email, cif, ktpId, productCode, currentPage, prevPage, isBack, isFromHome);
 	
 		returnMap.put("formMap", formMap);
 		return new ResponseEntity<Map>(returnMap,HttpStatus.OK);

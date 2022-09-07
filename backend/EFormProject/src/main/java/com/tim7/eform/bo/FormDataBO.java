@@ -8,30 +8,20 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-
-import com.tim7.eform.model.User;
 import com.tim7.eform.mongo.MongoQuery;
-import com.tim7.eform.repository.CustomUserRepository;
 
 import lombok.SneakyThrows;
 
 public class FormDataBO{
-	
-	@Autowired
-	CustomUserRepository repository;
 	
 	public static Logger log = Logger.getLogger(FormDataBO.class);
 	
@@ -47,25 +37,31 @@ public class FormDataBO{
 		return instance;
 	}
 	
-	public Map getRegistrationData(String email, String cif, String ktpId, String productCode, String currentPage, String prevPage, boolean isBack, Map userMap) {
+	public Map getRegistrationData(String email, String cif, String ktpId, String productCode, String currentPage, String prevPage, boolean isBack, boolean isFromHome) {
 		Map returnMap = new HashMap();
 		Map nextPageMap = new HashMap();
 		List fieldNameList = new LinkedList();
 		Map autofillMap = new HashMap();
+		Boolean isHome = false;
 		
-		nextPageMap = getNextPage(productCode,currentPage,prevPage,isBack);
+		nextPageMap = getNextPage(productCode,currentPage,prevPage,isBack, isFromHome);
 		fieldNameList = (List) nextPageMap.get("fieldNameList");
 		nextPageMap.remove("fieldNameList");
+		isHome = (Boolean) nextPageMap.get("isHome");
 		
-		autofillMap = getAutofillData(email, cif, ktpId, fieldNameList);
+		if(!isHome && isHome != null) {
+			autofillMap = getAutofillData(email, cif, ktpId, fieldNameList);			
+			returnMap.put("autofillMap", autofillMap);
+		}
 		
-		returnMap.put("autofillMap", autofillMap);
 		returnMap.put("nextPageMap", nextPageMap);
+		
+		log.info("User ["+email+"] requested '"+nextPageMap.get("nextPage")+"' isFromHome:"+isFromHome);
 		
 		return returnMap;
 	}
 	
-	public Map getNextPage(String productCode, String currentPage, String prevPage, boolean isBack) {
+	public Map getNextPage(String productCode, String currentPage, String prevPage, boolean isBack, boolean isFromHome) {
 		Map returnMap = new HashMap();
 		String nextPage=null;
 		String currentRequirement = null;
@@ -115,6 +111,11 @@ public class FormDataBO{
 						//If found a match between "currentPage" and current element of "productPageList"
 						//e.g: ktp-2 = ktp-2
 						if(currentPage.equals(productPageList.get(j))) {
+							if(isFromHome) {
+								nextPage = (String) productPageList.get(j);
+								prevPage = "home";
+								break;
+							}else
 							if(j == productPageList.size()-1) {
 								//Check if the current index points at last element of a "pageList"
 								//and last element of "requirementList"
@@ -134,9 +135,6 @@ public class FormDataBO{
 									prevPage = "home";
 								}
 							}
-//							System.out.println("Current Page: "+currentPage+", Found at: "+productCode+" > "+currentRequirement+" > index:"+j);
-//							System.out.println("Next Page: " + nextPage);
-//							System.out.println("Prev Page: " + prevPage);
 						}
 					}
 					break;
@@ -144,36 +142,42 @@ public class FormDataBO{
 			}
 		}
 		
-		pageConfigMap = getPageDetailsFromFile(currentRequirement);
-		pageNameList = (List)pageConfigMap.get("page");
-		int pageNameListSize = pageNameList.size();
+		
 		
 		//FieldName List
-		if(currentPage.equals("ktp-1")) {
+		if(currentPage.equals("ktp-1") && !isFromHome) {
 			nextPage = "home";
-			prevPage = "null";
+			prevPage = "ktp-1";
 			isHome = true;
 			returnMap.put("isHome", isHome);
-		}
-		
-		for(int i = 0 ; i < pageNameListSize ; i++) {
-			Map targetPage = (Map)pageNameList.get(i);
-			String targetPageName = (String) targetPage.get("pageCode");
-			if(nextPage.equals(targetPageName)) {
-				returnMap.put("fields", targetPage.get("fields"));
-				fieldList = (List) targetPage.get("fields");
-				Map targetFieldMap = new HashMap();
-				for(int j = 0 ; j < fieldList.size() ; j++) {
-					targetFieldMap = (Map)fieldList.get(j);
-					fieldNameList.add((String)targetFieldMap.get("fieldName"));
+		}else {
+			pageConfigMap = getPageDetailsFromFile(currentRequirement);
+			pageNameList = (List)pageConfigMap.get("page");
+			int pageNameListSize = pageNameList.size();
+			for(int i = 0 ; i < pageNameListSize ; i++) {
+				Map targetPage = (Map)pageNameList.get(i);
+				String targetPageName = (String) targetPage.get("pageCode");
+				if(nextPage.equals(targetPageName)) {
+					returnMap.put("fields", targetPage.get("fields"));
+					fieldList = (List) targetPage.get("fields");
+					Map targetFieldMap = new HashMap();
+					for(int j = 0 ; j < fieldList.size() ; j++) {
+						targetFieldMap = (Map)fieldList.get(j);
+						fieldNameList.add((String)targetFieldMap.get("fieldName"));
+					}
+					break;
 				}
-				break;
 			}
 		}
 		
+		if(isFromHome) {
+			returnMap.put("prevPage", "home");
+		}else returnMap.put("prevPage", currentPage);
+
+		
+		returnMap.put("isHome", isHome);
 		returnMap.put("isDone", isDone);
 		returnMap.put("nextPage", nextPage);
-		returnMap.put("prevPage", currentPage);
 		returnMap.put("fieldNameList", fieldNameList);
 		return returnMap;
 	}
@@ -195,7 +199,7 @@ public class FormDataBO{
 		
 		userDoc = mq.getUser(email, cif, ktpId);
 		
-		if(userDoc.containsKey("collectedData")) {
+		if(userDoc.containsKey("collectedData") && fieldList.size() != 0) {
 			collectedData = (List)userDoc.get("collectedData");
 			int lengthFieldList = fieldList.size();
 			int lengthCollected = 0;

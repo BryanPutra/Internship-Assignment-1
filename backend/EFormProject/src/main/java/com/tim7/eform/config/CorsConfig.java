@@ -12,8 +12,8 @@ public class CorsConfig implements WebMvcConfigurer{
 	  @Override
 	  public void addCorsMappings(CorsRegistry registry) {
 	      registry.addMapping("/**")
-	      		  .allowedOrigins("https://bb38-45-64-100-35.ap.ngrok.io","https://256e-36-72-148-241.ap.ngrok.io")
-	      		  .allowedOriginPatterns("https://bb38-45-64-100-35.ap.ngrok.io")
+	      		  .allowedOrigins("https://aee1-45-64-100-55.ap.ngrok.io","https://0583-36-80-83-181.ap.ngrok.io")
+	      		  .allowedOriginPatterns("https://aee1-45-64-100-55.ap.ngrok.io")
 	      		  .allowedHeaders("Origin", "Authorization", "Accept", "Content-Type")
 	              .allowedMethods("POST", "GET", "OPTIONS", "PUT", "DELETE")
 	              .allowCredentials(true)

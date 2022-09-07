@@ -8,6 +8,17 @@ import RegistrationHeader from "components/headers/RegistrationHeader";
 import SubmitButton from "components/buttons/SubmitButton";
 import * as errorUtils from "utils/errorUtils";
 import FormCustomInput from "components/inputs/FormCustomInput";
+import type {
+  IInputFormsRequestDataProps,
+  IInputFormsRequestSubmitForm,
+  IInputFormsRequestPage,
+  IInputFormsResponse,
+  INextPageMap,
+  IInputField,
+  IFormData1,
+  IFormData2,
+  IAutoFillMap,
+} from "interfaces/inputFormInterfaces";
 
 //libraries
 import {
@@ -21,112 +32,7 @@ import * as yup from "yup";
 import axios from "axios";
 import moment from "moment";
 import { useAxios } from "context/axiosContext";
-
-interface IInputFormsRequestPage {
-  id: string;
-  username: string;
-  email: string;
-  roles: string[];
-  productCode: string;
-  currentPage: string;
-  prevPage: string;
-  isBack: boolean;
-  isSubmit: boolean;
-}
-
-interface IInputFormsResponse {
-  formMap: {
-    autofillMap: {};
-    nextPageMap: {
-      nextPage: string;
-      prevPage: string;
-      fields: IInputField[];
-    };
-  };
-}
-
-interface IInputFormsRequestSubmitForm {
-  id: string;
-  username: string;
-  email: string;
-  roles: string[];
-  productCode: string;
-  currentPage: string;
-  prevPage: string;
-  isBack: boolean;
-  isSubmit: boolean;
-  inputData: IFormData1 | IFormData2;
-  autofillData: {};
-}
-
-interface IInputFormsRequestDataProps {
-  id: string;
-  username: string;
-  email: string;
-  roles: string[];
-  productCode: string;
-  currentPage: string;
-  prevPage: string;
-  isBack: boolean;
-  isSubmit: boolean;
-}
-
-interface IAutoFillMap {
-  ktpId?: string;
-  ktpName?: string;
-  birthDate?: string;
-  birthPlace?: string;
-  maritalStatusKtp?: string;
-  religionKtp?: string;
-  genderKtp?: string;
-  motherMaidenName?: string;
-  streetAddressKtp?: string;
-  rtKtp?: string;
-  rwKtp?: string;
-  provinceKtp?: string;
-  cityKtp?: string;
-  districtKtp?: string;
-  subDistrictKtp?: string;
-  postalCodeKtp?: string;
-}
-
-interface INextPageMap {
-  nextPage: string;
-  prevPage: string;
-  fields: IInputField[];
-}
-
-interface IFormData1 {
-  ktpId: string;
-  ktpName: string;
-  birthDate: string;
-  birthPlace: string;
-  maritalStatusKtp: string;
-  religionKtp: string;
-  genderKtp: string;
-  motherMaidenName: string;
-}
-
-interface IFormData2 {
-  streetAddressKtp: string;
-  rtKtp: string;
-  rwKtp: string;
-  provinceKtp: string;
-  cityKtp: string;
-  districtKtp: string;
-  subDistrictKtp: string;
-  postalCodeKtp: string;
-}
-
-interface IInputField {
-  fieldCode: string;
-  component: string;
-  fieldName: string;
-  label: string;
-  maxLength?: number;
-  placeholder?: string;
-  dbKey?: string;
-}
+import { useAuth } from "context/authContext";
 
 interface IDataLists {
   gender: string[];
@@ -138,9 +44,6 @@ interface IDataLists {
   subDistrict: string[];
 }
 
-const getFormDataURL: string =
-  "https://e3c6-36-72-148-241.ap.ngrok.io/api/form/getFormData";
-
 const InputForm: React.FunctionComponent = () => {
   // initial actions
   const {
@@ -150,60 +53,59 @@ const InputForm: React.FunctionComponent = () => {
     prevPage,
     setPrevPage,
     isBack,
+    setIsHome,
+    setKtpIsActive,
+    setKtpIsFilled,
+    setFormIsActive,
+    setFormIsFilled,
+    isFromHome,
     setIsBack,
     isSubmit,
     setIsSubmit,
   } = useMain();
-  const { user } = useMain();
+  const {userDetails} = useAuth();
   const { authorizationAxios } = useAxios();
 
   const [autofillMap, setAutoFillMap] = useState<IAutoFillMap>({});
-  const [nextPageMap, setNextPageMap] = useState<INextPageMap>({
-    nextPage: "",
-    prevPage: "",
-    fields: [],
-  });
   const [ktpPageState, setKtpPageState] = useState<string>("");
   const [inputFields, setInputFields] = useState<IInputField[]>([]);
 
   const setFormStates = (responseData: IInputFormsResponse) => {
     setInputFields(responseData.formMap.nextPageMap.fields);
-    console.log(inputFields);
     setKtpPageState(responseData.formMap.nextPageMap.nextPage);
     setCurrentPage(responseData.formMap.nextPageMap.nextPage);
     setPrevPage(responseData.formMap.nextPageMap.prevPage);
     setAutoFillMap(responseData.formMap.autofillMap);
-    setNextPageMap(responseData.formMap.nextPageMap);
   };
+
+  const resetStates = () => {
+    setIsHome(true);
+    setKtpIsActive(true);
+    setKtpIsFilled(false);
+    setFormIsActive(false);
+    setFormIsFilled(false);
+  }
 
   useEffect(() => {
-    // getInitialProps();
-    setKtpPageState("ktp-2")
+    getInitialProps();
   }, []);
 
-  const setInitialStates = () => {
-    setCurrentPage("ktp-2");
-    setPrevPage("home");
-    setIsBack(false);
-    setIsSubmit(false);
-    return
-  };
-
   const getInitialProps = async () => {
-    setInitialStates();
     const payload: IInputFormsRequestDataProps = {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      roles: user.roles,
+      id: userDetails[0].id,
+      username: userDetails[0].username,
+      email: userDetails[0].email,
+      roles: userDetails[0].roles,
       productCode: creatingProductName,
-      currentPage: currentPage,
-      prevPage: prevPage,
+      currentPage: "ktp-2",
+      prevPage: "home",
+      isFromHome: true,
       isBack: isBack,
-      isSubmit: isSubmit,
+      isSubmit: false,
     };
 
     console.log(payload);
+    console.log(currentPage, prevPage);
     const initialProps = await authorizationAxios.post("/getFormData", payload);
     const initialPropsData = initialProps.data;
     console.log(initialPropsData);
@@ -214,19 +116,19 @@ const InputForm: React.FunctionComponent = () => {
 
   // yup validation & error message management
   const schema1 = yup.object().shape({
-    ktpId: yup.string().min(5).max(16).required(),
-    ktpName: yup.string().required(),
-    birthDate: yup.string().required(),
-    birthPlace: yup.string().required(),
-    maritalStatusKtp: yup.string().required(),
-    religionKtp: yup.string().required(),
-    genderKtp: yup.string().required(),
-    motherMaidenName: yup.string().required(),
+    // ktpId: yup.string().min(5).max(16).required(),
+    // fullName: yup.string().required(),
+    // birthDate: yup.string().required(),
+    // birthPlace: yup.string().required(),
+    // maritalStatusKtp: yup.string().required(),
+    // religionKtp: yup.string().required(),
+    // genderKtp: yup.string().required(),
+    // motherMaidenName: yup.string().required(),
   });
   const schema2 = yup.object().shape({
     streetAddressKtp: yup.string().required(),
     rtKtp: yup.string().required(),
-    rwKtp: yup.string().required(),
+    // rwKtp: yup.string().required(),
     provinceKtp: yup.string().required(),
     cityKtp: yup.string().required(),
     districtKtp: yup.string().required(),
@@ -250,8 +152,8 @@ const InputForm: React.FunctionComponent = () => {
     switch (fieldName) {
       case "ktpId":
         return errors.ktpId;
-      case "ktpName":
-        return errors.ktpName;
+      case "fullName":
+        return errors.fullName;
       case "birthDate":
         return errors.birthDate;
       case "birthPlace":
@@ -353,126 +255,126 @@ const InputForm: React.FunctionComponent = () => {
 
   // forced data for client side testing purposes
   // change to response from getServerSide props when testing
-  const inputFields1: IInputField[] = [
-    {
-      fieldCode: "ktp-2-1",
-      component: "textField",
-      fieldName: "ktpId",
-      label: "NIK",
-      maxLength: 16,
-      placeholder: "Nomor Induk Kartu Tanda Penduduk | NIK",
-      dbKey: "ktpId",
-    },
-    {
-      fieldCode: "ktp-2-2",
-      component: "textField",
-      fieldName: "ktpName",
-      label: "NAMA",
-      placeholder: "Nama sesuai KTP",
-      dbKey: "fullName",
-    },
-    {
-      fieldCode: "ktp-2-3",
-      component: "Calendar",
-      fieldName: "birthDate",
-      label: "Tanggal Lahir",
-      dbKey: "birthDate",
-    },
-    {
-      fieldCode: "ktp-2-4",
-      component: "textField",
-      fieldName: "birthPlace",
-      label: "Tempat Lahir",
-      dbKey: "birthPlace",
-    },
-    {
-      fieldCode: "ktp-2-5",
-      component: "textField",
-      fieldName: "maritalStatusKtp",
-      label: "Status Pernikahan",
-      dbKey: "maritalStatusKtp",
-    },
-    {
-      fieldCode: "ktp-2-6",
-      component: "textField",
-      fieldName: "religionKtp",
-      label: "Agama",
-      dbKey: "religionKtp",
-    },
-    {
-      fieldCode: "ktp-2-7",
-      component: "Picker",
-      fieldName: "genderKtp",
-      label: "Gender",
-      dbKey: "genderKtp",
-    },
-    {
-      fieldCode: "ktp-2-8",
-      component: "textField",
-      fieldName: "motherMaidenName",
-      label: "Nama Ibu Kandung",
-      dbKey: "motherMaidenKtp",
-    },
-  ];
+  // const inputFields1: IInputField[] = [
+  //   {
+  //     fieldCode: "ktp-2-1",
+  //     component: "textField",
+  //     fieldName: "ktpId",
+  //     label: "NIK",
+  //     maxLength: 16,
+  //     placeholder: "Nomor Induk Kartu Tanda Penduduk | NIK",
+  //     dbKey: "ktpId",
+  //   },
+  //   {
+  //     fieldCode: "ktp-2-2",
+  //     component: "textField",
+  //     fieldName: "fullName",
+  //     label: "NAMA",
+  //     placeholder: "Nama sesuai KTP",
+  //     dbKey: "fullName",
+  //   },
+  //   {
+  //     fieldCode: "ktp-2-3",
+  //     component: "Calendar",
+  //     fieldName: "birthDate",
+  //     label: "Tanggal Lahir",
+  //     dbKey: "birthDate",
+  //   },
+  //   {
+  //     fieldCode: "ktp-2-4",
+  //     component: "textField",
+  //     fieldName: "birthPlace",
+  //     label: "Tempat Lahir",
+  //     dbKey: "birthPlace",
+  //   },
+  //   {
+  //     fieldCode: "ktp-2-5",
+  //     component: "textField",
+  //     fieldName: "maritalStatusKtp",
+  //     label: "Status Pernikahan",
+  //     dbKey: "maritalStatusKtp",
+  //   },
+  //   {
+  //     fieldCode: "ktp-2-6",
+  //     component: "textField",
+  //     fieldName: "religionKtp",
+  //     label: "Agama",
+  //     dbKey: "religionKtp",
+  //   },
+  //   {
+  //     fieldCode: "ktp-2-7",
+  //     component: "Picker",
+  //     fieldName: "genderKtp",
+  //     label: "Gender",
+  //     dbKey: "genderKtp",
+  //   },
+  //   {
+  //     fieldCode: "ktp-2-8",
+  //     component: "textField",
+  //     fieldName: "motherMaidenName",
+  //     label: "Nama Ibu Kandung",
+  //     dbKey: "motherMaidenKtp",
+  //   },
+  // ];
 
-  const inputFields2: IInputField[] = [
-    {
-      fieldCode: "ktp-3-1",
-      component: "textField",
-      fieldName: "streetAddressKtp",
-      label: "Alamat",
-      placeholder: "Alamat sesuai KTP",
-      dbKey: "streetAddressKtp",
-    },
-    {
-      fieldCode: "ktp-3-2",
-      component: "Picker",
-      fieldName: "rtKtp",
-      label: "RT",
-      placeholder: "Nomor RT alamat",
-      dbKey: "rtKtp",
-    },
-    {
-      fieldCode: "ktp-3-3",
-      component: "Picker",
-      fieldName: "rwKtp",
-      label: "RW",
-      placeholder: "Nomor RW alamat",
-      dbKey: "rwKtp",
-    },
-    {
-      fieldCode: "ktp-3-4",
-      component: "Picker",
-      fieldName: "provinceKtp",
-      label: "Provinsi",
-      dbKey: "provinceKtp",
-    },
-    {
-      component: "Picker",
-      fieldName: "cityKtp",
-      fieldCode: "ktp-3-5",
-      label: "Kota",
-    },
-    {
-      component: "Picker",
-      fieldName: "districtKtp",
-      fieldCode: "ktp-3-6",
-      label: "Kabupaten",
-    },
-    {
-      component: "Picker",
-      fieldName: "subDistrictKtp",
-      fieldCode: "ktp-3-7",
-      label: "Kecamatan",
-    },
-    {
-      component: "textField",
-      fieldName: "postalCodeKtp",
-      fieldCode: "ktp-3-8",
-      label: "Kode Pos",
-      maxLength: 5,
-    },
-  ];
+  // const inputFields2: IInputField[] = [
+  //   {
+  //     fieldCode: "ktp-3-1",
+  //     component: "textField",
+  //     fieldName: "streetAddressKtp",
+  //     label: "Alamat",
+  //     placeholder: "Alamat sesuai KTP",
+  //     dbKey: "streetAddressKtp",
+  //   },
+  //   {
+  //     fieldCode: "ktp-3-2",
+  //     component: "Picker",
+  //     fieldName: "rtKtp",
+  //     label: "RT",
+  //     placeholder: "Nomor RT alamat",
+  //     dbKey: "rtKtp",
+  //   },
+  //   {
+  //     fieldCode: "ktp-3-3",
+  //     component: "Picker",
+  //     fieldName: "rwKtp",
+  //     label: "RW",
+  //     placeholder: "Nomor RW alamat",
+  //     dbKey: "rwKtp",
+  //   },
+  //   {
+  //     fieldCode: "ktp-3-4",
+  //     component: "Picker",
+  //     fieldName: "provinceKtp",
+  //     label: "Provinsi",
+  //     dbKey: "provinceKtp",
+  //   },
+  //   {
+  //     component: "Picker",
+  //     fieldName: "cityKtp",
+  //     fieldCode: "ktp-3-5",
+  //     label: "Kota",
+  //   },
+  //   {
+  //     component: "Picker",
+  //     fieldName: "districtKtp",
+  //     fieldCode: "ktp-3-6",
+  //     label: "Kabupaten",
+  //   },
+  //   {
+  //     component: "Picker",
+  //     fieldName: "subDistrictKtp",
+  //     fieldCode: "ktp-3-7",
+  //     label: "Kecamatan",
+  //   },
+  //   {
+  //     component: "textField",
+  //     fieldName: "postalCodeKtp",
+  //     fieldCode: "ktp-3-8",
+  //     label: "Kode Pos",
+  //     maxLength: 5,
+  //   },
+  // ];
   // END forced data for client side testing purposes
 
   // form utils
@@ -496,36 +398,39 @@ const InputForm: React.FunctionComponent = () => {
   };
 
   const isFormData1 = (object: any): object is IFormData1 => {
-    return object.birthDate !== undefined;
+    return object.ktpId !== undefined;
   };
 
   const submitData = async (formData: IFormData1 | IFormData2) => {
     try {
       const payload: IInputFormsRequestSubmitForm = {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        roles: user.roles,
+        id: userDetails[0].id,
+        username: userDetails[0].username,
+        email: userDetails[0].email,
+        roles: userDetails[0].roles,
         productCode: creatingProductName,
         currentPage: currentPage,
         prevPage: prevPage,
         isBack: isBack,
-        isSubmit: isSubmit,
+        isSubmit: true,
         inputData: formData,
         autofillData: {},
       };
       let response;
-      if (isFormData1(formData)) {
+      if (isFormData1(formData)) {  
         const formattedDate = moment(formData.birthDate).format("DD-MM-YYYY");
         console.log(formattedDate);
-        response = await axios.post(getFormDataURL, {
-          ...payload,
-          inputData: { ...formData, birthDate: formattedDate },
-        });
+        // response = await authorizationAxios.post("/getFormData", {
+        //   ...payload,
+        //   inputData: { ...formData, birthDate: formattedDate },
+        // });
+        response = await authorizationAxios.post("/getFormData", payload);
       } else {
-        response = await axios.post(getFormDataURL, payload);
+        response = await authorizationAxios.post("/getFormData", payload);
+        alert("Data submitted successfully");
+        router.push("/mainmenu");
       }
-      console.log(response);
+      console.log(response.data);
       setFormStates(response.data);
     } catch (err) {
       alert(`Failed to submit data, ${errorUtils.getErrorMessage(err)}`);
@@ -535,6 +440,7 @@ const InputForm: React.FunctionComponent = () => {
   const onForm1Submit: SubmitHandler<IFormData1> = async (
     formData: IFormData1
   ) => {
+    console.log(currentPage, prevPage);
     setIsLoading(true);
     await submitData(formData);
     setIsLoading(false);
@@ -545,8 +451,6 @@ const InputForm: React.FunctionComponent = () => {
   ) => {
     setIsLoading(true);
     await submitData(formData);
-    alert("Data submitted successfully");
-    router.push("/mainmenu");
     setIsLoading(false);
   };
 
@@ -567,23 +471,21 @@ const InputForm: React.FunctionComponent = () => {
           >
             <div className="text-3xl">Personal Information</div>
 
-            {inputFields1.map((field) => {
+            {inputFields.map((field) => {
               return (
                 <FormCustomInput
                   inputType={field.component}
                   inputName={field.fieldName}
                   inputLabel={field.label}
                   inputPlaceholder={field.placeholder}
-                  defaultValueProp={getAutoFillValue(field, autofillMap)}
+                  // defaultValueProp={getAutoFillValue(field, autofillMap)}
                   errors={errors}
                   errorString={getErrorString(field)}
                   selectItemsList={selectDropDownList(field)}
                 />
               );
             })}
-            {/* <CustomButton name="Continue" isPressable={false} goToPage={setKtpPageState("ktp-3")}/> */}
             <SubmitButton
-              // isDisabled={!methods1.formState.isValid}
               name="Continue"
               isLoading={isLoading}
             />
@@ -596,14 +498,14 @@ const InputForm: React.FunctionComponent = () => {
             onSubmit={methods2.handleSubmit(onForm2Submit)}
           >
             <div className="text-3xl">Personal Information</div>
-            {inputFields2.map((field) => {
+            {inputFields.map((field) => {
               return (
                 <FormCustomInput
                   inputType={field.component}
                   inputName={field.fieldName}
                   inputLabel={field.label}
                   inputPlaceholder={field.placeholder}
-                  defaultValueProp={getAutoFillValue(field, autofillMap)}
+                  // defaultValueProp={getAutoFillValue(field, autofillMap)}
                   errors={errors2}
                   errorString={getErrorString(field)}
                   selectItemsList={selectDropDownList(field)}
@@ -611,7 +513,6 @@ const InputForm: React.FunctionComponent = () => {
               );
             })}
             <SubmitButton
-              // isDisabled={!methods1.formState.isValid}
               name="Submit"
               isLoading={isLoading}
             />

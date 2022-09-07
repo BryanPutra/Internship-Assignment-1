@@ -14,11 +14,11 @@ const Protected: React.FunctionComponent<IProtectedProps> = (props) => {
   const checkAuth = useCallback(() => {
     console.log(authState, userDetails);
     !authState ? logout() : setAuthState(true);
-  }, []);
+  }, [authState]);
 
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [authState]);
 
   return (<>{props.children}</>)
 };

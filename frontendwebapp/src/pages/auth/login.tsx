@@ -31,7 +31,8 @@ const schema = yup.object().shape({
 });
 
 const Login: React.FunctionComponent = () => {
-  const { login, authState, setAuthState, testPostAuth, userDetails } = useAuth();
+  const { login, authState, setAuthState, testPostAuth, userDetails } =
+    useAuth();
   const methods = useForm<ILoginFormInputs>({ resolver: yupResolver(schema) });
   const errors = methods.formState.errors;
   const [isHeld, setIsHeld] = useState<boolean>(false);
@@ -46,19 +47,19 @@ const Login: React.FunctionComponent = () => {
   };
 
   const loginWithGoogle = () => {};
-  
+
   const bruh = () => {
     setAuthState(true);
     console.log(authState);
     router.replace("/mainmenu");
-  }
+  };
 
   const router = useRouter();
 
   useEffect(() => {
     if (authState) {
       router.back();
-      return
+      return;
     }
     router.prefetch("/mainmenu");
   }, []);
@@ -118,7 +119,9 @@ const Login: React.FunctionComponent = () => {
           onTouchEnd={() => {
             setIsHeld(false);
           }}
-          className={`${isHeld ? "!bg-grey" : "!bg-paleGrey"} font-semibold py-3 flex flex-row text-textDarkGrey w-full rounded-lg shadow-md align-center justify-center`}
+          className={`${
+            isHeld ? "!bg-grey" : "!bg-paleGrey"
+          } font-semibold py-3 flex flex-row text-textDarkGrey w-full rounded-lg shadow-md align-center justify-center`}
         >
           Login with Google
         </button>

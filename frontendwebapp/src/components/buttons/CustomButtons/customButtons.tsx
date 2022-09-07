@@ -4,7 +4,7 @@ import { useState } from "react";
 interface ICustomButtonProps {
   name: string;
   isPressable: boolean;
-  goToPage: void;
+  goToPage: () => void;
 }
 
 const CustomButton: React.FunctionComponent<ICustomButtonProps> = (props) => {
@@ -17,7 +17,7 @@ const CustomButton: React.FunctionComponent<ICustomButtonProps> = (props) => {
       onTouchEnd={() => {
         setIsHeld(false);
       }}
-      onClick={}
+      onClick={props.goToPage}
       className={`${
         isHeld ? "!bg-red" : "!bg-pink"
       } font-semibold py-3 flex flex-row text-whiteGrey w-fill rounded-lg shadow-lg align-center justify-center`}

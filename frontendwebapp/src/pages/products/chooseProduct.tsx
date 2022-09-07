@@ -43,7 +43,7 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
         selectLoan();
         break;
     }
-  }, [productSectionSelected, router.pathname]);
+  }, [productSectionSelected]);
 
   const selectCredit = () => {
     setProductSectionSelected('credit');

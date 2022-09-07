@@ -53,7 +53,7 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
       render={({ field }) => (
         <div className="w-full">
           {{
-            textField: (
+            textfield: (
               <TextField
                 className=""
                 fullWidth
@@ -64,7 +64,7 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
                 variant="standard"
               />
             ),
-            Picker: (
+            picker: (
               <>
                 <InputLabel id="select">{props.inputLabel}</InputLabel>
                 <Select
@@ -79,7 +79,7 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
                 </Select>
               </>
             ),
-            Calendar: (
+            calendar: (
               <LocalizationProvider dateAdapter={AdapterMoment}>
                 <DatePicker
                   label={props.inputLabel}
@@ -87,7 +87,7 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
                   // onChange={setSelectedDate}
                   inputFormat="DD/MM/yyyy"
                   openTo="year"
-                  views={["year", "month", "day"]}
+                  // views={["year", "month", "day"]}
                   renderInput={(props: TextFieldProps) => (
                     <TextField
                       {...props}

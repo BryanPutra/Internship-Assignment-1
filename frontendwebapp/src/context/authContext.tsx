@@ -47,6 +47,7 @@ interface IAuthProviderProps {
 const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
   const [authState, setAuthState] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<IUser[]>([]);
+  const {user, setUser} = useMain();
   const { authenticationAxios, testAxios } = useAxios();
   const router = useRouter();
 
@@ -56,7 +57,10 @@ const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
   const login = async (data: Object) => {
     try {
       const response = await authenticationAxios.post("/login", data);
-      setUserDetails(users => [...users, response.data]);
+      const userDetail: IUser = response.data      
+      setUserDetails(users => [...users, userDetail]);
+      // setUser({...user, id: userDetail.id, username: userDetail.username, email: userDetail.email, roles: userDetail.roles } as IUser);
+      // setUser({...user, ...{id: userDetail.id, username: userDetail.username, email: userDetail.email, roles: userDetail.roles} as IUser});
       setAuthState(true);
       alert("Logged in successfully");
       router.push("/mainmenu");

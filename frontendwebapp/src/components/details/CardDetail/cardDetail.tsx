@@ -11,7 +11,6 @@ interface ICardDetail {
 
 const CardDetail: React.FunctionComponent = () => {
 
-  const {user} = useMain();
   const cardsDetails: ICardDetail[] = [
     {
       accountNumber: "014428812",

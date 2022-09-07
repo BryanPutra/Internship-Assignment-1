@@ -8,6 +8,12 @@ import RegistrationHeader from "components/headers/RegistrationHeader";
 import * as errorUtils from "utils/errorUtils";
 import { useMain } from "context/mainContext";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { useAxios } from "context/axiosContext";
+import type {
+  IInputFormsRequestDataProps,
+  IInputFormsRequestSubmitForm,
+  IInputFormsResponse,
+} from "interfaces/inputFormInterfaces";
 
 //lib
 // import Webcam from "react-webcam";
@@ -15,6 +21,7 @@ import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import UploadIcon from "@mui/icons-material/Upload";
 import FlipCameraIosIcon from "@mui/icons-material/FlipCameraIos";
 import axios from "axios";
+import { useAuth } from "context/authContext";
 
 interface ITakePhotoProps {}
 
@@ -75,12 +82,63 @@ const TakePhoto: React.FunctionComponent<ITakePhotoProps> = (props) => {
   //   setHeight(window.innerHeight);
   // };
 
-  const { creatingProductName } = useMain();
   const router = useRouter();
-  // const {};
+  const { authorizationAxios } = useAxios();
+  const {
+    creatingProductName,
+    currentPage,
+    setCurrentPage,
+    prevPage,
+    setPrevPage,
+    isFromHome,
+    setIsHome,
+    isBack,
+    setIsBack,
+    isSubmit,
+    setIsSubmit,
+    setKtpIsActive,
+    setKtpIsFilled,
+    setFormIsActive,
+  } = useMain();
+
+  const { userDetails } = useAuth();
+
   const [source, setSource] = useState<string>("");
   const [imageBase64, setImageBase64] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const setFormStatesAfterSubmit = (responseData: IInputFormsResponse) => {
+    setCurrentPage(responseData.formMap.nextPageMap.nextPage);
+    setPrevPage(responseData.formMap.nextPageMap.prevPage);
+    setKtpIsActive(false);
+    setKtpIsFilled(true);
+    setFormIsActive(true);
+  };
+
+  const setFormStates = (responseData: IInputFormsResponse) => {
+    setIsHome(responseData.formMap.nextPageMap.isHome);
+    setCurrentPage(responseData.formMap.nextPageMap.nextPage);
+    setPrevPage(responseData.formMap.nextPageMap.prevPage);
+  };
+
+  const getInitialProps = async () => {
+    const payload: IInputFormsRequestDataProps = {
+      id: userDetails[0].id,
+      username: userDetails[0].username,
+      email: userDetails[0].email,
+      roles: userDetails[0].roles,
+      productCode: creatingProductName,
+      currentPage: "ktp-1",
+      prevPage: "home",
+      isFromHome: isFromHome,
+      isBack: isBack,
+      isSubmit: false,
+    };
+    const response = await authorizationAxios.post("/getFormData", payload);
+    const initialPropsData: IInputFormsResponse = response.data;
+    console.log(initialPropsData);
+    setFormStates(initialPropsData);
+  };
 
   const reset = () => {
     setSource("");
@@ -98,21 +156,45 @@ const TakePhoto: React.FunctionComponent<ITakePhotoProps> = (props) => {
       reader.readAsDataURL(blob);
     });
 
-  const test = () => {
-    setIsLoading(true);
-  };
+  useEffect(() => {
+    try {
+      getInitialProps();
+    } catch (err) {
+      alert(
+        `Failed to fetch data from server, ${errorUtils.getErrorMessage(err)}`
+      );
+    }
+  }, []);
 
   const uploadImage = async () => {
     if (!imageBase64) return;
     try {
+      const payload: IInputFormsRequestSubmitForm = {
+        id: userDetails[0].id,
+        username: userDetails[0].username,
+        email: userDetails[0].email,
+        roles: userDetails[0].roles,
+        productCode: creatingProductName,
+        currentPage: "ktp-1",
+        prevPage: "home",
+        isBack: isBack,
+        isSubmit: true,
+        inputData: { ktpPhoto: imageBase64 },
+        autofillData: {},
+      };
+      console.log(payload);
+      
       setIsLoading(true);
-      const response = await axios.post("/asd", imageBase64);
-      console.log(response);
+      const response = await authorizationAxios.post("/getFormData", payload);
+      const formResponseData: IInputFormsResponse = response.data;
+      setFormStatesAfterSubmit(formResponseData);
+      console.log(formResponseData);
       reset();
       alert("Uploaded image successfully");
       router.back();
     } catch (err) {
       alert(`Failed to upload image, ${errorUtils.getErrorMessage(err)}`);
+      reset();
     }
   };
 
@@ -122,7 +204,9 @@ const TakePhoto: React.FunctionComponent<ITakePhotoProps> = (props) => {
     if (files.length !== 0) {
       const file = files[0];
       const convertedImage = await convertBlobToBase64(file);
-      convertedImage ? setImageBase64("") : setImageBase64(convertedImage!);
+      console.log(convertedImage);
+      
+      convertedImage ? setImageBase64(convertedImage!) : setImageBase64("");
       const newUrl = URL.createObjectURL(file);
       setSource(newUrl);
     }
@@ -196,7 +280,7 @@ const TakePhoto: React.FunctionComponent<ITakePhotoProps> = (props) => {
           </label>
           {source && (
             <div
-              onClick={test}
+              onClick={uploadImage}
               className="p-4 rounded-full shadow-lg bg-whiteGrey"
             >
               <svg className="w-14 h-14 text-pink">

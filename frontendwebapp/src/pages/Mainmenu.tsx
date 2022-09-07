@@ -31,6 +31,7 @@ import MainMenuTitle from "components/titles/MainMenuTitle";
 import ProductCard from "components/cards/ProductCard";
 
 import { useMain } from "context/mainContext";
+import { useHistory } from "context/historyContext";
 
 interface IMainMenuProps {}
 
@@ -48,13 +49,32 @@ interface IPayIcons {
 
 const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
   const { logout, testPostAuth, userDetails } = useAuth();
-  const { setProductSectionSelected } = useMain();
-  const {user, setUser, setCurrentPage} = useMain();
+  const { history } = useHistory();
+  const {
+    setProductSectionSelected,
+    setCurrentPage,
+    currentPage,
+    prevPage,
+    setPrevPage,
+  } = useMain();
 
   useEffect(() => {
-    setUser(userDetails[0]);
-    setCurrentPage("home");
-  }, [])
+    setCurrentPage("mainmenu");
+    console.log(currentPage);
+    // console.log(userDetails);
+    // setCurrentPage(history[history.length - 1]);
+    // setPrevPage(history[history.length - 2]);
+    // console.log(currentPage);
+    // console.log(prevPage);
+  }, []);
+
+  const printCurrentPage = () => {
+    console.log(history.length - 1);
+    console.log(history.length - 2);
+    console.log(currentPage);
+    console.log(prevPage);
+    console.log(history);
+  };
 
   const frameStyle = {
     gap: "12",
@@ -62,19 +82,19 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
 
   const productList = [
     {
-      productName: 'Credit Card',
+      productName: "Credit Card",
       color: "black",
       // function setCreditCardPressed on product section
       // on Link clicked, perform the above function
     },
     {
-      productName: 'Savings',
+      productName: "Savings",
       color: "",
       // function setCreditCardPressed on product section
       // on Link clicked, perform the above function
     },
     {
-      productName: 'Loan',
+      productName: "Loan",
       color: "lightBlue",
       // function setCreditCardPressed on product section
       // on Link clicked, perform the above function
@@ -141,10 +161,10 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
   ];
 
   const productSelectedValues = {
-    'Credit Card': 'credit',
-    'Savings': 'savings',
-    'Loan': 'loan'
-  }
+    "Credit Card": "credit",
+    Savings: "savings",
+    Loan: "loan",
+  };
 
   // const testPostAuths = async () => {
   //   try {
@@ -167,7 +187,7 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
             <Image src={SimobiLogo} alt="Login Pic" layout="responsive" />
           </div>
           <div className="flex flex-row justify-end w-full gap-3">
-            <div onClick={testPostAuth}>
+            <div onClick={printCurrentPage}>
               <Settings />
             </div>
             <div onClick={logout}>
@@ -234,16 +254,21 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
         >
           {productList.map((product) => {
             return (
-              <div onClick={() => {
-                switch(product.productName){
-                  case 'Credit Card': setProductSectionSelected('credit');
-                  break;
-                  case 'Savings': setProductSectionSelected('savings');
-                  break;
-                  case 'Loan' : setProductSectionSelected('loan');
-                  break;
-                }
-              }}>
+              <div
+                onClick={() => {
+                  switch (product.productName) {
+                    case "Credit Card":
+                      setProductSectionSelected("credit");
+                      break;
+                    case "Savings":
+                      setProductSectionSelected("savings");
+                      break;
+                    case "Loan":
+                      setProductSectionSelected("loan");
+                      break;
+                  }
+                }}
+              >
                 <ProductCard
                   productName={product.productName}
                   color={product.color}

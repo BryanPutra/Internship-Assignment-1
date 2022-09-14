@@ -53,6 +53,7 @@ public class LoginController {
 		Authentication authentication = authenticationManager.authenticate(
 										new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
 																				loginRequest.getPassword()));
+		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		UserDetailsImplements userDetails = (UserDetailsImplements) authentication.getPrincipal();
 		ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);

@@ -4,24 +4,31 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.bson.Document;
 import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.tim7.eform.mongo.MongoQuery;
+import com.tim7.eform.repository.UserRepository;
 
 import lombok.SneakyThrows;
 
 public class FormDataBO{
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	public static Logger log = Logger.getLogger(FormDataBO.class);
 	
@@ -90,7 +97,6 @@ public class FormDataBO{
 		}else {
 //		Check if user is going back to the previous page
 			if(isBack == true){
-				currentPage = prevPage;
 				if(currentPage.equals("home")) {
 					returnMap.put("isHome", true);
 					return returnMap;
@@ -111,12 +117,19 @@ public class FormDataBO{
 						//If found a match between "currentPage" and current element of "productPageList"
 						//e.g: ktp-2 = ktp-2
 						if(currentPage.equals(productPageList.get(j))) {
-							if(isFromHome) {
+							if(isBack) {
+								if(j > 0) {
+									nextPage = (String) productPageList.get(j-1);
+									if(j > 1)prevPage = (String) productPageList.get(j-2);
+									else prevPage = "home";
+								}else {
+									nextPage = "home";
+								}
+							}else if(isFromHome) {
 								nextPage = (String) productPageList.get(j);
 								prevPage = "home";
 								break;
-							}else
-							if(j == productPageList.size()-1) {
+							}else if(j == productPageList.size()-1) {
 								//Check if the current index points at last element of a "pageList"
 								//and last element of "requirementList"
 								if(i != productRequirementList.size()-1) {
@@ -141,9 +154,6 @@ public class FormDataBO{
 				}
 			}
 		}
-		
-		
-		
 		//FieldName List
 		if(currentPage.equals("ktp-1") && !isFromHome) {
 			nextPage = "home";
@@ -189,6 +199,48 @@ public class FormDataBO{
 		
 		
 		return returnMap; 
+	}
+	
+	public String submitRegistrationData(String email, String cif, String ktpId, Map inputData, Map autofillData) {
+		
+		List inputDataKey = new LinkedList(inputData.keySet());
+		List autofillKey = new LinkedList(autofillData.keySet());
+		
+		List inputDataValue = new LinkedList(inputData.values());
+		List autofillValue = new LinkedList(autofillData.values());
+		//if user input is different from the autofill data, then submit the user input
+		if(!inputDataKey.equals(autofillKey) || !inputDataValue.equals(autofillValue)) {
+			System.out.println("Found input difference");
+			if(userRepository.existsByEmail(email)) {
+				MongoQuery mq = new MongoQuery();
+				Document userDoc = mq.getUser(email, cif, ktpId);
+				List collectedData = new LinkedList();
+				collectedData = (List)userDoc.get("collectedData");
+				
+				Set updatedCollectedData = new HashSet();
+				if(userDoc.containsKey("collectedData")) {
+					updatedCollectedData = new HashSet(collectedData);
+				}
+
+				int length = inputDataKey.size();
+				for(int i = 0 ; i < length ; i++) {
+					String currentInputKey = (String)inputDataKey.get(i);
+					userDoc.append(currentInputKey, inputData.get(currentInputKey));
+					updatedCollectedData.add(currentInputKey);
+				}
+				userDoc.append("collectedData", updatedCollectedData);
+				
+				mq.updateUser(email, cif, ktpId, userDoc);
+				return "OK";
+			}
+		}else if(inputDataKey.equals(autofillKey) && inputDataValue.equals(autofillValue)) {
+			System.out.println("Input is same as autofill data");
+			return "No changes";
+		}
+		
+		
+		
+		return null;
 	}
 	
 	public Map getAutofillData(String email, String cif, String ktpId, List fieldList) throws UsernameNotFoundException {

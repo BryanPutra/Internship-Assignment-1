@@ -59,7 +59,7 @@
 						},
 						{
 							"fieldCode" : "ktp-2-7",
-							"component" : "genderpicker",
+							"component" : "picker",
 							"fieldName" : "genderKtp",
 							"label" : "Gender"
 						},

@@ -58,7 +58,6 @@ public class FormController {
 	public ResponseEntity<Map> getFormData(/*@RequestHeader(value="Authorization", required = true) String basicAuth, */@RequestBody final Map formData) {
 		Map returnMap = new HashMap();
 		Map formMap = new HashMap();
-		System.out.println(formData);
 		String id = (String)formData.get("id");
 		String email = (String)formData.get("email");
 		String cif = (String)formData.get("cif");
@@ -82,46 +81,10 @@ public class FormController {
 			
 			inputData = (Map) formData.get("inputData");
 			autofillData = (Map) formData.get("autofillData");
-			List inputDataKey = new LinkedList(inputData.keySet());
-			List autofillKey = new LinkedList(autofillData.keySet());
 			
-			List inputDataValue = new LinkedList(inputData.values());
-			List autofillValue = new LinkedList(autofillData.values());
-			//if user input is different from the autofill data, then submit the user input
-			if(!inputDataKey.equals(autofillKey) || !inputDataValue.equals(autofillValue)) {
-				System.out.println("Found input difference");
-				if(userRepository.existsByEmail(email)) {
-					MongoQuery mq = new MongoQuery();
-					Document userDoc = mq.getUser(email, cif, ktpId);
-					List collectedData = new LinkedList();
-					collectedData = (List)userDoc.get("collectedData");
-					
-					Set updatedCollectedData = new HashSet();
-					if(userDoc.containsKey("collectedData")) {
-						updatedCollectedData = new HashSet(collectedData);
-					}
-
-					int length = inputDataKey.size();
-					for(int i = 0 ; i < length ; i++) {
-						String currentInputKey = (String)inputDataKey.get(i);
-						userDoc.append(currentInputKey, inputData.get(currentInputKey));
-						updatedCollectedData.add(currentInputKey);
-					}
-					userDoc.append("collectedData", updatedCollectedData);
-					
-					mq.updateUser(email, cif, ktpId, userDoc);
-					returnMap.put("submitStatus", "OK");
-				}
-			}else if(inputDataKey.equals(autofillKey) && inputDataValue.equals(autofillValue)) {
-				System.out.println("Input is same as autofill data");
-				//do nothing..
-			}
-			
-			
-			//TODO: Input Validation	
+			String submitStatus = FormDataBO.getinstance().submitRegistrationData(email, cif, ktpId, inputData, autofillData);
+			returnMap.put("submitStatus", submitStatus);
 		}
-		
-		
 		
 		formMap = FormDataBO.getinstance().getRegistrationData(email, cif, ktpId, productCode, currentPage, prevPage, isBack, isFromHome);
 	

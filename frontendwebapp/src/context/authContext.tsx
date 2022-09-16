@@ -1,10 +1,10 @@
-import { AxiosInstance, AxiosPromise } from "axios";
+import { AxiosInstance, AxiosPromise, AxiosResponse } from "axios";
 import * as React from "react";
 import { useContext, useState, createContext } from "react";
 import { useAxios } from "./axiosContext";
 import * as errorUtils from "utils/errorUtils";
 import * as dataUtils from "utils/dataUtils";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import { useMain } from "./mainContext";
 
 interface IAuthContext {
@@ -14,7 +14,8 @@ interface IAuthContext {
   setUserDetails?: React.Dispatch<React.SetStateAction<IUser[]>>;
   login: (data: Object) => Promise<any>;
   logout: () => Promise<any>;
-  testPostAuth: () => Promise<any>,
+  testPostAuth: () => Promise<any>;
+  checkAuthenticated: () => Promise<any>;
 }
 
 interface IUser {
@@ -32,6 +33,7 @@ const authContextDefault: IAuthContext = {
   login: async () => {},
   logout: async () => {},
   testPostAuth: async () => {},
+  checkAuthenticated: async () => {},
 };
 
 const AuthContext = createContext<IAuthContext>(authContextDefault);
@@ -47,18 +49,17 @@ interface IAuthProviderProps {
 const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
   const [authState, setAuthState] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<IUser[]>([]);
-  const {user, setUser} = useMain();
+  const { resetMainStates } = useMain();
   const { authenticationAxios, testAxios } = useAxios();
   const router = useRouter();
 
-  //bambangaja@gmail.com
-  //12345
+  const isAuthorized = (response: AxiosResponse) => response.status !== 401;
 
   const login = async (data: Object) => {
     try {
       const response = await authenticationAxios.post("/login", data);
-      const userDetail: IUser = response.data      
-      setUserDetails(users => [...users, userDetail]);
+      const userDetail: IUser = response.data;
+      setUserDetails((users) => [...users, userDetail]);
       // setUser({...user, id: userDetail.id, username: userDetail.username, email: userDetail.email, roles: userDetail.roles } as IUser);
       // setUser({...user, ...{id: userDetail.id, username: userDetail.username, email: userDetail.email, roles: userDetail.roles} as IUser});
       setAuthState(true);
@@ -69,18 +70,28 @@ const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
     }
   };
 
+  const checkAuthenticated = async () => {
+    try {
+      const response = await authenticationAxios.get("/");
+      if (!isAuthorized(response)) logout();
+    } catch (err) {
+      alert(`Failed to fetch, ${errorUtils.getErrorMessage(err)}`);
+    }
+  };
+
   const testPostAuth = async () => {
     try {
-      const response = await testAxios.get('/home');
+      const response = await testAxios.get("/home");
       console.log(response);
     } catch (err) {
       console.log(err);
       alert(`Failed to fetch, ${errorUtils.getErrorMessage(err)}`);
     }
-  }
+  };
 
   const logout = async () => {
     try {
+      resetMainStates();
       setAuthState(false);
       dataUtils.clearArray(userDetails);
       router.replace("/auth/login");
@@ -104,7 +115,8 @@ const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
     userDetails,
     login,
     logout,
-    testPostAuth
+    testPostAuth,
+    checkAuthenticated,
   };
   return (
     <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>

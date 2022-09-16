@@ -2,14 +2,6 @@ import * as React from "react";
 import { useContext, useState, createContext, useEffect } from "react";
 import { useRouter } from "next/router";
 
-//local
-import * as errorUtils from "utils/errorUtils";
-import * as dataUtils from "utils/dataUtils";
-
-//libs
-import { useAuth } from "./authContext";
-import { useHistory } from "./historyContext";
-
 interface IUser {
   id: string;
   username: string;
@@ -44,38 +36,47 @@ interface IMainContext {
   setFormIsActive: React.Dispatch<React.SetStateAction<boolean>>;
   formIsFilled: boolean;
   setFormIsFilled: React.Dispatch<React.SetStateAction<boolean>>;
+  resetMainStates: () => void;
 }
 
-const mainContextDefault: IMainContext = {
+interface IDefaultMainStates {
+  user: IUser;
+  productSectionSelected: string;
+  creatingProductName: string;
+  currentPage: string;
+  prevPage: string;
+  isHome: boolean;
+  isFromHome: boolean;
+  isBack: boolean;
+  isSubmit: boolean;
+  ktpIsActive: boolean;
+  ktpIsFilled: boolean;
+  formIsActive: boolean;
+  formIsFilled: boolean;
+}
+
+const defaultMainStates: IDefaultMainStates = {
   user: {} as IUser,
-  setUser: () => {},
   productSectionSelected: "",
-  setProductSectionSelected: () => {},
   creatingProductName: "",
-  setCreatingProductName: () => {},
   currentPage: "",
-  setCurrentPage: () => {},
   prevPage: "",
-  setPrevPage: () => {},
   isHome: true,
-  setIsHome: () => {},
   isFromHome: true,
-  setIsFromHome: () => {},
-  isBack: true,
-  setIsBack: () => {},
+  isBack: false,
   isSubmit: false,
-  setIsSubmit: () => {},
   ktpIsActive: false,
-  setKtpIsActive: () => {},
   ktpIsFilled: false,
-  setKtpIsFilled: () => {},
   formIsActive: false,
-  setFormIsActive: () => {},
   formIsFilled: false,
-  setFormIsFilled: () => {},
 };
 
-const MainContext = createContext<IMainContext>(mainContextDefault);
+const getInitialStates = (): IDefaultMainStates => {
+  const mainStates: string | null = localStorage.getItem("mainStates");
+  return mainStates ? JSON.parse(mainStates) : defaultMainStates;
+};
+
+const MainContext = createContext<IMainContext>({} as IMainContext);
 
 const useMain = () => {
   return useContext(MainContext);
@@ -101,6 +102,50 @@ const MainProvider: React.FunctionComponent<IMainProviderProps> = (props) => {
   const [ktpIsFilled, setKtpIsFilled] = useState<boolean>(false);
   const [formIsActive, setFormIsActive] = useState<boolean>(false);
   const [formIsFilled, setFormIsFilled] = useState<boolean>(false);
+  const [mainStates, setMainStates] =
+    useState<IDefaultMainStates>(getInitialStates);
+
+  const resetMainStates = () => {
+    setMainStates(defaultMainStates);
+    localStorage.clear();
+  };
+
+  useEffect(() => {
+    setMainStates({
+      ...mainStates,
+      user: user,
+      productSectionSelected: productSectionSelected,
+      creatingProductName: creatingProductName,
+      currentPage: currentPage,
+      prevPage: prevPage,
+      isHome: isHome,
+      isFromHome: isFromHome,
+      isBack: isBack,
+      isSubmit: isSubmit,
+      ktpIsActive: ktpIsActive,
+      ktpIsFilled: ktpIsFilled,
+      formIsActive: formIsActive,
+      formIsFilled: formIsFilled,
+    });
+  }, [
+    user,
+    productSectionSelected,
+    creatingProductName,
+    currentPage,
+    prevPage,
+    isHome,
+    isFromHome,
+    isBack,
+    isSubmit,
+    ktpIsActive,
+    ktpIsFilled,
+    formIsActive,
+    formIsFilled,
+  ]);
+
+  useEffect(() => {
+    localStorage.setItem("mainStates", JSON.stringify(mainStates));
+  }, [mainStates]);
 
   useEffect(() => {
     switch (currentPage) {
@@ -145,6 +190,7 @@ const MainProvider: React.FunctionComponent<IMainProviderProps> = (props) => {
     setFormIsActive,
     formIsFilled,
     setFormIsFilled,
+    resetMainStates,
   };
   return (
     <MainContext.Provider value={value}>{props.children}</MainContext.Provider>

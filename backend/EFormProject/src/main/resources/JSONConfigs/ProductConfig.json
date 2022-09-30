@@ -1,50 +1,50 @@
 { "productList": [
     {
         "product" : "savings",
-        "requirementList" : [
-        	{
-        		"requirement" : "ktp",
-        		"pageList" : [
-        			"ktp-1",
-        			"ktp-2",
-       				"ktp-3"
-        		]
-        	},
-        	{
-				"requirement" : "income",
-        		"pageList" : [
-        			"income-1",
-        			"income-2",
-       				"income-3"
-        		]       	
-        	}
-        ]
+        "sectionList" :[
+				{
+					"sectionId" : "S-KTP-1",
+					"requirement": "ktp",
+					"sectionTitle" : "Foto KTP",
+					"pageList" : [
+        				"ktp-1"
+        			]
+				},
+				{
+					"sectionId" : "S-KTP-2",
+					"requirement": "ktp",
+					"sectionTitle" : "Form Data KTP",
+					"pageList" : [
+        				"ktp-2",
+       					"ktp-3"
+        			]
+				}
+       	]
     },
     {
-        "product": "P2",
-        "requirementList" : [
-        	{
-        		"requirement" : "ktp",
-        		"requirementDetails" : [
-					"ktp-1",
-        			"ktp-2",
-       				"ktp-3" 
-        		]
-        	}
-        ]
-    },
-    {
-        "product": "P3",
-        "requirementList" : [
-        	{
-        		"requirement" : "ktp",
-        		"requirementDetails" : [
-					"ktp-1",
-        			"ktp-2",
-       				"ktp-3" 
-        		]
-        	}
-        ]
-    }	
-    ]
+        "product" : "P2",
+        "sectionList" :[
+				{
+					"sectionTitle" : "Foto KTP",
+					"pageList" : [
+        				"ktp-1"
+        			]
+				},
+				{
+					"sectionTitle" : "Form Data KTP",
+					"pageList" : [
+        				"ktp-2",
+       					"ktp-3"
+        			]
+				},
+				{
+					"sectionTitle" : "Income",
+					"pageList" : [
+        				"income-1",
+       					"income-2"
+        			]
+				}
+       	]
+    }
+   ]
 }

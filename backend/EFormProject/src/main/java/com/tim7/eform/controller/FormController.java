@@ -68,16 +68,18 @@ public class FormController {
 		Boolean isBack = (Boolean) formData.get("isBack");
 		Boolean isSubmit = (Boolean) formData.get("isSubmit");
 		Boolean isFromHome = (Boolean) formData.get("isFromHome");
-
+		
 		//validate booleans, DO NOT REMOVE
 		if(isSubmit==null) isSubmit = false;
 		if(isFromHome == null) isFromHome = false;
 		if(isBack == null) isBack = false;
 		
-		//TODO: Make new class to process submits in FormDataBO
+		formMap = FormDataBO.getinstance().getRegistrationData(email, cif, ktpId, productCode, currentPage, prevPage, isBack, isFromHome);
+		
 		if(isSubmit) {
 			Map inputData = new HashMap();
 			Map autofillData = new HashMap();
+			Map nextPageMap = new HashMap();
 			
 			inputData = (Map) formData.get("inputData");
 			autofillData = (Map) formData.get("autofillData");
@@ -85,8 +87,6 @@ public class FormController {
 			String submitStatus = FormDataBO.getinstance().submitRegistrationData(email, cif, ktpId, inputData, autofillData);
 			returnMap.put("submitStatus", submitStatus);
 		}
-		
-		formMap = FormDataBO.getinstance().getRegistrationData(email, cif, ktpId, productCode, currentPage, prevPage, isBack, isFromHome);
 	
 		returnMap.put("formMap", formMap);
 		return new ResponseEntity<Map>(returnMap,HttpStatus.OK);

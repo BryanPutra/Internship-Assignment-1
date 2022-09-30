@@ -45,6 +45,21 @@ public class MongoQuery {
 		return doc;
 	}
 	
+	public Document getUserFormData(String email, String cif, String ktpId) {
+		Document doc, userDoc;
+		Map filter = filterSelection(email, cif, ktpId);
+		fieldName = (String) filter.get("filterName");
+		filterVal = (String) filter.get("value");
+		
+		try (MongoClient mongoClient = MongoClients.create(uri)){
+			MongoDatabase database = mongoClient.getDatabase("eform_project");
+			MongoCollection<Document> collection = database.getCollection("users");
+			userDoc = collection.find(eq(fieldName, filterVal)).first();
+		}
+		doc = (Document) userDoc.get("formData");
+		return doc;
+	}
+	
 	public Document getCollectedData(String email, String cif, String ktpId) {
 		Document returnDoc = new Document();
 		Document doc = getUser(email, cif, ktpId);

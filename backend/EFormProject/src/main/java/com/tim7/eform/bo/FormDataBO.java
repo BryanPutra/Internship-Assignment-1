@@ -74,9 +74,10 @@ public class FormDataBO{
 		String currentRequirement = null;
 		Map productConfigMap = new HashMap();
 		Map pageConfigMap = new HashMap();
-		
-		List productRequirementList = new LinkedList();
-		List productPageList = new LinkedList();
+		Map currentSectionMap = new HashMap();
+	
+		List productSectionList = new LinkedList();
+		List sectionPageList = new LinkedList();
 		List pageNameList = new LinkedList();
 		List fieldList = new LinkedList();
 		List fieldNameList = new LinkedList();
@@ -85,72 +86,68 @@ public class FormDataBO{
 		boolean isDone = false; 
 		
 		productConfigMap = getProductRequirementsFromFile(productCode);
-		productRequirementList = (List) productConfigMap.get("requirementList");
+		productSectionList = (List) productConfigMap.get("sectionList");
 		
 //		If user is entering a new form
 		if(currentPage == null) {
 			System.out.println("current page is null");
-			Map targetRequirementMap = (Map)productRequirementList.get(0);
+			Map targetRequirementMap = (Map)productSectionList.get(0);
 			currentRequirement = (String)targetRequirementMap.get("requirement");
-			productPageList = (List)targetRequirementMap.get("pageList");
-			nextPage = (String)productPageList.get(0);
+			productSectionList = (List)targetRequirementMap.get("pageList");
+			nextPage = (String)productSectionList.get(0);
 		}else {
-//		Check if user is going back to the previous page
-			if(isBack == true){
-				if(currentPage.equals("home")) {
-					returnMap.put("isHome", true);
-					return returnMap;
-				}
-			}
-			for(int i = 0 ; i < productRequirementList.size() ; i++) {
-				Map targetRequirementMap = (Map)productRequirementList.get(i);
-				currentRequirement = (String)targetRequirementMap.get("requirement");
+			//TODO : Check when user is going back
+			Map targetSectionMap = new HashMap();
+			for(int i = 0 ; i < productSectionList.size() ; i++) {
+				targetSectionMap = (Map)productSectionList.get(i);
+				currentRequirement = (String)targetSectionMap.get("requirement");
 				/*		Check If user's current page contains the requirement name on the current index
 						If true, do another loop to find the precise position of the pageName,
 							e.g: where is precisely ktp-2 located inside the list,
 						   	and what is the next and previous element of the list						*/
 				if(currentPage.contains(currentRequirement)) {
-					productPageList = (List)targetRequirementMap.get("pageList");
-					int pageListLength = productPageList.size();
+					sectionPageList = (List)targetSectionMap.get("pageList");
+					int pageListLength = sectionPageList.size();
 					
 					for(int j = 0 ; j < pageListLength ; j++) {
-						//If found a match between "currentPage" and current element of "productPageList"
+						//If found a match between "currentPage" and current element of "sectionPageList"
 						//e.g: ktp-2 = ktp-2
-						if(currentPage.equals(productPageList.get(j))) {
+						if(currentPage.equals(sectionPageList.get(j))) {
+							currentSectionMap = targetSectionMap;
 							if(isBack) {
 								if(j > 0) {
-									nextPage = (String) productPageList.get(j-1);
-									if(j > 1)prevPage = (String) productPageList.get(j-2);
+									nextPage = (String) sectionPageList.get(j-1);
+									if(j > 1)prevPage = (String) sectionPageList.get(j-2);
 									else prevPage = "home";
 								}else {
 									nextPage = "home";
 								}
 							}else if(isFromHome) {
-								nextPage = (String) productPageList.get(j);
+								nextPage = (String) sectionPageList.get(j);
 								prevPage = "home";
 								break;
-							}else if(j == productPageList.size()-1) {
+							}else if(j == sectionPageList.size()-1) {
 								//Check if the current index points at last element of a "pageList"
-								//and last element of "requirementList"
-								if(i != productRequirementList.size()-1) {
-									targetRequirementMap = (Map)productRequirementList.get(i+1);
-									productPageList = (List)targetRequirementMap.get("pageList");
-									nextPage = (String)productPageList.get(0);
+								//and last element of "SectionList"
+								if(i != productSectionList.size()-1) {
+									targetSectionMap = (Map)productSectionList.get(i+1);
+									sectionPageList = (List)targetSectionMap.get("pageList");
+									nextPage = (String)sectionPageList.get(0);
 								}else {
 									isDone = true;
 									return returnMap;
 								}
 							}else {
-								nextPage = (String) productPageList.get(j+1);
+								nextPage = (String) sectionPageList.get(j+1);
 								if(j>0) {
-									prevPage = (String) productPageList.get(j-1);
+									prevPage = (String) sectionPageList.get(j-1);
 								}else {
 									prevPage = "home";
 								}
 							}
+							break;
 						}
 					}
-					break;
 				}
 			}
 		}
@@ -166,6 +163,7 @@ public class FormDataBO{
 			int pageNameListSize = pageNameList.size();
 			for(int i = 0 ; i < pageNameListSize ; i++) {
 				Map targetPage = (Map)pageNameList.get(i);
+				
 				String targetPageName = (String) targetPage.get("pageCode");
 				if(nextPage.equals(targetPageName)) {
 					returnMap.put("fields", targetPage.get("fields"));
@@ -184,11 +182,11 @@ public class FormDataBO{
 			returnMap.put("prevPage", "home");
 		}else returnMap.put("prevPage", currentPage);
 
-		
 		returnMap.put("isHome", isHome);
 		returnMap.put("isDone", isDone);
 		returnMap.put("nextPage", nextPage);
 		returnMap.put("fieldNameList", fieldNameList);
+		returnMap.put("sectionPageMap", currentSectionMap);
 		return returnMap;
 	}
 	
@@ -199,6 +197,18 @@ public class FormDataBO{
 		
 		
 		return returnMap; 
+	}
+	
+	public Map getPageFromSection(String productCode) {
+		Map returnMap = new HashMap();
+		Map productConfigMap = new HashMap();
+		List productSectionList = new LinkedList();
+		
+		
+		productConfigMap = getProductRequirementsFromFile(productCode);
+		productSectionList = (List) productConfigMap.get("sectionList");
+		
+		return returnMap;
 	}
 	
 	public String submitRegistrationData(String email, String cif, String ktpId, Map inputData, Map autofillData) {
@@ -214,21 +224,30 @@ public class FormDataBO{
 			if(userRepository.existsByEmail(email)) {
 				MongoQuery mq = new MongoQuery();
 				Document userDoc = mq.getUser(email, cif, ktpId);
+				
+				Map formData = new HashMap();
+				Map additionalData = new HashMap();
 				List collectedData = new LinkedList();
-				collectedData = (List)userDoc.get("collectedData");
+				
+				formData = (Map)userDoc.get("formData");
+				additionalData = (Map)userDoc.get("additionalData");
+				
+				collectedData = (List)additionalData.get("collectedData");
 				
 				Set updatedCollectedData = new HashSet();
-				if(userDoc.containsKey("collectedData")) {
+				if(additionalData.containsKey("collectedData")) {
 					updatedCollectedData = new HashSet(collectedData);
 				}
 
 				int length = inputDataKey.size();
 				for(int i = 0 ; i < length ; i++) {
 					String currentInputKey = (String)inputDataKey.get(i);
-					userDoc.append(currentInputKey, inputData.get(currentInputKey));
+					formData.put(currentInputKey, inputData.get(currentInputKey));
 					updatedCollectedData.add(currentInputKey);
 				}
 				userDoc.append("collectedData", updatedCollectedData);
+				
+				//TODO: check if the section is fully completed or partially completed
 				
 				mq.updateUser(email, cif, ktpId, userDoc);
 				return "OK";
@@ -237,8 +256,6 @@ public class FormDataBO{
 			System.out.println("Input is same as autofill data");
 			return "No changes";
 		}
-		
-		
 		
 		return null;
 	}

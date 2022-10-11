@@ -1,5 +1,6 @@
 package com.tim7.eform.controller;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -49,10 +50,6 @@ public class FormController {
 		return "Project EForm Tim 7";
 	}
 	
-	String test() {
-		return "a";
-	}
-	
 	@PostMapping("/getFormData")
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Map> getFormData(/*@RequestHeader(value="Authorization", required = true) String basicAuth, */@RequestBody final Map formData) {
@@ -92,4 +89,20 @@ public class FormController {
 		return new ResponseEntity<Map>(returnMap,HttpStatus.OK);
 	}
 	
+	@GetMapping("/test")
+	String test() {
+		return "test() method successfully called";
+	}
+	
+	@PostMapping("/insertImage")
+	public String insertImage(@RequestBody final Map formData) throws URISyntaxException {
+		
+		String base64String = (String)formData.get("ktpPhoto");
+		String cif = (String)formData.get("cif");
+		String email = (String)formData.get("email");
+		
+		FormDataBO.getinstance().storeBase64KtpPhoto(base64String, cif, email);
+		
+		return "Insert Complete";
+	}
 }

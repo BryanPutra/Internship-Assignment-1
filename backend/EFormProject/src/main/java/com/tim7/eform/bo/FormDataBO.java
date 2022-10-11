@@ -1,7 +1,11 @@
 package com.tim7.eform.bo;
 
-import java.io.File;
+import javax.xml.bind.DatatypeConverter;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,21 +53,38 @@ public class FormDataBO{
 		Map nextPageMap = new HashMap();
 		List fieldNameList = new LinkedList();
 		Map autofillMap = new HashMap();
-		Boolean isHome = false;
 		
-		nextPageMap = getNextPage(productCode,currentPage,prevPage,isBack, isFromHome);
-		fieldNameList = (List) nextPageMap.get("fieldNameList");
-		nextPageMap.remove("fieldNameList");
-		isHome = (Boolean) nextPageMap.get("isHome");
-		
-		if(!isHome && isHome != null) {
-			autofillMap = getAutofillData(email, cif, ktpId, fieldNameList);			
-			returnMap.put("autofillMap", autofillMap);
+		if(!currentPage.equals("home")) {
+			nextPageMap = getNextPage(productCode,currentPage, prevPage, isBack, isFromHome);
+			fieldNameList = (List) nextPageMap.get("fieldNameList");
+			nextPageMap.remove("fieldNameList");
+			boolean isHome = (boolean) nextPageMap.get("isHome");
+			boolean isDone = (boolean) nextPageMap.get("isDone");
+			if(!isHome && !isDone) {
+				autofillMap = getAutofillData(email, cif, ktpId, fieldNameList);
+				returnMap.put("nextPageMap", nextPageMap);
+				returnMap.put("autofillMap", autofillMap);
+				log.info("User ["+email+"] requested '"+nextPageMap.get("nextPage")+"' isFromHome:"+isFromHome);
+			}else if(isHome) {
+				List sectionList = new LinkedList();
+				sectionList = getSectionData(productCode, email, cif, ktpId);
+				returnMap.put("sectionMap", sectionList);
+				log.info("User ["+email+"] requested section page of '"+productCode+"' isBack:"+isBack);
+			}else if(isDone) {
+				//TODO: Figure out what to do when it's done
+			}
+		}else {
+			List sectionList = new LinkedList();
+			sectionList = getSectionData(productCode, email, cif, ktpId);
+			System.out.println("B");
+			returnMap.put("sectionList", sectionList);
+			log.info("User ["+email+"] requested section page of '"+productCode+"' isBack:"+isBack);
 		}
 		
-		returnMap.put("nextPageMap", nextPageMap);
 		
-		log.info("User ["+email+"] requested '"+nextPageMap.get("nextPage")+"' isFromHome:"+isFromHome);
+		
+		
+		
 		
 		return returnMap;
 	}
@@ -74,7 +95,6 @@ public class FormDataBO{
 		String currentRequirement = null;
 		Map productConfigMap = new HashMap();
 		Map pageConfigMap = new HashMap();
-		Map currentSectionMap = new HashMap();
 	
 		List productSectionList = new LinkedList();
 		List sectionPageList = new LinkedList();
@@ -95,8 +115,9 @@ public class FormDataBO{
 			currentRequirement = (String)targetRequirementMap.get("requirement");
 			productSectionList = (List)targetRequirementMap.get("pageList");
 			nextPage = (String)productSectionList.get(0);
+		}else if(isBack && prevPage.equals("home")) {
+			isHome = true;
 		}else {
-			//TODO : Check when user is going back
 			Map targetSectionMap = new HashMap();
 			for(int i = 0 ; i < productSectionList.size() ; i++) {
 				targetSectionMap = (Map)productSectionList.get(i);
@@ -113,7 +134,6 @@ public class FormDataBO{
 						//If found a match between "currentPage" and current element of "sectionPageList"
 						//e.g: ktp-2 = ktp-2
 						if(currentPage.equals(sectionPageList.get(j))) {
-							currentSectionMap = targetSectionMap;
 							if(isBack) {
 								if(j > 0) {
 									nextPage = (String) sectionPageList.get(j-1);
@@ -135,7 +155,7 @@ public class FormDataBO{
 									nextPage = (String)sectionPageList.get(0);
 								}else {
 									isDone = true;
-									return returnMap;
+									break;
 								}
 							}else {
 								nextPage = (String) sectionPageList.get(j+1);
@@ -157,7 +177,7 @@ public class FormDataBO{
 			prevPage = "ktp-1";
 			isHome = true;
 			returnMap.put("isHome", isHome);
-		}else {
+		}else if(!isDone || !isHome){
 			pageConfigMap = getPageDetailsFromFile(currentRequirement);
 			pageNameList = (List)pageConfigMap.get("page");
 			int pageNameListSize = pageNameList.size();
@@ -178,49 +198,195 @@ public class FormDataBO{
 			}
 		}
 		
+		//check if isHome (user is in the product sections page)
+		
 		if(isFromHome) {
 			returnMap.put("prevPage", "home");
 		}else returnMap.put("prevPage", currentPage);
+		
+		if(!isHome) {
+			returnMap.put("nextPage", nextPage);
+			returnMap.put("fieldNameList", fieldNameList);			
+		}
 
 		returnMap.put("isHome", isHome);
 		returnMap.put("isDone", isDone);
-		returnMap.put("nextPage", nextPage);
-		returnMap.put("fieldNameList", fieldNameList);
-		returnMap.put("sectionPageMap", currentSectionMap);
 		return returnMap;
 	}
+	
+	
+	
+	
 	
 	//Call this first when user clicked on one of the product button
-	public Map getSectionData() {
-		Map returnMap = new HashMap();
-		
-		
-		
-		return returnMap; 
-	}
-	
-	public Map getPageFromSection(String productCode) {
-		Map returnMap = new HashMap();
+	//This function should also be called somewhere in the getNextPage()
+	public List getSectionData(String productCode, String email, String cif, String ktpId) {
+
 		Map productConfigMap = new HashMap();
-		List productSectionList = new LinkedList();
+		Map pageConfigMap = new HashMap();
+		List returnSectionList = new LinkedList();
+		List collectedData = new LinkedList();
+		List sectionList = new LinkedList();
+		List pageList = new LinkedList();
+
+		String prevStatus = null;
 		
-		
+//		Fetch all collected data from the user into a List
+		Document userDoc = mq.getUser(email, cif, ktpId);
+		collectedData = (List)userDoc.get("collectedData");
+	
+//		Map the JSON Product Config into productConfigMap
+//		and get section list from Map
 		productConfigMap = getProductRequirementsFromFile(productCode);
-		productSectionList = (List) productConfigMap.get("sectionList");
+		sectionList = (List)productConfigMap.get("sectionList");
 		
-		return returnMap;
+//		Outer Loop #0 	-> search the sectionList to find all section belonging to the productCode
+//		Inner Loop #1 	-> search the pageList to find matching pages that belongs to the current outer loop 'section'
+//		Inner Loop #2 	-> search the fieldList of current Page and match it with collectedData
+//		IF	::	-> Found SOME matches	, THEN mark the section as	"In Progress"
+//				-> NO matches			, THEN						"Not yet filled"
+//				-> ALL matches			, THEN						"Completed"
+//		
+		//	#0
+		int sectionListLength = sectionList.size();
+		for(int i = 0 ; i < sectionListLength ; i++) {
+			Map currentSectionMap = (Map)sectionList.get(i);
+			Map sectionMapPayload = currentSectionMap;
+			List currentSectionPageList = (List) currentSectionMap.get("pageList");
+			String currentRequirement = (String) currentSectionMap.get("requirement");
+			boolean hasOneFilled = false;
+			boolean hasOneUnfilled = false;
+			boolean allPageFilled = true;
+			boolean allPageUnfilled = true;
+			boolean sectionInProgress = false;
+			
+			pageConfigMap = getPageDetailsFromFile(currentRequirement);
+			pageList = (List)pageConfigMap.get("page");
+			
+			//	#1
+			int sectionPageListLength = currentSectionPageList.size();
+			for(int j = 0 ; j < sectionPageListLength ; j++) {
+				String currentSectionPageCode = (String)currentSectionPageList.get(i);
+				String checkStatus = null;
+				
+				// #1.1
+				int pageListLength = pageList.size();
+				for(int k = 0 ; k < pageListLength ; k++) {
+					Map currentPageMap = (Map)pageList.get(k);
+					String currentPageConfigCode = (String) currentPageMap.get("pageCode");
+					if(currentSectionPageCode.equals(currentPageConfigCode)) {
+						checkStatus = checkIfFilled((List)currentPageMap.get("fields"), collectedData);
+						break;
+					}
+					
+				}
+				
+				//Section boolean IFs
+				if(checkStatus.equals("COMPLETED")) {
+					hasOneFilled = true;
+					allPageUnfilled = false;
+				}else if(checkStatus.equals("NOT FILLED")) {
+					hasOneUnfilled = true;
+					allPageFilled = false;
+				}else if(checkStatus.equals("IN PROGRESS") || (hasOneFilled && hasOneUnfilled)){
+					sectionInProgress = true;
+				}
+			}
+			
+			//Check if all page in the section is not yet filled
+			if(allPageUnfilled) {
+				sectionMapPayload.put("sectionStatus", "INCOMPLETE");
+				//Check if it's the first section of the product or the section before is already COMPLETE
+				if(prevStatus == null || prevStatus.equals("COMPLETE")) {
+					sectionMapPayload.put("disabled", false);
+				}
+				else {
+					sectionMapPayload.put("disabled", true);
+				}
+				prevStatus = "INCOMPLETE";
+			}
+			//Check if all page in the section is filled
+			else if(allPageFilled){
+				sectionMapPayload.put("sectionStatus", "COMPLETE");
+				sectionMapPayload.put("disabled", false);
+				prevStatus = "COMPLETE";
+			}
+			//Check if SOME page in the section is filled
+			else if(sectionInProgress) {
+				sectionMapPayload.put("sectionStatus", "IN PROGRESS");
+				sectionMapPayload.put("disabled", false);
+				prevStatus = "IN PROGRESS";
+			}
+			returnSectionList.add(sectionMapPayload);
+		}
+		
+		return returnSectionList; 
 	}
 	
+//		This function determines the state of CURRENT PAGE & is a complementary function for getSectionData()
+//	 	RETURNS:		COMPLETED		IF ->	ALL fields in this page have been filled
+//						NOT FILLED		IF ->	ALL fields in this page have not been filled
+//						IN PROGRESS		IF ->	SOME fields in this page are filled
+	public String checkIfFilled(List fieldList, List collectedData) {
+		String checkStatus = "COMPLETED";
+		int fieldListLength = fieldList.size();
+		boolean hasOneFilled = false;
+		boolean hasOneUnfilled = false;
+		boolean allFilled = true;
+		boolean allUnfilled = true;
+		
+		// #2
+		for(int i = 0 ; i < fieldListLength ; i++) {
+			Map currentFieldMap = (Map)fieldList.get(i);
+			String currentFieldName = (String)currentFieldMap.get("fieldName");
+			String currentFieldFlag = "NOT FILLED";
+			
+			// #2.1
+			int collectedDataLength = collectedData.size();
+			for(int j = 0 ; j < collectedDataLength ; j++) {
+				if(currentFieldName.equals(collectedData.get(j))) {
+					currentFieldFlag = "FILLED";
+					hasOneFilled = true;
+					allUnfilled = false;
+					collectedData.remove(j);
+					break;
+				}
+			}
+			if(currentFieldFlag.equals("NOT FILLED")) {
+				hasOneUnfilled = true;
+				allFilled = false;
+			}
+		}
+		
+		if(allFilled) {
+			checkStatus = "COMPLETED";
+		}else if(allUnfilled) {
+			checkStatus = "NOT FILLED";
+		}else if(hasOneFilled && hasOneUnfilled) {
+			checkStatus = "IN PROGRESS";
+		}
+		
+		return checkStatus;
+	}
+	
+	
+	
+	
+	
+//	This function controls submit logic
 	public String submitRegistrationData(String email, String cif, String ktpId, Map inputData, Map autofillData) {
 		
+		//Key set of current page's inputData & autofillData Map
 		List inputDataKey = new LinkedList(inputData.keySet());
 		List autofillKey = new LinkedList(autofillData.keySet());
 		
+		//Value set of current page's inputData & autofillData Map
 		List inputDataValue = new LinkedList(inputData.values());
 		List autofillValue = new LinkedList(autofillData.values());
-		//if user input is different from the autofill data, then submit the user input
+		
+		// Check If user input is different from the autofill data, 
+		// then submit the user input else skip the loop
 		if(!inputDataKey.equals(autofillKey) || !inputDataValue.equals(autofillValue)) {
-			System.out.println("Found input difference");
 			if(userRepository.existsByEmail(email)) {
 				MongoQuery mq = new MongoQuery();
 				Document userDoc = mq.getUser(email, cif, ktpId);
@@ -239,15 +405,23 @@ public class FormDataBO{
 					updatedCollectedData = new HashSet(collectedData);
 				}
 
+
+//				INPUT TO USERDOC LOOP
+//				
 				int length = inputDataKey.size();
 				for(int i = 0 ; i < length ; i++) {
 					String currentInputKey = (String)inputDataKey.get(i);
-					formData.put(currentInputKey, inputData.get(currentInputKey));
+					//Check if the input is ktpPhoto
+					if(currentInputKey.equals("ktpPhoto")) {
+						String imagePath = storeBase64KtpPhoto((String)inputData.get("currentInputKey"), email, cif);
+						formData.put(currentInputKey, imagePath);
+					}else {
+						formData.put(currentInputKey, inputData.get(currentInputKey));
+					}
 					updatedCollectedData.add(currentInputKey);
 				}
+				userDoc.append("formData", formData);
 				userDoc.append("collectedData", updatedCollectedData);
-				
-				//TODO: check if the section is fully completed or partially completed
 				
 				mq.updateUser(email, cif, ktpId, userDoc);
 				return "OK";
@@ -260,14 +434,63 @@ public class FormDataBO{
 		return null;
 	}
 	
+	//TODO: Add function to getImage, get path from user's document then encode image to base64
+//	This function decodes the base64 image string of ktpPhoto into bytes 
+//	then stores it into a binary(image) file.
+	public String storeBase64KtpPhoto(String base64String, String email, String cif) {
+		String resourcePath = "src/main/resources/KTP-Images/";
+		String[] strings = base64String.split(",");
+		String extension;
+		switch(strings[0]) {
+		case "data:image/jpeg;base64":
+			extension = "jpeg";
+			break;
+		case "data:image/png;base64":
+			extension = "png";
+			break;
+		case "data:image/jpg;base64":
+			extension = "jpg";
+			break;
+		default:
+			extension = "jpg";
+			break;
+		}
+		
+		//Convert base64 string to binary data and then store it in src/main/resource/KTP-Images
+		//Name the image like: CIF_EMAIL.EXTENSION
+		
+		byte[] data = DatatypeConverter.parseBase64Binary(strings[1]);
+		String path = resourcePath + cif + "_" + email + "." + extension;
+		
+		//Get the image's target file path
+		File file = new File(path);
+		
+		//Creates the file & writes the image bytes into the file
+		//If no exception then returns the image path in the file system
+		try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))){
+			outputStream.write(data);
+			return path;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "No Path..";
+		}
+	}
+	
+	
+	
+	
+//	This function fetches the already collected data
+//	of the current page's fields and returns it as a Map(fieldName, value);
 	public Map getAutofillData(String email, String cif, String ktpId, List fieldList) throws UsernameNotFoundException {
 		Map returnMap = new HashMap();
+		Map formData = new HashMap();
 		Document userDoc = new Document();
 		List collectedData = new LinkedList();
 		String fieldName;
 		
 		userDoc = mq.getUser(email, cif, ktpId);
-		
+		formData = (Map)userDoc.get("formData");
+
 		if(userDoc.containsKey("collectedData") && fieldList.size() != 0) {
 			collectedData = (List)userDoc.get("collectedData");
 			int lengthFieldList = fieldList.size();
@@ -278,25 +501,20 @@ public class FormDataBO{
 					for(int j = 0 ; j < lengthCollected ; j++) {
 						if(fieldList.get(i).equals(collectedData.get(j))) {
 							fieldName = (String)fieldList.get(i);
-							returnMap.put(fieldName, userDoc.get(fieldName));
+							returnMap.put(fieldName, formData.get(fieldName));
 							break;
 						}
 					}
 				}
 			}			
-		}
-		
-		/*	1. Cari user dari DB pake email, extract field/column "collectedData" dari user
-			2. Compare collectedData smaa fieldList, kalau salah satu index ada yang sama, ambil data dari user sesuai fieldnya.
-				cth:	collectedData 	= [fullname, ktpGender]
-		     			fieldList 		= [fullname, ktpGender, ktpMaritalStatus]
-						[Output] = user's ktpName, user's ktpGender
-					
-			3. Ambil data dari userMap sesuai output No.2
-			4. Put hasil ke returnMap, cth>> returnMap.put("fullname", userMap.get("fullname"));
-		*/
+		}			
 		return returnMap;
 	}
+	
+	
+	
+	
+	
 	
 	public Map getProductRequirementsFromFile(String productCode) {
 		Map productRequirements = new HashMap<>();
@@ -331,6 +549,10 @@ public class FormDataBO{
 		return productRequirements;
 	}
 	
+	
+	
+	
+	
 	public Map getPageDetailsFromFile(String requirementName) {
 		Map returnMap = new HashMap<>();
 		List<Object> pageList = new LinkedList();
@@ -364,6 +586,12 @@ public class FormDataBO{
 		return returnMap;
 	}
 	
+	
+	
+	
+//	toMap() and toList() function are 
+//	complementary function for: getProductRequirementFromFile()
+//	& getPageDetailsFromFile()
 	public static Map<String, Object> toMap(JSONObject object) throws JSONException {
 	    Map<String, Object> map = new HashMap<String, Object>();
 
@@ -398,12 +626,6 @@ public class FormDataBO{
 	        list.add(value);
 	    }
 	    return list;
-	}
-	
-	@SneakyThrows
-	@SuppressWarnings({"unchecked"})
-	public static <T> T get(String fieldName, Object instance, Class<?> instanceClass) throws Exception{
-	    return (T) instanceClass.getDeclaredField(fieldName).get(instance);
 	}
 	
 }

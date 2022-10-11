@@ -48,12 +48,11 @@ public class EFormProjectApplication implements CommandLineRunner{
 	}
 	
 	public void run(String... args) throws Exception {		
-		
 //		MongoQuery mq = new MongoQuery();
 //		mq.insertNewUser("bambangaja@gmail.com", "Bambang Aja", "12345");
 	}
 	
-	//[!] Do not run unless dummy data is changed
+	//[!] DO NOT RUN! FUNCTION IS DEPRECATED
 	public void populateDummyData() throws ParseException {
 //		SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd-MM-yyyy");
 //		SimpleDateFormat fullDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");

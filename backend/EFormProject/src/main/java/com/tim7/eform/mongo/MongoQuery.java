@@ -81,6 +81,7 @@ public class MongoQuery {
 	        
 	    }
 	}
+	
 	public Set getRole() {
 		Set roles = new HashSet<>();
 		Document doc = new Document();
@@ -93,11 +94,12 @@ public class MongoQuery {
 		roles.add(doc);
 		return roles;
 	}
+	
+	//TODO: add line to append CIF Code
 	public void insertNewUser(String email, String fullName, String password) {
-		Set<Role> roles = new HashSet<>();
 		Document newUser = new Document();
-		//String encPass = encoder.encode(password);
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		
 		newUser.append("email", email);
 		newUser.append("fullname", fullName);
 		newUser.append("password", encoder.encode(password));

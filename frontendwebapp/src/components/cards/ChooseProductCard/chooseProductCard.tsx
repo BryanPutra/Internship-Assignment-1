@@ -2,7 +2,9 @@ import * as React from "react";
 import { useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import { useRouter } from "next/router";
-import {useMain} from 'context/mainContext';
+import { useMain } from "context/mainContext";
+import { useAxios } from "context/axiosContext";
+import { IInputFormsRequestPage } from "interfaces/inputFormInterfaces";
 
 interface IChooseProductCardProps {
   productTitle: string;
@@ -16,7 +18,8 @@ const ChooseProductCard: React.FunctionComponent<IChooseProductCardProps> = (
   const [isHeld, setIsHeld] = useState<boolean>(false);
   const router = useRouter();
   const { setCreatingProductName } = useMain();
-  
+  const { authorizationAxios } = useAxios();
+
   return (
     <div
       onTouchStart={() => {
@@ -26,8 +29,8 @@ const ChooseProductCard: React.FunctionComponent<IChooseProductCardProps> = (
         setIsHeld(false);
       }}
       onClick={() => {
-        setCreatingProductName(props.productTitle)
-        router.push('/inputs/inputData');
+        setCreatingProductName(props.productTitle);
+        router.push("/inputs/inputData");
       }}
       className={`p-5 flex flex-row bg-white rounded-2xl shadow-lg w-full gap-2 ${
         isHeld ? "!bg-grey" : "!bg-white"

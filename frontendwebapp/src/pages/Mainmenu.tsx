@@ -76,10 +76,6 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
     console.log(history);
   };
 
-  const frameStyle = {
-    gap: "12",
-  };
-
   const productList = [
     {
       productName: "Credit Card",
@@ -159,24 +155,6 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
       linkTo: "/pay/".concat(),
     },
   ];
-
-  const productSelectedValues = {
-    "Credit Card": "credit",
-    Savings: "savings",
-    Loan: "loan",
-  };
-
-  // const testPostAuths = async () => {
-  //   try {
-  //     const response = axios.get(
-  //       "https://b776-180-241-243-138.ap.ngrok.io/api/form/home"
-  //     );
-  //     console.log(response);
-  //   } catch (err) {
-  //     console.log(err);
-  //     alert(`Failed to fetch, ${errorUtils.getErrorMessage(err)}`);
-  //   }
-  // };
 
   return (
     <MainContainer containerType="secondary">

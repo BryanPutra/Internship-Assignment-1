@@ -66,7 +66,7 @@ const Login: React.FunctionComponent = () => {
 
   return (
     <MainContainer containerType="primary">
-      <Image src={imageLogo} alt="Login Pic" layout="responsive" />
+      <Image src={imageLogo} alt="Login Pic" layout="responsive" priority />
       <AuthTitle text="Login" textSize="text-4xl" />
       <FormProvider {...methods}>
         <form

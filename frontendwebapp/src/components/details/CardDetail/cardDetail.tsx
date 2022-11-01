@@ -1,5 +1,3 @@
-import { useAuth } from "context/authContext";
-import { useMain } from "context/mainContext";
 import * as React from "react";
 
 interface ICardDetail {

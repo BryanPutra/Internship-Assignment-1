@@ -1,6 +1,9 @@
 import * as React from "react";
 import { useContext, useState, createContext, useEffect } from "react";
 import { useRouter } from "next/router";
+import { json } from "stream/consumers";
+import { Logout } from "@mui/icons-material";
+import { useAuth } from "./authContext";
 
 interface IUser {
   id: string;
@@ -36,6 +39,8 @@ interface IMainContext {
   setFormIsActive: React.Dispatch<React.SetStateAction<boolean>>;
   formIsFilled: boolean;
   setFormIsFilled: React.Dispatch<React.SetStateAction<boolean>>;
+  mainStates: IDefaultMainStates;
+  setMainStates: React.Dispatch<React.SetStateAction<IDefaultMainStates>>;
   resetMainStates: () => void;
 }
 
@@ -72,7 +77,10 @@ const defaultMainStates: IDefaultMainStates = {
 };
 
 const getInitialStates = (): IDefaultMainStates => {
-  const mainStates: string | null = localStorage.getItem("mainStates");
+  const mainStates: string | null =
+    typeof window !== "undefined"
+      ? localStorage.getItem("mainStates") || null
+      : null;
   return mainStates ? JSON.parse(mainStates) : defaultMainStates;
 };
 
@@ -88,6 +96,7 @@ interface IMainProviderProps {
 
 const MainProvider: React.FunctionComponent<IMainProviderProps> = (props) => {
   const router = useRouter();
+  const { logout } = useAuth();
   const [user, setUser] = useState<IUser>({} as IUser);
   const [productSectionSelected, setProductSectionSelected] =
     useState<string>("");
@@ -103,11 +112,32 @@ const MainProvider: React.FunctionComponent<IMainProviderProps> = (props) => {
   const [formIsActive, setFormIsActive] = useState<boolean>(false);
   const [formIsFilled, setFormIsFilled] = useState<boolean>(false);
   const [mainStates, setMainStates] =
+    // useState<IDefaultMainStates>(Object.keys(getInitialStates().user).length === 0 ? getInitialStates :);
     useState<IDefaultMainStates>(getInitialStates);
 
   const resetMainStates = () => {
     setMainStates(defaultMainStates);
     localStorage.clear();
+  };
+
+  const setStatesFromStorage = (storageStates: IDefaultMainStates) => {
+    if (!localStorage.getItem('mainStates')) return;
+    setMainStates({
+      ...mainStates,
+      user: storageStates.user,
+      productSectionSelected: storageStates.productSectionSelected,
+      creatingProductName: storageStates.creatingProductName,
+      currentPage: storageStates.currentPage,
+      prevPage: storageStates.prevPage,
+      isHome: storageStates.isHome,
+      isFromHome: storageStates.isFromHome,
+      isBack: storageStates.isBack,
+      isSubmit: storageStates.isSubmit,
+      ktpIsActive: storageStates.ktpIsActive,
+      ktpIsFilled: storageStates.ktpIsFilled,
+      formIsActive: storageStates.formIsActive,
+      formIsFilled: storageStates.formIsFilled,
+    });
   };
 
   useEffect(() => {
@@ -144,7 +174,15 @@ const MainProvider: React.FunctionComponent<IMainProviderProps> = (props) => {
   ]);
 
   useEffect(() => {
+    if (Object.keys(mainStates.user).length === 0) {
+      const storageMainStates: IDefaultMainStates = JSON.parse(
+        localStorage.getItem("mainStates")!
+      );
+      setStatesFromStorage(storageMainStates);
+      return;
+    }
     localStorage.setItem("mainStates", JSON.stringify(mainStates));
+    console.log(mainStates, localStorage);
   }, [mainStates]);
 
   useEffect(() => {
@@ -190,6 +228,8 @@ const MainProvider: React.FunctionComponent<IMainProviderProps> = (props) => {
     setFormIsActive,
     formIsFilled,
     setFormIsFilled,
+    mainStates,
+    setMainStates,
     resetMainStates,
   };
   return (

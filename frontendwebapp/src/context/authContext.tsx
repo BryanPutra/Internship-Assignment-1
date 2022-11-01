@@ -1,4 +1,4 @@
-import { AxiosInstance, AxiosPromise, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import * as React from "react";
 import { useContext, useState, createContext } from "react";
 import { useAxios } from "./axiosContext";
@@ -49,17 +49,18 @@ interface IAuthProviderProps {
 const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
   const [authState, setAuthState] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<IUser[]>([]);
-  const { resetMainStates } = useMain();
-  const { authenticationAxios, testAxios } = useAxios();
+  const { resetMainStates, user, setUser } = useMain();
+  const { authenticationAxios, testAxios, authorizationAxios } = useAxios();
   const router = useRouter();
 
-  const isAuthorized = (response: AxiosResponse) => response.status !== 401;
+  const isAuthorized = (response: AxiosResponse) => response.status === 200;
 
   const login = async (data: Object) => {
     try {
       const response = await authenticationAxios.post("/login", data);
       const userDetail: IUser = response.data;
       setUserDetails((users) => [...users, userDetail]);
+      setUser(userDetail);
       // setUser({...user, id: userDetail.id, username: userDetail.username, email: userDetail.email, roles: userDetail.roles } as IUser);
       // setUser({...user, ...{id: userDetail.id, username: userDetail.username, email: userDetail.email, roles: userDetail.roles} as IUser});
       setAuthState(true);
@@ -70,9 +71,16 @@ const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
     }
   };
 
-  const checkAuthenticated = async () => {
+  const checkAuthenticated = async () => {  
+    console.log("bruh");
+      
     try {
-      const response = await authenticationAxios.get("/");
+      console.log("bruh");
+      console.log(!localStorage.getItem("mainStates"));
+      if (!localStorage.getItem("mainStates")) return;
+      const response = await authenticationAxios.get("/home");
+      console.log(response);
+      console.log(!isAuthorized(response));
       if (!isAuthorized(response)) logout();
     } catch (err) {
       alert(`Failed to fetch, ${errorUtils.getErrorMessage(err)}`);

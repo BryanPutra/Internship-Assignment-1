@@ -49,7 +49,7 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
     <Controller
       name={props.inputName}
       control={control}
-      defaultValue={props.defaultValueProp}
+      // defaultValue={props.defaultValueProp}
       render={({ field }) => (
         <div className="w-full">
           {{
@@ -58,6 +58,7 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
                 className=""
                 fullWidth
                 {...field}
+                value={props.defaultValueProp}
                 color="primary"
                 placeholder={props.inputPlaceholder}
                 label={props.inputLabel}
@@ -72,6 +73,7 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
                   labelId="select"
                   variant="standard"
                   {...field}
+                  value={props.defaultValueProp}
                 >
                   {props.selectItemsList?.map((item: string) => {
                     return <MenuItem value={item}>{item}</MenuItem>;
@@ -98,6 +100,7 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
                     />
                   )}
                   {...field}
+                  value={props.defaultValueProp}
                 />
               </LocalizationProvider>
             ),

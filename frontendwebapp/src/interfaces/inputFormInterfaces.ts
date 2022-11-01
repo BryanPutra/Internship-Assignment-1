@@ -1,3 +1,12 @@
+interface ISectionDetails {
+  sectionTitle: string;
+  sectionStatus: string;
+  disabled: boolean;
+  sectionId?: string;
+  requirement?: string;
+  pageList: string[];
+}
+
 interface IInputFormsRequestSubmitForm {
   id: string;
   username: string;
@@ -51,14 +60,15 @@ interface IInputFormsRequestPage {
   roles: string[];
   productCode: string;
   currentPage: string;
-  prevPage: string;
+  prevPage?: string;
   isFromHome: boolean;
-  isBack: boolean;
-  isSubmit: boolean;
+  isBack?: boolean;
+  isSubmit?: boolean;
 }
 
 interface IInputFormsResponse {
   formMap: {
+    sectionList?: ISectionDetails[];
     autofillMap: {};
     nextPageMap: {
       nextPage: string;
@@ -121,4 +131,5 @@ export type {
   IInputField,
   IFormData1,
   IFormData2,
+  ISectionDetails
 };

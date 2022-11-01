@@ -17,7 +17,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 interface IChooseProductProps {}
 
-interface productInfo {
+interface IProductInfo {
   productTitle: string;
   productDetails: string;
   imageSrc: StaticImageData;
@@ -66,7 +66,7 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
     setLoanSelected(true);
   };
 
-  const creditInfo: productInfo[] = [
+  const creditInfo: IProductInfo[] = [
     {
       productTitle: "Platinum Card",
       productDetails: "Pay easier with more benefits",
@@ -78,7 +78,7 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
       imageSrc: creditSecure,
     },
   ];
-  const savingsInfo: productInfo[] = [
+  const savingsInfo: IProductInfo[] = [
     {
       productTitle: "Tabungan Simas Payroll",
       productDetails: "Basically kartu debit lol pakai dengan waspada",
@@ -90,7 +90,7 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
       imageSrc: creditPlatinum,
     },
   ];
-  const loanInfo: productInfo[] = [
+  const loanInfo: IProductInfo[] = [
     {
       productTitle: "Beeg Loan",
       productDetails: "Pinjem duit bang kubalikin taun depan",
@@ -133,7 +133,7 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
       {/* main container */}
       <div className="flex flex-col px-5 py-5 items-center gap-5 h-screen">
         {creditSelected &&
-          productInfo.credit.map((product: productInfo) => {
+          productInfo.credit.map((product: IProductInfo) => {
             return (
               <ChooseProductCard
                 productTitle={product.productTitle}
@@ -143,7 +143,7 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
             );
           })}
         {savingsSelected &&
-          productInfo.savings.map((product: productInfo) => {
+          productInfo.savings.map((product: IProductInfo) => {
             return (
               <ChooseProductCard
                 productTitle={product.productTitle}
@@ -153,7 +153,7 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
             );
           })}
         {loanSelected &&
-          productInfo.loan.map((product: productInfo) => {
+          productInfo.loan.map((product: IProductInfo) => {
             return (
               <ChooseProductCard
                 productTitle={product.productTitle}

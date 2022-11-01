@@ -11,9 +11,7 @@ import FormCustomInput from "components/inputs/FormCustomInput";
 import type {
   IInputFormsRequestDataProps,
   IInputFormsRequestSubmitForm,
-  IInputFormsRequestPage,
   IInputFormsResponse,
-  INextPageMap,
   IInputField,
   IFormData1,
   IFormData2,
@@ -29,7 +27,8 @@ import {
 } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import axios from "axios";
+import { Skeleton } from "@mui/material";
+
 import moment from "moment";
 import { useAxios } from "context/axiosContext";
 import { useAuth } from "context/authContext";
@@ -58,12 +57,8 @@ const InputForm: React.FunctionComponent = () => {
     setKtpIsFilled,
     setFormIsActive,
     setFormIsFilled,
-    isFromHome,
-    setIsBack,
-    isSubmit,
-    setIsSubmit,
   } = useMain();
-  const {userDetails} = useAuth();
+  const { userDetails } = useAuth();
   const { authorizationAxios } = useAxios();
 
   const [autofillMap, setAutoFillMap] = useState<IAutoFillMap>({});
@@ -84,10 +79,12 @@ const InputForm: React.FunctionComponent = () => {
     setKtpIsFilled(false);
     setFormIsActive(false);
     setFormIsFilled(false);
-  }
+  };
 
   useEffect(() => {
     getInitialProps();
+    // setKtpPageState("ktp-3");
+    console.log(inputFields.length, ktpPageState);
   }, []);
 
   const getInitialProps = async () => {
@@ -116,14 +113,14 @@ const InputForm: React.FunctionComponent = () => {
 
   // yup validation & error message management
   const schema1 = yup.object().shape({
-    // ktpId: yup.string().min(5).max(16).required(),
-    // fullName: yup.string().required(),
-    // birthDate: yup.string().required(),
-    // birthPlace: yup.string().required(),
-    // maritalStatusKtp: yup.string().required(),
-    // religionKtp: yup.string().required(),
-    // genderKtp: yup.string().required(),
-    // motherMaidenName: yup.string().required(),
+    ktpId: yup.string().min(5).max(16).required(),
+    fullName: yup.string().required(),
+    birthDate: yup.string().required(),
+    birthPlace: yup.string().required(),
+    maritalStatusKtp: yup.string().required(),
+    religionKtp: yup.string().required(),
+    genderKtp: yup.string().required(),
+    motherMaidenName: yup.string().required(),
   });
   const schema2 = yup.object().shape({
     streetAddressKtp: yup.string().required(),
@@ -255,126 +252,126 @@ const InputForm: React.FunctionComponent = () => {
 
   // forced data for client side testing purposes
   // change to response from getServerSide props when testing
-  // const inputFields1: IInputField[] = [
-  //   {
-  //     fieldCode: "ktp-2-1",
-  //     component: "textField",
-  //     fieldName: "ktpId",
-  //     label: "NIK",
-  //     maxLength: 16,
-  //     placeholder: "Nomor Induk Kartu Tanda Penduduk | NIK",
-  //     dbKey: "ktpId",
-  //   },
-  //   {
-  //     fieldCode: "ktp-2-2",
-  //     component: "textField",
-  //     fieldName: "fullName",
-  //     label: "NAMA",
-  //     placeholder: "Nama sesuai KTP",
-  //     dbKey: "fullName",
-  //   },
-  //   {
-  //     fieldCode: "ktp-2-3",
-  //     component: "Calendar",
-  //     fieldName: "birthDate",
-  //     label: "Tanggal Lahir",
-  //     dbKey: "birthDate",
-  //   },
-  //   {
-  //     fieldCode: "ktp-2-4",
-  //     component: "textField",
-  //     fieldName: "birthPlace",
-  //     label: "Tempat Lahir",
-  //     dbKey: "birthPlace",
-  //   },
-  //   {
-  //     fieldCode: "ktp-2-5",
-  //     component: "textField",
-  //     fieldName: "maritalStatusKtp",
-  //     label: "Status Pernikahan",
-  //     dbKey: "maritalStatusKtp",
-  //   },
-  //   {
-  //     fieldCode: "ktp-2-6",
-  //     component: "textField",
-  //     fieldName: "religionKtp",
-  //     label: "Agama",
-  //     dbKey: "religionKtp",
-  //   },
-  //   {
-  //     fieldCode: "ktp-2-7",
-  //     component: "Picker",
-  //     fieldName: "genderKtp",
-  //     label: "Gender",
-  //     dbKey: "genderKtp",
-  //   },
-  //   {
-  //     fieldCode: "ktp-2-8",
-  //     component: "textField",
-  //     fieldName: "motherMaidenName",
-  //     label: "Nama Ibu Kandung",
-  //     dbKey: "motherMaidenKtp",
-  //   },
-  // ];
+  const inputFields1: IInputField[] = [
+    {
+      fieldCode: "ktp-2-1",
+      component: "textField",
+      fieldName: "ktpId",
+      label: "NIK",
+      maxLength: 16,
+      placeholder: "Nomor Induk Kartu Tanda Penduduk | NIK",
+      dbKey: "ktpId",
+    },
+    {
+      fieldCode: "ktp-2-2",
+      component: "textField",
+      fieldName: "fullName",
+      label: "NAMA",
+      placeholder: "Nama sesuai KTP",
+      dbKey: "fullName",
+    },
+    {
+      fieldCode: "ktp-2-3",
+      component: "Calendar",
+      fieldName: "birthDate",
+      label: "Tanggal Lahir",
+      dbKey: "birthDate",
+    },
+    {
+      fieldCode: "ktp-2-4",
+      component: "textField",
+      fieldName: "birthPlace",
+      label: "Tempat Lahir",
+      dbKey: "birthPlace",
+    },
+    {
+      fieldCode: "ktp-2-5",
+      component: "textField",
+      fieldName: "maritalStatusKtp",
+      label: "Status Pernikahan",
+      dbKey: "maritalStatusKtp",
+    },
+    {
+      fieldCode: "ktp-2-6",
+      component: "textField",
+      fieldName: "religionKtp",
+      label: "Agama",
+      dbKey: "religionKtp",
+    },
+    {
+      fieldCode: "ktp-2-7",
+      component: "Picker",
+      fieldName: "genderKtp",
+      label: "Gender",
+      dbKey: "genderKtp",
+    },
+    {
+      fieldCode: "ktp-2-8",
+      component: "textField",
+      fieldName: "motherMaidenName",
+      label: "Nama Ibu Kandung",
+      dbKey: "motherMaidenKtp",
+    },
+  ];
 
-  // const inputFields2: IInputField[] = [
-  //   {
-  //     fieldCode: "ktp-3-1",
-  //     component: "textField",
-  //     fieldName: "streetAddressKtp",
-  //     label: "Alamat",
-  //     placeholder: "Alamat sesuai KTP",
-  //     dbKey: "streetAddressKtp",
-  //   },
-  //   {
-  //     fieldCode: "ktp-3-2",
-  //     component: "Picker",
-  //     fieldName: "rtKtp",
-  //     label: "RT",
-  //     placeholder: "Nomor RT alamat",
-  //     dbKey: "rtKtp",
-  //   },
-  //   {
-  //     fieldCode: "ktp-3-3",
-  //     component: "Picker",
-  //     fieldName: "rwKtp",
-  //     label: "RW",
-  //     placeholder: "Nomor RW alamat",
-  //     dbKey: "rwKtp",
-  //   },
-  //   {
-  //     fieldCode: "ktp-3-4",
-  //     component: "Picker",
-  //     fieldName: "provinceKtp",
-  //     label: "Provinsi",
-  //     dbKey: "provinceKtp",
-  //   },
-  //   {
-  //     component: "Picker",
-  //     fieldName: "cityKtp",
-  //     fieldCode: "ktp-3-5",
-  //     label: "Kota",
-  //   },
-  //   {
-  //     component: "Picker",
-  //     fieldName: "districtKtp",
-  //     fieldCode: "ktp-3-6",
-  //     label: "Kabupaten",
-  //   },
-  //   {
-  //     component: "Picker",
-  //     fieldName: "subDistrictKtp",
-  //     fieldCode: "ktp-3-7",
-  //     label: "Kecamatan",
-  //   },
-  //   {
-  //     component: "textField",
-  //     fieldName: "postalCodeKtp",
-  //     fieldCode: "ktp-3-8",
-  //     label: "Kode Pos",
-  //     maxLength: 5,
-  //   },
-  // ];
+  const inputFields2: IInputField[] = [
+    {
+      fieldCode: "ktp-3-1",
+      component: "textField",
+      fieldName: "streetAddressKtp",
+      label: "Alamat",
+      placeholder: "Alamat sesuai KTP",
+      dbKey: "streetAddressKtp",
+    },
+    {
+      fieldCode: "ktp-3-2",
+      component: "Picker",
+      fieldName: "rtKtp",
+      label: "RT",
+      placeholder: "Nomor RT alamat",
+      dbKey: "rtKtp",
+    },
+    {
+      fieldCode: "ktp-3-3",
+      component: "Picker",
+      fieldName: "rwKtp",
+      label: "RW",
+      placeholder: "Nomor RW alamat",
+      dbKey: "rwKtp",
+    },
+    {
+      fieldCode: "ktp-3-4",
+      component: "Picker",
+      fieldName: "provinceKtp",
+      label: "Provinsi",
+      dbKey: "provinceKtp",
+    },
+    {
+      component: "Picker",
+      fieldName: "cityKtp",
+      fieldCode: "ktp-3-5",
+      label: "Kota",
+    },
+    {
+      component: "Picker",
+      fieldName: "districtKtp",
+      fieldCode: "ktp-3-6",
+      label: "Kabupaten",
+    },
+    {
+      component: "Picker",
+      fieldName: "subDistrictKtp",
+      fieldCode: "ktp-3-7",
+      label: "Kecamatan",
+    },
+    {
+      component: "textField",
+      fieldName: "postalCodeKtp",
+      fieldCode: "ktp-3-8",
+      label: "Kode Pos",
+      maxLength: 5,
+    },
+  ];
   // END forced data for client side testing purposes
 
   // form utils
@@ -389,7 +386,7 @@ const InputForm: React.FunctionComponent = () => {
     inputField: IInputField,
     autofillMap: IAutoFillMap
   ) => {
-    if (!isAutoFill(autofillMap)) return;
+    if (!isAutoFill(autofillMap)) return " ";
     for (let listKeyString of Object.keys(autofillMap)) {
       if (!inputField.fieldName.includes(listKeyString)) continue;
       console.log(listKeyString);
@@ -417,7 +414,7 @@ const InputForm: React.FunctionComponent = () => {
         autofillData: {},
       };
       let response;
-      if (isFormData1(formData)) {  
+      if (isFormData1(formData)) {
         const formattedDate = moment(formData.birthDate).format("DD-MM-YYYY");
         console.log(formattedDate);
         // response = await authorizationAxios.post("/getFormData", {
@@ -470,25 +467,33 @@ const InputForm: React.FunctionComponent = () => {
             onSubmit={methods1.handleSubmit(onForm1Submit)}
           >
             <div className="text-3xl">Personal Information</div>
+            {inputFields.length !== 0
+              ? inputFields.map((field) => {
+                  return (
+                    <FormCustomInput
+                      inputType={field.component}
+                      inputName={field.fieldName}
+                      inputLabel={field.label}
+                      inputPlaceholder={field.placeholder}
+                      defaultValueProp={getAutoFillValue(field, autofillMap)}
+                      errors={errors}
+                      errorString={getErrorString(field)}
+                      selectItemsList={selectDropDownList(field)}
+                    />
+                  );
+                })
+              : inputFields1.map((field) => {
+                  return (
+                    <Skeleton
+                      variant="rounded"
+                      height={30}
+                      sx={{ bgcolor: "grey.200" }}
+                      animation="wave"
+                    />
+                  );
+                })}
 
-            {inputFields.map((field) => {
-              return (
-                <FormCustomInput
-                  inputType={field.component}
-                  inputName={field.fieldName}
-                  inputLabel={field.label}
-                  inputPlaceholder={field.placeholder}
-                  // defaultValueProp={getAutoFillValue(field, autofillMap)}
-                  errors={errors}
-                  errorString={getErrorString(field)}
-                  selectItemsList={selectDropDownList(field)}
-                />
-              );
-            })}
-            <SubmitButton
-              name="Continue"
-              isLoading={isLoading}
-            />
+            <SubmitButton name="Continue" isLoading={isLoading} />
           </form>
         </FormProvider>
       ) : (
@@ -498,24 +503,32 @@ const InputForm: React.FunctionComponent = () => {
             onSubmit={methods2.handleSubmit(onForm2Submit)}
           >
             <div className="text-3xl">Personal Information</div>
-            {inputFields.map((field) => {
-              return (
-                <FormCustomInput
-                  inputType={field.component}
-                  inputName={field.fieldName}
-                  inputLabel={field.label}
-                  inputPlaceholder={field.placeholder}
-                  // defaultValueProp={getAutoFillValue(field, autofillMap)}
-                  errors={errors2}
-                  errorString={getErrorString(field)}
-                  selectItemsList={selectDropDownList(field)}
-                />
-              );
-            })}
-            <SubmitButton
-              name="Submit"
-              isLoading={isLoading}
-            />
+            {inputFields.length !== 0
+              ? inputFields.map((field) => {
+                  return (
+                    <FormCustomInput
+                      inputType={field.component}
+                      inputName={field.fieldName}
+                      inputLabel={field.label}
+                      inputPlaceholder={field.placeholder}
+                      defaultValueProp={getAutoFillValue(field, autofillMap)}
+                      errors={errors2}
+                      errorString={getErrorString(field)}
+                      selectItemsList={selectDropDownList(field)}
+                    />
+                  );
+                })
+              : inputFields2.map((field) => {
+                  return (
+                    <Skeleton
+                      variant="rounded"
+                      height={30}
+                      sx={{ bgcolor: "grey.200" }}
+                      animation="wave"
+                    />
+                  );
+                })}
+            <SubmitButton name="Submit" isLoading={isLoading} />
           </form>
         </FormProvider>
       )}

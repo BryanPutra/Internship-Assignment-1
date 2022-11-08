@@ -96,7 +96,6 @@ interface IMainProviderProps {
 
 const MainProvider: React.FunctionComponent<IMainProviderProps> = (props) => {
   const router = useRouter();
-  const { logout } = useAuth();
   const [user, setUser] = useState<IUser>({} as IUser);
   const [productSectionSelected, setProductSectionSelected] =
     useState<string>("");

@@ -2,7 +2,6 @@ import { useAuth } from "context/authContext";
 import * as React from "react";
 import { useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
-import { useMain } from "context/mainContext";
 
 interface IProtectedProps {
   children: React.ReactNode;
@@ -13,19 +12,18 @@ const Protected: React.FunctionComponent<IProtectedProps> = (props) => {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("fuck shet");
-    
+    if (router.asPath === "/") return;
+    if (router.asPath.includes("/auth")) return;
+    console.log('shit');
     checkAuthenticated();
-    console.log("done");
-    
   }, [router.asPath]);
 
   useEffect(() => {
-    console.log("fuck shit");
-    
+    if (router.asPath === "/") return;
+    if (router.asPath.includes("/auth")) return;
+    console.log('shit');
     checkAuthenticated();
   }, []);
-
 
   return (<>{props.children}</>)
 };

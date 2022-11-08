@@ -72,18 +72,14 @@ const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
   };
 
   const checkAuthenticated = async () => {  
-    console.log("bruh");
-      
     try {
-      console.log("bruh");
-      console.log(!localStorage.getItem("mainStates"));
-      if (!localStorage.getItem("mainStates")) return;
-      const response = await authenticationAxios.get("/home");
+      const response = await authorizationAxios.get("/home");
       console.log(response);
-      console.log(!isAuthorized(response));
-      if (!isAuthorized(response)) logout();
+      if (isAuthorized(response)) return;
     } catch (err) {
-      alert(`Failed to fetch, ${errorUtils.getErrorMessage(err)}`);
+      alert(`User is not authenticated. Please login again.`);
+      logout();
+      router.replace("/auth/login");
     }
   };
 

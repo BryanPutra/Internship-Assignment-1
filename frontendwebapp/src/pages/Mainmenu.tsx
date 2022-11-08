@@ -60,12 +60,11 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
 
   useEffect(() => {
     setCurrentPage("mainmenu");
-    console.log(currentPage);
     // console.log(userDetails);
     // setCurrentPage(history[history.length - 1]);
     // setPrevPage(history[history.length - 2]);
-    // console.log(currentPage);
-    // console.log(prevPage);
+    console.log(currentPage);
+    console.log(prevPage);
   }, []);
 
   const printCurrentPage = () => {

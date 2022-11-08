@@ -11,19 +11,19 @@ import Protected from "components/customRoute/Protected";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Protected>
-      <AxiosProvider>
-        <MainProvider>
-          <AuthProvider>
-            <HistoryProvider>
-              <ThemeProvider>
+    <AxiosProvider>
+      <MainProvider>
+        <AuthProvider>
+          <HistoryProvider>
+            <ThemeProvider>
+              <Protected>
                 <Component {...pageProps} />
-              </ThemeProvider>
-            </HistoryProvider>
-          </AuthProvider>
-        </MainProvider>
-      </AxiosProvider>
-    </Protected>
+              </Protected>
+            </ThemeProvider>
+          </HistoryProvider>
+        </AuthProvider>
+      </MainProvider>
+    </AxiosProvider>
   );
 }
 

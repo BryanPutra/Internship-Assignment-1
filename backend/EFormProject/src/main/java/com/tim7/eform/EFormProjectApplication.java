@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.tim7.eform.bo.FormDataBO;
+import com.tim7.eform.bo.Test;
 import com.tim7.eform.model.EnumRole;
 import com.tim7.eform.model.Role;
 import com.tim7.eform.model.User;
@@ -47,9 +48,10 @@ public class EFormProjectApplication implements CommandLineRunner{
 		SpringApplication.run(EFormProjectApplication.class, args);
 	}
 	
-	public void run(String... args) throws Exception {		
+	public void run(String... args) throws Exception {
 //		MongoQuery mq = new MongoQuery();
-//		mq.insertNewUser("bambangaja@gmail.com", "Bambang Aja", "12345");
+//		mq.insertNewUserWithCif("bambangaja@gmail.com", "Bambang Aja","000001", "12345");
+//		mq.insertNewUserWithCif("budiaja@gmail.com","Budi Aja", "000002", "12345");
 	}
 	
 	//[!] DO NOT RUN! FUNCTION IS DEPRECATED

@@ -18,7 +18,7 @@ public class User {
 	
 	@Id
 	private String id;
-    private String cifCode;
+    private String cif;
     
     private String ktpId;
     private String fullName;
@@ -79,12 +79,12 @@ public class User {
 		this.id = id;
 	}
 
-	public String getCifCode() {
-		return cifCode;
+	public String getCif() {
+		return cif;
 	}
 
-	public void setCifCode(String cifCode) {
-		this.cifCode = cifCode;
+	public void setCif(String cifCode) {
+		this.cif = cifCode;
 	}
 
 	public String getKtpId() {

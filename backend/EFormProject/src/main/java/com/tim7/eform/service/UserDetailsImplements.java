@@ -18,13 +18,15 @@ public class UserDetailsImplements implements UserDetails {
 	private String id;
 	private String username;
 	private String email;
+	private String cif;
 	@JsonIgnore
 	private String password;
 	private Collection<? extends GrantedAuthority> authorities;
-	public UserDetailsImplements(String id, String username, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+	public UserDetailsImplements(String id, String username, String email, String cif, String password, Collection<? extends GrantedAuthority> authorities) {
 		this.id = id;
 		this.username = username;
 		this.email = email;
+		this.cif = cif;
 		this.password = password;
 		this.authorities = authorities;
 	}
@@ -37,6 +39,7 @@ public class UserDetailsImplements implements UserDetails {
 				user.getId(),
 				user.getUsername(),
 				user.getEmail(),
+				user.getCif(),
 				user.getPassword(),
 				authorities);
 	}
@@ -53,6 +56,10 @@ public class UserDetailsImplements implements UserDetails {
 	
 	public String getEmail() {
 		return email;
+	}
+	
+	public String getCif() {
+		return cif;
 	}
 	
 	public String getPassword() {

@@ -66,6 +66,7 @@ public class LoginController {
 								.body(new UserInfoResponse(userDetails.getId(),
 															userDetails.getUsername(),
 															userDetails.getEmail(),
+															userDetails.getCif(),
 															roles));
 	}
 	

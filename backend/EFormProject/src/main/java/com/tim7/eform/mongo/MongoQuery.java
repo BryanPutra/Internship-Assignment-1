@@ -2,8 +2,10 @@ package com.tim7.eform.mongo;
 
 import static com.mongodb.client.model.Filters.eq;
 
+import java.awt.Transparency;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +42,7 @@ public class MongoQuery {
 	        MongoDatabase database = mongoClient.getDatabase("eform_project");
 	        MongoCollection<Document> collection = database.getCollection("users");
 	        doc = collection.find(eq(fieldName, filterVal)).first();
-	        //System.out.println(doc.toJson());
+	        mongoClient.close();
 	    }
 		return doc;
 	}
@@ -55,6 +57,7 @@ public class MongoQuery {
 			MongoDatabase database = mongoClient.getDatabase("eform_project");
 			MongoCollection<Document> collection = database.getCollection("users");
 			userDoc = collection.find(eq(fieldName, filterVal)).first();
+			mongoClient.close();
 		}
 		doc = (Document) userDoc.get("formData");
 		return doc;
@@ -78,7 +81,7 @@ public class MongoQuery {
 	        MongoDatabase database = mongoClient.getDatabase("eform_project");
 	        MongoCollection<Document> collection = database.getCollection("users");
 	        collection.replaceOne(eq(fieldName,filterVal), updatedDoc);
-	        
+	        mongoClient.close();
 	    }
 	}
 	
@@ -109,8 +112,78 @@ public class MongoQuery {
 	        MongoDatabase database = mongoClient.getDatabase("eform_project");
 	        MongoCollection<Document> collection = database.getCollection("users");
 	        collection.insertOne(newUser);
+	        mongoClient.close();
 	    }
 	}
+	
+	public void insertNewUserWithCif(String email, String fullName, String cif, String password) {
+		Document newUser = new Document();
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		Map formData = new HashMap();
+		List collectedData = new LinkedList();
+		
+		newUser.append("cif", cif);
+		newUser.append("email", email);
+		newUser.append("fullname", fullName);
+		newUser.append("password", encoder.encode(password));
+		newUser.append("roles", getRole());		
+		newUser.append("formData", formData);
+		newUser.append("collectedData", collectedData);
+		
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+	        MongoDatabase database = mongoClient.getDatabase("eform_project");
+	        MongoCollection<Document> collection = database.getCollection("users");
+	        collection.insertOne(newUser);
+	        mongoClient.close();
+	    }
+	}
+	
+	
+	
+	
+	
+	public boolean exists(String email, String cif, String ktpId) {
+		Document doc;
+		Map filter = filterSelection(email, cif, ktpId);
+		fieldName = (String) filter.get("filterName");
+		filterVal = (String) filter.get("value");
+		
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+	        MongoDatabase database = mongoClient.getDatabase("eform_project");
+	        MongoCollection<Document> collection = database.getCollection("users");
+	        doc = collection.find(eq(fieldName, filterVal)).first();
+	        mongoClient.close();
+	    }
+		
+		if(doc == null) {
+			return false;
+			
+		}
+		else {
+			return true;
+		}
+	}
+	
+	public boolean existsByEmail(String email) {
+		Document doc;
+		
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+	        MongoDatabase database = mongoClient.getDatabase("eform_project");
+	        MongoCollection<Document> collection = database.getCollection("users");
+	        doc = collection.find(eq("email", email)).first();
+	        mongoClient.close();
+	    }
+		
+		if(doc == null) {
+			return false;
+			
+		}
+		else {
+			return true;
+		}
+	}
+	
+	
 	
 	private Map filterSelection(String email, String cif, String ktpId) {
 		Map filterMap = new HashMap();

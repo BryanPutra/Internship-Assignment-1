@@ -7,6 +7,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.apache.commons.io.FileUtils;
 import org.bson.Document;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +35,9 @@ public class FormDataBO{
 	
 	@Autowired
 	private UserRepository userRepository;
-	
+	final String RESOURCE_PATH = "src/main/resources/KTP-Images/";
 	public static Logger log = Logger.getLogger(FormDataBO.class);
-	
 	private static FormDataBO instance = null;
-	
 	MongoQuery mq = new MongoQuery();
 	
 	public static synchronized FormDataBO getinstance() {
@@ -48,24 +48,24 @@ public class FormDataBO{
 		return instance;
 	}
 	
-	public Map getRegistrationData(String email, String cif, String ktpId, String productCode, String currentPage, String prevPage, boolean isBack, boolean isFromHome) {
+	public Map getRegistrationData(String email, String cif, String ktpId, String productCode, String currentPage, String prevPage, boolean isBack, boolean isFromSectionPage) {
 		Map returnMap = new HashMap();
 		Map nextPageMap = new HashMap();
 		List fieldNameList = new LinkedList();
 		Map autofillMap = new HashMap();
 		
-		if(!currentPage.equals("home")) {
-			nextPageMap = getNextPage(productCode,currentPage, prevPage, isBack, isFromHome);
+		if(!currentPage.equals("sectionPage") || currentPage == null || currentPage.equals("")) {
+			nextPageMap = getNextPage(productCode,currentPage, prevPage, isBack, isFromSectionPage);
 			fieldNameList = (List) nextPageMap.get("fieldNameList");
 			nextPageMap.remove("fieldNameList");
-			boolean isHome = (boolean) nextPageMap.get("isHome");
+			boolean isSectionPage = (boolean) nextPageMap.get("isSectionPage");
 			boolean isDone = (boolean) nextPageMap.get("isDone");
-			if(!isHome && !isDone) {
+			if(!isSectionPage && !isDone) {
 				autofillMap = getAutofillData(email, cif, ktpId, fieldNameList);
 				returnMap.put("nextPageMap", nextPageMap);
 				returnMap.put("autofillMap", autofillMap);
-				log.info("User ["+email+"] requested '"+nextPageMap.get("nextPage")+"' isFromHome:"+isFromHome);
-			}else if(isHome) {
+				log.info("User ["+email+"] requested '"+nextPageMap.get("nextPage")+"' isFromSectionPage:"+isFromSectionPage);
+			}else if(isSectionPage) {
 				List sectionList = new LinkedList();
 				sectionList = getSectionData(productCode, email, cif, ktpId);
 				returnMap.put("sectionMap", sectionList);
@@ -76,20 +76,17 @@ public class FormDataBO{
 		}else {
 			List sectionList = new LinkedList();
 			sectionList = getSectionData(productCode, email, cif, ktpId);
-			System.out.println("B");
 			returnMap.put("sectionList", sectionList);
 			log.info("User ["+email+"] requested section page of '"+productCode+"' isBack:"+isBack);
 		}
-		
-		
-		
-		
-		
-		
 		return returnMap;
 	}
 	
-	public Map getNextPage(String productCode, String currentPage, String prevPage, boolean isBack, boolean isFromHome) {
+	
+	
+	
+	
+	public Map getNextPage(String productCode, String currentPage, String prevPage, boolean isBack, boolean isFromSectionPage) {
 		Map returnMap = new HashMap();
 		String nextPage=null;
 		String currentRequirement = null;
@@ -102,7 +99,7 @@ public class FormDataBO{
 		List fieldList = new LinkedList();
 		List fieldNameList = new LinkedList();
 		
-		boolean isHome = false;
+		boolean isSectionPage = false;
 		boolean isDone = false; 
 		
 		productConfigMap = getProductRequirementsFromFile(productCode);
@@ -115,8 +112,8 @@ public class FormDataBO{
 			currentRequirement = (String)targetRequirementMap.get("requirement");
 			productSectionList = (List)targetRequirementMap.get("pageList");
 			nextPage = (String)productSectionList.get(0);
-		}else if(isBack && prevPage.equals("home")) {
-			isHome = true;
+		}else if(isBack && prevPage.equals("sectionPage")) {
+			isSectionPage = true;
 		}else {
 			Map targetSectionMap = new HashMap();
 			for(int i = 0 ; i < productSectionList.size() ; i++) {
@@ -138,13 +135,13 @@ public class FormDataBO{
 								if(j > 0) {
 									nextPage = (String) sectionPageList.get(j-1);
 									if(j > 1)prevPage = (String) sectionPageList.get(j-2);
-									else prevPage = "home";
+									else prevPage = "sectionPage";
 								}else {
-									nextPage = "home";
+									nextPage = "sectionPage";
 								}
-							}else if(isFromHome) {
+							}else if(isFromSectionPage) {
 								nextPage = (String) sectionPageList.get(j);
-								prevPage = "home";
+								prevPage = "sectionPage";
 								break;
 							}else if(j == sectionPageList.size()-1) {
 								//Check if the current index points at last element of a "pageList"
@@ -162,7 +159,7 @@ public class FormDataBO{
 								if(j>0) {
 									prevPage = (String) sectionPageList.get(j-1);
 								}else {
-									prevPage = "home";
+									prevPage = "sectionPage";
 								}
 							}
 							break;
@@ -172,15 +169,16 @@ public class FormDataBO{
 			}
 		}
 		//FieldName List
-		if(currentPage.equals("ktp-1") && !isFromHome) {
-			nextPage = "home";
+		if(currentPage.equals("ktp-1") && !isFromSectionPage) {
+			nextPage = "sectionPage";
 			prevPage = "ktp-1";
-			isHome = true;
-			returnMap.put("isHome", isHome);
-		}else if(!isDone || !isHome){
+			isSectionPage = true;
+			returnMap.put("isSectionPage", isSectionPage);
+		}else if(!isDone || !isSectionPage){
 			pageConfigMap = getPageDetailsFromFile(currentRequirement);
 			pageNameList = (List)pageConfigMap.get("page");
 			int pageNameListSize = pageNameList.size();
+			//Loop through fieldList of target page on PageConfig
 			for(int i = 0 ; i < pageNameListSize ; i++) {
 				Map targetPage = (Map)pageNameList.get(i);
 				
@@ -198,18 +196,18 @@ public class FormDataBO{
 			}
 		}
 		
-		//check if isHome (user is in the product sections page)
+		//check if isSectionPage (user is in the product sections page)
 		
-		if(isFromHome) {
-			returnMap.put("prevPage", "home");
+		if(isFromSectionPage) {
+			returnMap.put("prevPage", "sectionPage");
 		}else returnMap.put("prevPage", currentPage);
 		
-		if(!isHome) {
+		if(!isSectionPage) {
 			returnMap.put("nextPage", nextPage);
 			returnMap.put("fieldNameList", fieldNameList);			
 		}
 
-		returnMap.put("isHome", isHome);
+		returnMap.put("isSectionPage", isSectionPage);
 		returnMap.put("isDone", isDone);
 		return returnMap;
 	}
@@ -240,6 +238,8 @@ public class FormDataBO{
 		productConfigMap = getProductRequirementsFromFile(productCode);
 		sectionList = (List)productConfigMap.get("sectionList");
 		
+		
+		//CASE 1: User have filled some form
 //		Outer Loop #0 	-> search the sectionList to find all section belonging to the productCode
 //		Inner Loop #1 	-> search the pageList to find matching pages that belongs to the current outer loop 'section'
 //		Inner Loop #2 	-> search the fieldList of current Page and match it with collectedData
@@ -247,79 +247,78 @@ public class FormDataBO{
 //				-> NO matches			, THEN						"Not yet filled"
 //				-> ALL matches			, THEN						"Completed"
 //		
-		//	#0
-		int sectionListLength = sectionList.size();
-		for(int i = 0 ; i < sectionListLength ; i++) {
-			Map currentSectionMap = (Map)sectionList.get(i);
-			Map sectionMapPayload = currentSectionMap;
-			List currentSectionPageList = (List) currentSectionMap.get("pageList");
-			String currentRequirement = (String) currentSectionMap.get("requirement");
-			boolean hasOneFilled = false;
-			boolean hasOneUnfilled = false;
-			boolean allPageFilled = true;
-			boolean allPageUnfilled = true;
-			boolean sectionInProgress = false;
-			
-			pageConfigMap = getPageDetailsFromFile(currentRequirement);
-			pageList = (List)pageConfigMap.get("page");
-			
-			//	#1
-			int sectionPageListLength = currentSectionPageList.size();
-			for(int j = 0 ; j < sectionPageListLength ; j++) {
-				String currentSectionPageCode = (String)currentSectionPageList.get(i);
-				String checkStatus = null;
+			//	#0
+			int sectionListLength = sectionList.size();
+			for(int i = 0 ; i < sectionListLength ; i++) {
+				Map currentSectionMap = (Map)sectionList.get(i);
+				Map sectionMapPayload = currentSectionMap;
+				List currentSectionPageList = (List) currentSectionMap.get("pageList");
+				String currentRequirement = (String) currentSectionMap.get("requirement");
+				boolean hasOneFilled = false;
+				boolean hasOneUnfilled = false;
+				boolean allPageFilled = true;
+				boolean allPageUnfilled = true;
+				boolean sectionInProgress = false;
 				
-				// #1.1
-				int pageListLength = pageList.size();
-				for(int k = 0 ; k < pageListLength ; k++) {
-					Map currentPageMap = (Map)pageList.get(k);
-					String currentPageConfigCode = (String) currentPageMap.get("pageCode");
-					if(currentSectionPageCode.equals(currentPageConfigCode)) {
-						checkStatus = checkIfFilled((List)currentPageMap.get("fields"), collectedData);
-						break;
+				pageConfigMap = getPageDetailsFromFile(currentRequirement);
+				pageList = (List)pageConfigMap.get("page");
+				
+				//	#1
+				int sectionPageListLength = currentSectionPageList.size();
+				for(int j = 0 ; j < sectionPageListLength ; j++) {
+					String currentSectionPageCode = (String)currentSectionPageList.get(i);
+					String checkStatus = null;
+					
+					// #1.1
+					int pageListLength = pageList.size();
+					for(int k = 0 ; k < pageListLength ; k++) {
+						Map currentPageMap = (Map)pageList.get(k);
+						String currentPageConfigCode = (String) currentPageMap.get("pageCode");
+						if(currentSectionPageCode.equals(currentPageConfigCode)) {
+							checkStatus = checkIfFilled((List)currentPageMap.get("fields"), collectedData);
+							break;
+						}
+						
 					}
 					
+					//Section boolean IFs
+					if(checkStatus.equals("COMPLETED")) {
+						hasOneFilled = true;
+						allPageUnfilled = false;
+					}else if(checkStatus.equals("NOT FILLED")) {
+						hasOneUnfilled = true;
+						allPageFilled = false;
+					}else if(checkStatus.equals("IN PROGRESS") || (hasOneFilled && hasOneUnfilled)){
+						sectionInProgress = true;
+					}
 				}
 				
-				//Section boolean IFs
-				if(checkStatus.equals("COMPLETED")) {
-					hasOneFilled = true;
-					allPageUnfilled = false;
-				}else if(checkStatus.equals("NOT FILLED")) {
-					hasOneUnfilled = true;
-					allPageFilled = false;
-				}else if(checkStatus.equals("IN PROGRESS") || (hasOneFilled && hasOneUnfilled)){
-					sectionInProgress = true;
+				//Check if all page in the section is not yet filled
+				if(allPageUnfilled) {
+					sectionMapPayload.put("sectionStatus", "INCOMPLETE");
+					//Check if it's the first section of the product or the section before is already COMPLETE
+					if(prevStatus == null || prevStatus.equals("COMPLETE")) {
+						sectionMapPayload.put("disabled", false);
+					}
+					else {
+						sectionMapPayload.put("disabled", true);
+					}
+					prevStatus = "INCOMPLETE";
 				}
-			}
-			
-			//Check if all page in the section is not yet filled
-			if(allPageUnfilled) {
-				sectionMapPayload.put("sectionStatus", "INCOMPLETE");
-				//Check if it's the first section of the product or the section before is already COMPLETE
-				if(prevStatus == null || prevStatus.equals("COMPLETE")) {
+				//Check if all page in the section is filled
+				else if(allPageFilled){
+					sectionMapPayload.put("sectionStatus", "COMPLETE");
 					sectionMapPayload.put("disabled", false);
+					prevStatus = "COMPLETE";
 				}
-				else {
-					sectionMapPayload.put("disabled", true);
+				//Check if SOME page in the section is filled
+				else if(sectionInProgress) {
+					sectionMapPayload.put("sectionStatus", "IN PROGRESS");
+					sectionMapPayload.put("disabled", false);
+					prevStatus = "IN PROGRESS";
 				}
-				prevStatus = "INCOMPLETE";
+				returnSectionList.add(sectionMapPayload);
 			}
-			//Check if all page in the section is filled
-			else if(allPageFilled){
-				sectionMapPayload.put("sectionStatus", "COMPLETE");
-				sectionMapPayload.put("disabled", false);
-				prevStatus = "COMPLETE";
-			}
-			//Check if SOME page in the section is filled
-			else if(sectionInProgress) {
-				sectionMapPayload.put("sectionStatus", "IN PROGRESS");
-				sectionMapPayload.put("disabled", false);
-				prevStatus = "IN PROGRESS";
-			}
-			returnSectionList.add(sectionMapPayload);
-		}
-		
 		return returnSectionList; 
 	}
 	
@@ -336,26 +335,30 @@ public class FormDataBO{
 		boolean allUnfilled = true;
 		
 		// #2
-		for(int i = 0 ; i < fieldListLength ; i++) {
-			Map currentFieldMap = (Map)fieldList.get(i);
-			String currentFieldName = (String)currentFieldMap.get("fieldName");
-			String currentFieldFlag = "NOT FILLED";
-			
-			// #2.1
-			int collectedDataLength = collectedData.size();
-			for(int j = 0 ; j < collectedDataLength ; j++) {
-				if(currentFieldName.equals(collectedData.get(j))) {
-					currentFieldFlag = "FILLED";
-					hasOneFilled = true;
-					allUnfilled = false;
-					collectedData.remove(j);
-					break;
+		if(collectedData != null) {
+			for(int i = 0 ; i < fieldListLength ; i++) {
+				Map currentFieldMap = (Map)fieldList.get(i);
+				String currentFieldName = (String)currentFieldMap.get("fieldName");
+				String currentFieldFlag = "NOT FILLED";
+				
+				// #2.1
+				int collectedDataLength = collectedData.size();
+				for(int j = 0 ; j < collectedDataLength ; j++) {
+					if(currentFieldName.equals(collectedData.get(j))) {
+						currentFieldFlag = "FILLED";
+						hasOneFilled = true;
+						allUnfilled = false;
+						collectedData.remove(j);
+						break;
+					}
+				}
+				if(currentFieldFlag.equals("NOT FILLED")) {
+					hasOneUnfilled = true;
+					allFilled = false;
 				}
 			}
-			if(currentFieldFlag.equals("NOT FILLED")) {
-				hasOneUnfilled = true;
-				allFilled = false;
-			}
+		}else {
+			allUnfilled = true;
 		}
 		
 		if(allFilled) {
@@ -376,35 +379,23 @@ public class FormDataBO{
 //	This function controls submit logic
 	public String submitRegistrationData(String email, String cif, String ktpId, Map inputData, Map autofillData) {
 		
-		//Key set of current page's inputData & autofillData Map
-		List inputDataKey = new LinkedList(inputData.keySet());
-		List autofillKey = new LinkedList(autofillData.keySet());
-		
-		//Value set of current page's inputData & autofillData Map
-		List inputDataValue = new LinkedList(inputData.values());
-		List autofillValue = new LinkedList(autofillData.values());
-		
-		// Check If user input is different from the autofill data, 
-		// then submit the user input else skip the loop
-		if(!inputDataKey.equals(autofillKey) || !inputDataValue.equals(autofillValue)) {
-			if(userRepository.existsByEmail(email)) {
-				MongoQuery mq = new MongoQuery();
+		if(autofillData == null) {
+			List inputDataKey = new LinkedList(inputData.keySet());
+			MongoQuery mq = new MongoQuery();
+			
+			if(mq.existsByEmail(email)) {
 				Document userDoc = mq.getUser(email, cif, ktpId);
 				
 				Map formData = new HashMap();
-				Map additionalData = new HashMap();
 				List collectedData = new LinkedList();
 				
 				formData = (Map)userDoc.get("formData");
-				additionalData = (Map)userDoc.get("additionalData");
-				
-				collectedData = (List)additionalData.get("collectedData");
+				collectedData = (List)userDoc.get("collectedData");
 				
 				Set updatedCollectedData = new HashSet();
-				if(additionalData.containsKey("collectedData")) {
+				if(collectedData != null) {
 					updatedCollectedData = new HashSet(collectedData);
 				}
-
 
 //				INPUT TO USERDOC LOOP
 //				
@@ -413,7 +404,7 @@ public class FormDataBO{
 					String currentInputKey = (String)inputDataKey.get(i);
 					//Check if the input is ktpPhoto
 					if(currentInputKey.equals("ktpPhoto")) {
-						String imagePath = storeBase64KtpPhoto((String)inputData.get("currentInputKey"), email, cif);
+						String imagePath = storeBase64KtpPhoto((String)inputData.get(currentInputKey), email, cif);
 						formData.put(currentInputKey, imagePath);
 					}else {
 						formData.put(currentInputKey, inputData.get(currentInputKey));
@@ -426,19 +417,74 @@ public class FormDataBO{
 				mq.updateUser(email, cif, ktpId, userDoc);
 				return "OK";
 			}
-		}else if(inputDataKey.equals(autofillKey) && inputDataValue.equals(autofillValue)) {
-			System.out.println("Input is same as autofill data");
-			return "No changes";
+		}else if(!autofillData.isEmpty() && autofillData != null)){
+
+			//Key set of current page's inputData & autofillData Map
+			List inputDataKey = new LinkedList(inputData.keySet());
+			List autofillKey = new LinkedList(autofillData.keySet());
+			
+			//Value set of current page's inputData & autofillData Map
+			List inputDataValue = new LinkedList(inputData.values());
+			List autofillValue = new LinkedList(autofillData.values());
+			
+			// Check If user input is different from the autofill data, 
+			// then submit the user input else skip the loop
+			if(!inputDataKey.equals(autofillKey) || !inputDataValue.equals(autofillValue)) {
+				if(userRepository.existsByEmail(email)) {
+					MongoQuery mq = new MongoQuery();
+					Document userDoc = mq.getUser(email, cif, ktpId);
+					
+					Map formData = new HashMap();
+					Map additionalData = new HashMap();
+					List collectedData = new LinkedList();
+					
+					formData = (Map)userDoc.get("formData");
+					additionalData = (Map)userDoc.get("additionalData");
+					
+					collectedData = (List)additionalData.get("collectedData");
+					
+					Set updatedCollectedData = new HashSet();
+					if(additionalData.containsKey("collectedData")) {
+						updatedCollectedData = new HashSet(collectedData);
+					}
+	
+	//				INPUT TO USERDOC LOOP
+	//				
+					int length = inputDataKey.size();
+					for(int i = 0 ; i < length ; i++) {
+						String currentInputKey = (String)inputDataKey.get(i);
+						//Check if the input is ktpPhoto
+						if(currentInputKey.equals("ktpPhoto")) {
+							String imagePath = storeBase64KtpPhoto((String)inputData.get("currentInputKey"), email, cif);
+							formData.put(currentInputKey, imagePath);
+						}else {
+							formData.put(currentInputKey, inputData.get(currentInputKey));
+						}
+						updatedCollectedData.add(currentInputKey);
+					}
+					userDoc.append("formData", formData);
+					userDoc.append("collectedData", updatedCollectedData);
+					
+					mq.updateUser(email, cif, ktpId, userDoc);
+					return "OK";
+				}
+			}else if(inputDataKey.equals(autofillKey) && inputDataValue.equals(autofillValue)) {
+				System.out.println("Input is same as autofill data");
+				return "No changes";
+			}
 		}
-		
 		return null;
 	}
+	
+	
+	
+	
 	
 	//TODO: Add function to getImage, get path from user's document then encode image to base64
 //	This function decodes the base64 image string of ktpPhoto into bytes 
 //	then stores it into a binary(image) file.
 	public String storeBase64KtpPhoto(String base64String, String email, String cif) {
-		String resourcePath = "src/main/resources/KTP-Images/";
+		
 		String[] strings = base64String.split(",");
 		String extension;
 		switch(strings[0]) {
@@ -460,7 +506,7 @@ public class FormDataBO{
 		//Name the image like: CIF_EMAIL.EXTENSION
 		
 		byte[] data = DatatypeConverter.parseBase64Binary(strings[1]);
-		String path = resourcePath + cif + "_" + email + "." + extension;
+		String path = RESOURCE_PATH + cif + "_" + email + "." + extension;
 		
 		//Get the image's target file path
 		File file = new File(path);
@@ -477,6 +523,23 @@ public class FormDataBO{
 	}
 	
 	
+	public String getImageString(String filePath) {
+		System.out.println("ran getImageString");
+		byte[] fileContent;
+		try {
+			fileContent = FileUtils.readFileToByteArray(new File(filePath));
+			String encodedString = Base64.getEncoder().encodeToString(fileContent);
+			return encodedString;
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		
+		return "Image not Found";
+	}
+	
+	
+	
 	
 	
 //	This function fetches the already collected data
@@ -486,7 +549,7 @@ public class FormDataBO{
 		Map formData = new HashMap();
 		Document userDoc = new Document();
 		List collectedData = new LinkedList();
-		String fieldName;
+		String fieldName, collectedDataName;
 		
 		userDoc = mq.getUser(email, cif, ktpId);
 		formData = (Map)userDoc.get("formData");
@@ -498,11 +561,19 @@ public class FormDataBO{
 			if(!collectedData.isEmpty()) {
 				lengthCollected = collectedData.size();
 				for(int i = 0 ; i < lengthFieldList ; i++) {
+					fieldName = (String)fieldList.get(i);
 					for(int j = 0 ; j < lengthCollected ; j++) {
-						if(fieldList.get(i).equals(collectedData.get(j))) {
-							fieldName = (String)fieldList.get(i);
-							returnMap.put(fieldName, formData.get(fieldName));
-							break;
+						collectedDataName = (String) collectedData.get(j);
+						//checks if the current field name matches current collectedData name
+						if(fieldName.equals(collectedDataName)) {
+							//checks if the current field is ktpPhoto
+							if(fieldName.equals("ktpPhoto")) {
+								returnMap.put(fieldName, getImageString((String)formData.get(fieldName)));
+								break;
+							}else {								
+								returnMap.put(fieldName, formData.get(fieldName));
+								break;
+							}
 						}
 					}
 				}

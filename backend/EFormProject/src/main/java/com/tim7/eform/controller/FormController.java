@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,21 +24,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.tim7.eform.bo.FormDataBO;
-import com.tim7.eform.model.User;
-import com.tim7.eform.mongo.MongoQuery;
 import com.tim7.eform.repository.CustomUserRepository;
-import com.tim7.eform.repository.UserRepository;
 
 @RestController
 @RequestMapping(value="/api/form")
 public class FormController {
-	
-	@Autowired
-	private UserRepository userRepository;
 	
 	@Autowired
 	CustomUserRepository repo;
@@ -64,19 +55,18 @@ public class FormController {
 		String prevPage = (String) formData.get("prevPage");
 		Boolean isBack = (Boolean) formData.get("isBack");
 		Boolean isSubmit = (Boolean) formData.get("isSubmit");
-		Boolean isFromHome = (Boolean) formData.get("isFromHome");
+		Boolean isFromSectionPage = (Boolean) formData.get("isFromSectionPage");
 		
 		//validate booleans, DO NOT REMOVE
 		if(isSubmit==null) isSubmit = false;
-		if(isFromHome == null) isFromHome = false;
+		if(isFromSectionPage == null) isFromSectionPage = false;
 		if(isBack == null) isBack = false;
 		
-		formMap = FormDataBO.getinstance().getRegistrationData(email, cif, ktpId, productCode, currentPage, prevPage, isBack, isFromHome);
+		formMap = FormDataBO.getinstance().getRegistrationData(email, cif, ktpId, productCode, currentPage, prevPage, isBack, isFromSectionPage);
 		
 		if(isSubmit) {
 			Map inputData = new HashMap();
 			Map autofillData = new HashMap();
-			Map nextPageMap = new HashMap();
 			
 			inputData = (Map) formData.get("inputData");
 			autofillData = (Map) formData.get("autofillData");

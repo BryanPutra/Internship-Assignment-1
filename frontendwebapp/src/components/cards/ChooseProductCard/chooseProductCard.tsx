@@ -3,8 +3,6 @@ import { useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import { useRouter } from "next/router";
 import { useMain } from "context/mainContext";
-import { useAxios } from "context/axiosContext";
-import { IInputFormsRequestPage } from "interfaces/inputFormInterfaces";
 
 interface IChooseProductCardProps {
   productTitle: string;
@@ -17,8 +15,18 @@ const ChooseProductCard: React.FunctionComponent<IChooseProductCardProps> = (
 ) => {
   const [isHeld, setIsHeld] = useState<boolean>(false);
   const router = useRouter();
-  const { setCreatingProductName } = useMain();
-  const { authorizationAxios } = useAxios();
+  const { mainStates, setMainStates } = useMain();
+
+  const onClicked = () => {
+    setMainStates(prevState => ({
+      ...prevState,
+      creatingProductName: props.productTitle,
+      currentPage: "sectionPage",
+      isFromSectionPage: true,
+    }));
+    router.push("/inputs/inputData");
+    console.log(mainStates);
+  }
 
   return (
     <div
@@ -28,10 +36,7 @@ const ChooseProductCard: React.FunctionComponent<IChooseProductCardProps> = (
       onTouchEnd={() => {
         setIsHeld(false);
       }}
-      onClick={() => {
-        setCreatingProductName(props.productTitle);
-        router.push("/inputs/inputData");
-      }}
+      onClick={onClicked}
       className={`p-5 flex flex-row bg-white rounded-2xl shadow-lg w-full gap-2 ${
         isHeld ? "!bg-grey" : "!bg-white"
       }`}

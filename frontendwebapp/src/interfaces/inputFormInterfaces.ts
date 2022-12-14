@@ -1,3 +1,24 @@
+interface IUser {
+  id: string;
+  username: string;
+  email: string;
+  cif: string;
+  roles: string[];
+}
+
+interface IDefaultMainStates {
+  user: IUser;
+  productSectionSelected: string;
+  creatingProductName: string;
+  currentPage: string;
+  prevPage: string;
+  sectionDetails: ISectionDetails[];
+  isSectionPage: boolean;
+  isFromSectionPage: boolean;
+  isBack: boolean;
+  isSubmit: boolean;
+}
+
 interface ISectionDetails {
   sectionTitle: string;
   sectionStatus: string;
@@ -7,10 +28,21 @@ interface ISectionDetails {
   pageList: string[];
 }
 
+interface IDataLists {
+  gender: string[];
+  rt: string[];
+  rw: string[];
+  province: string[];
+  city: string[];
+  district: string[];
+  subDistrict: string[];
+}
+
 interface IInputFormsRequestSubmitForm {
   id: string;
   username: string;
   email: string;
+  cif: string;
   roles: string[];
   productCode: string;
   currentPage: string;
@@ -29,7 +61,7 @@ interface IAutoFillMap {
   maritalStatusKtp?: string;
   religionKtp?: string;
   genderKtp?: string;
-  motherMaidenName?: string;
+  motherMaidenKtp?: string;
   streetAddressKtp?: string;
   rtKtp?: string;
   rwKtp?: string;
@@ -41,14 +73,15 @@ interface IAutoFillMap {
 }
 
 interface IInputFormsRequestDataProps {
-  id: string;
+  id?: string;
   username: string;
   email: string;
+  cif: string;
   roles: string[];
   productCode: string;
   currentPage: string;
   prevPage: string;
-  isFromHome: boolean;
+  isFromSectionPage: boolean;
   isBack: boolean;
   isSubmit: boolean;
 }
@@ -57,11 +90,12 @@ interface IInputFormsRequestPage {
   id: string;
   username: string;
   email: string;
+  cif: string;
   roles: string[];
   productCode: string;
   currentPage: string;
   prevPage?: string;
-  isFromHome: boolean;
+  isFromSectionPage: boolean;
   isBack?: boolean;
   isSubmit?: boolean;
 }
@@ -72,10 +106,30 @@ interface IInputFormsResponse {
     autofillMap: {};
     nextPageMap: {
       nextPage: string;
-      isHome: boolean;
+      isSectionPage: boolean;
       prevPage: string;
       fields: IInputField[];
     };
+  };
+}
+
+interface IInputFormsSubmitResponse {
+  formMap: {
+    sectionList?: ISectionDetails[];
+    autofillMap: {};
+    nextPageMap: {
+      nextPage: string;
+      isSectionPage: boolean;
+      prevPage: string;
+      fields: IInputField[];
+    };
+  };
+}
+
+interface ICreatedProductResponse {
+  formMap: {
+    isDone: boolean;
+    productName: string;
   };
 }
 
@@ -103,7 +157,7 @@ interface IFormData1 {
   maritalStatusKtp: string;
   religionKtp: string;
   genderKtp: string;
-  motherMaidenName: string;
+  motherMaidenKtp: string;
 }
 
 interface IFormData2 {
@@ -122,6 +176,8 @@ interface IPhotoData {
 }
 
 export type {
+  IUser,
+  IDefaultMainStates,
   IInputFormsRequestDataProps,
   IInputFormsRequestSubmitForm,
   IInputFormsRequestPage,
@@ -131,5 +187,8 @@ export type {
   IInputField,
   IFormData1,
   IFormData2,
-  ISectionDetails
+  ISectionDetails,
+  IDataLists,
+  IInputFormsSubmitResponse,
+  ICreatedProductResponse,
 };

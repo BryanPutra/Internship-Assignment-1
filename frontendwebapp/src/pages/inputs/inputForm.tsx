@@ -16,6 +16,8 @@ import type {
   IFormData1,
   IFormData2,
   IAutoFillMap,
+  IDataLists,
+  ICreatedProductResponse
 } from "interfaces/inputFormInterfaces";
 
 //libraries
@@ -30,35 +32,21 @@ import * as yup from "yup";
 import { Skeleton } from "@mui/material";
 
 import moment from "moment";
-import { useAxios } from "context/axiosContext";
+import { useAxios, apiURL } from "context/axiosContext";
 import { useAuth } from "context/authContext";
-
-interface IDataLists {
-  gender: string[];
-  rt: string[];
-  rw: string[];
-  province: string[];
-  city: string[];
-  district: string[];
-  subDistrict: string[];
-}
 
 const InputForm: React.FunctionComponent = () => {
   // initial actions
   const {
     creatingProductName,
     currentPage,
-    setCurrentPage,
     prevPage,
-    setPrevPage,
+    setMainStates,
     isBack,
-    setIsHome,
-    setKtpIsActive,
-    setKtpIsFilled,
-    setFormIsActive,
-    setFormIsFilled,
+    mainStates,
+    resetStatesAfterSubmit,
   } = useMain();
-  const { userDetails } = useAuth();
+  const { logout } = useAuth();
   const { authorizationAxios } = useAxios();
 
   const [autofillMap, setAutoFillMap] = useState<IAutoFillMap>({});
@@ -68,17 +56,19 @@ const InputForm: React.FunctionComponent = () => {
   const setFormStates = (responseData: IInputFormsResponse) => {
     setInputFields(responseData.formMap.nextPageMap.fields);
     setKtpPageState(responseData.formMap.nextPageMap.nextPage);
-    setCurrentPage(responseData.formMap.nextPageMap.nextPage);
-    setPrevPage(responseData.formMap.nextPageMap.prevPage);
+    setMainStates(prevState => ({
+      ...mainStates,
+      currentPage: responseData.formMap.nextPageMap.nextPage,
+      prevPage: responseData.formMap.nextPageMap.prevPage,
+    }));
     setAutoFillMap(responseData.formMap.autofillMap);
   };
 
   const resetStates = () => {
-    setIsHome(true);
-    setKtpIsActive(true);
-    setKtpIsFilled(false);
-    setFormIsActive(false);
-    setFormIsFilled(false);
+    setAutoFillMap({});
+    setKtpPageState("");
+    setInputFields([]);
+    resetStatesAfterSubmit();
   };
 
   useEffect(() => {
@@ -88,24 +78,29 @@ const InputForm: React.FunctionComponent = () => {
   }, []);
 
   const getInitialProps = async () => {
+    if (Object.keys(mainStates.user).length === 0) {
+      logout();
+      return;
+    }
     const payload: IInputFormsRequestDataProps = {
-      id: userDetails[0].id,
-      username: userDetails[0].username,
-      email: userDetails[0].email,
-      roles: userDetails[0].roles,
-      productCode: creatingProductName,
+      id: mainStates.user.id,
+      username: mainStates.user.username,
+      email: mainStates.user.email,
+      cif: mainStates.user.cif,
+      roles: mainStates.user.roles,
+      productCode: mainStates.creatingProductName,
       currentPage: "ktp-2",
-      prevPage: "home",
-      isFromHome: true,
-      isBack: isBack,
+      prevPage: "sectionPage",
+      isFromSectionPage: true,
+      isBack: mainStates.isBack,
       isSubmit: false,
     };
-
     console.log(payload);
     console.log(currentPage, prevPage);
     const initialProps = await authorizationAxios.post("/getFormData", payload);
-    const initialPropsData = initialProps.data;
+    const initialPropsData: IInputFormsResponse = initialProps.data;
     console.log(initialPropsData);
+    methods1.reset(initialPropsData.formMap.autofillMap);
     setFormStates(initialPropsData);
   };
 
@@ -115,17 +110,18 @@ const InputForm: React.FunctionComponent = () => {
   const schema1 = yup.object().shape({
     ktpId: yup.string().min(5).max(16).required(),
     fullName: yup.string().required(),
+    // birthDate: yup.date().required().min(),
     birthDate: yup.string().required(),
     birthPlace: yup.string().required(),
     maritalStatusKtp: yup.string().required(),
     religionKtp: yup.string().required(),
     genderKtp: yup.string().required(),
-    motherMaidenName: yup.string().required(),
+    motherMaidenKtp: yup.string().required(),
   });
   const schema2 = yup.object().shape({
     streetAddressKtp: yup.string().required(),
     rtKtp: yup.string().required(),
-    // rwKtp: yup.string().required(),
+    rwKtp: yup.string().required(),
     provinceKtp: yup.string().required(),
     cityKtp: yup.string().required(),
     districtKtp: yup.string().required(),
@@ -133,12 +129,31 @@ const InputForm: React.FunctionComponent = () => {
     postalCodeKtp: yup.string().required().max(5),
   });
 
+  const getAutoFillValue = (
+    inputField: IInputField,
+    autofillMap: IAutoFillMap
+  ) => {
+    if (!isAutoFill(autofillMap)) return "";
+    for (let listKeyString of Object.keys(autofillMap)) {
+      if (!inputField.fieldName.includes(listKeyString)) continue;
+      console.log(listKeyString);
+      return autofillMap[inputField.fieldName as keyof IAutoFillMap];
+    }
+  };
+
+  const getAutoFillObject = () => {
+    return autofillMap ? autofillMap : undefined;
+  };
+
   const methods1 = useForm<IFormData1>({
     resolver: yupResolver(schema1),
+    defaultValues: getAutoFillObject(),
     // mode: "onChange",
   });
+
   const methods2 = useForm<IFormData2>({
     resolver: yupResolver(schema2),
+    defaultValues: getAutoFillObject(),
     // mode: "onChange",
   });
   // const watchAll = methods1.watch();
@@ -161,8 +176,8 @@ const InputForm: React.FunctionComponent = () => {
         return errors.religionKtp;
       case "genderKtp":
         return errors.genderKtp;
-      case "motherMaidenName":
-        return errors.motherMaidenName;
+      case "motherMaidenKtp":
+        return errors.motherMaidenKtp;
       case "streetAddressKtp":
         return errors2.streetAddressKtp;
       case "rtKtp":
@@ -308,7 +323,7 @@ const InputForm: React.FunctionComponent = () => {
     {
       fieldCode: "ktp-2-8",
       component: "textField",
-      fieldName: "motherMaidenName",
+      fieldName: "motherMaidenKtp",
       label: "Nama Ibu Kandung",
       dbKey: "motherMaidenKtp",
     },
@@ -382,18 +397,6 @@ const InputForm: React.FunctionComponent = () => {
     }
   };
 
-  const getAutoFillValue = (
-    inputField: IInputField,
-    autofillMap: IAutoFillMap
-  ) => {
-    if (!isAutoFill(autofillMap)) return " ";
-    for (let listKeyString of Object.keys(autofillMap)) {
-      if (!inputField.fieldName.includes(listKeyString)) continue;
-      console.log(listKeyString);
-      return autofillMap[inputField.fieldName as keyof IAutoFillMap];
-    }
-  };
-
   const isFormData1 = (object: any): object is IFormData1 => {
     return object.ktpId !== undefined;
   };
@@ -401,13 +404,14 @@ const InputForm: React.FunctionComponent = () => {
   const submitData = async (formData: IFormData1 | IFormData2) => {
     try {
       const payload: IInputFormsRequestSubmitForm = {
-        id: userDetails[0].id,
-        username: userDetails[0].username,
-        email: userDetails[0].email,
-        roles: userDetails[0].roles,
-        productCode: creatingProductName,
-        currentPage: currentPage,
-        prevPage: prevPage,
+        id: mainStates.user.id,
+        username: mainStates.user.username,
+        email: mainStates.user.email,
+        cif: mainStates.user.cif,
+        roles: mainStates.user.roles,
+        productCode: mainStates.creatingProductName,
+        currentPage: mainStates.currentPage,
+        prevPage: mainStates.prevPage,
         isBack: isBack,
         isSubmit: true,
         inputData: formData,
@@ -416,19 +420,24 @@ const InputForm: React.FunctionComponent = () => {
       let response;
       if (isFormData1(formData)) {
         const formattedDate = moment(formData.birthDate).format("DD-MM-YYYY");
-        console.log(formattedDate);
-        // response = await authorizationAxios.post("/getFormData", {
-        //   ...payload,
-        //   inputData: { ...formData, birthDate: formattedDate },
-        // });
+        console.log(payload);
         response = await authorizationAxios.post("/getFormData", payload);
+        const responseData: IInputFormsResponse = response.data;
+        console.log(responseData);
+        methods1.reset();
+        methods2.reset(responseData.formMap.autofillMap);
+        setFormStates(response.data);
       } else {
+        console.log(payload);
         response = await authorizationAxios.post("/getFormData", payload);
-        alert("Data submitted successfully");
+        const responseData: ICreatedProductResponse = response.data;
+        console.log(response);
+        methods2.reset();
+        resetStates();
+        alert(`Data submitted successfully, ${responseData.formMap.productName} has been created`);
         router.push("/mainmenu");
       }
       console.log(response.data);
-      setFormStates(response.data);
     } catch (err) {
       alert(`Failed to submit data, ${errorUtils.getErrorMessage(err)}`);
     }
@@ -437,7 +446,6 @@ const InputForm: React.FunctionComponent = () => {
   const onForm1Submit: SubmitHandler<IFormData1> = async (
     formData: IFormData1
   ) => {
-    console.log(currentPage, prevPage);
     setIsLoading(true);
     await submitData(formData);
     setIsLoading(false);
@@ -463,6 +471,7 @@ const InputForm: React.FunctionComponent = () => {
       {ktpPageState === "ktp-2" ? (
         <FormProvider {...methods1}>
           <form
+            key={1}
             className="flex flex-col justify-center px-5 mt-6 gap-8"
             onSubmit={methods1.handleSubmit(onForm1Submit)}
           >
@@ -475,7 +484,6 @@ const InputForm: React.FunctionComponent = () => {
                       inputName={field.fieldName}
                       inputLabel={field.label}
                       inputPlaceholder={field.placeholder}
-                      defaultValueProp={getAutoFillValue(field, autofillMap)}
                       errors={errors}
                       errorString={getErrorString(field)}
                       selectItemsList={selectDropDownList(field)}
@@ -499,6 +507,7 @@ const InputForm: React.FunctionComponent = () => {
       ) : (
         <FormProvider {...methods2}>
           <form
+            key={2}
             className="flex flex-col justify-center px-5 mt-6 gap-8"
             onSubmit={methods2.handleSubmit(onForm2Submit)}
           >
@@ -511,7 +520,6 @@ const InputForm: React.FunctionComponent = () => {
                       inputName={field.fieldName}
                       inputLabel={field.label}
                       inputPlaceholder={field.placeholder}
-                      defaultValueProp={getAutoFillValue(field, autofillMap)}
                       errors={errors2}
                       errorString={getErrorString(field)}
                       selectItemsList={selectDropDownList(field)}

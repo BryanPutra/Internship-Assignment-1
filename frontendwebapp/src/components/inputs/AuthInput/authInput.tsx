@@ -15,12 +15,15 @@ const AuthInput: React.FunctionComponent<IAuthInputProps> = (props) => {
   const { control } = useFormContext();
   return (
     <Controller
+      defaultValue={""}
       name={props.name}
       control={control}
       render={({ field }) => (
         <div className="flex flex-col mt-3">
           <div className="flex flex-row items-end">
-            <props.icon sx={{ color: "action.active", mr: 1, my: 0.5, mb: 1 }} />
+            <props.icon
+              sx={{ color: "action.active", mr: 1, my: 0.5, mb: 1 }}
+            />
             <Input
               {...field}
               type={props.type}
@@ -31,7 +34,9 @@ const AuthInput: React.FunctionComponent<IAuthInputProps> = (props) => {
           </div>
           {props.errors && (
             <>
-              <div className="text-sm text-red mt-2 ml">{props.errorString}</div>
+              <div className="text-sm text-red mt-2 ml">
+                {props.errorString}
+              </div>
             </>
           )}
         </div>

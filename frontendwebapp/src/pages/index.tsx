@@ -1,8 +1,4 @@
 import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
-import Button from "@material-tailwind/react";
 import { useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "context/authContext";

@@ -1,12 +1,10 @@
 import * as React from "react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 //local
 import MainContainer from "components/containers/MainContainer";
 import { useMain } from "context/mainContext";
 import RegistrationHeader from "components/headers/RegistrationHeader";
 import type {
-  ISectionDetails,
   IInputFormsRequestPage,
   IInputFormsResponse,
 } from "interfaces/inputFormInterfaces";
@@ -14,37 +12,43 @@ import type {
 import { Skeleton } from "@mui/material";
 import InputDataButton from "components/buttons/InputDataButton";
 import { useAxios } from "context/axiosContext";
-import { useAuth } from "context/authContext";
 
 interface IInputDataProps {}
 
 const InputData: React.FunctionComponent<IInputDataProps> = (props) => {
-  const { creatingProductName, currentPage, ktpIsActive, ktpIsFilled } =
+  const { mainStates, sectionDetails, setMainStates} =
     useMain();
-  const { userDetails } = useAuth();
   const { authorizationAxios } = useAxios();
-  const [sectionDetails, setSectionDetails] = useState<ISectionDetails[]>([]);
 
   useEffect(() => {
     const getInitialProps = async () => {
       const payload: IInputFormsRequestPage = {
-        id: userDetails[0].id,
-        username: userDetails[0].username,
-        email: userDetails[0].email,
-        roles: userDetails[0].roles,
-        productCode: creatingProductName,
-        currentPage: currentPage,
-        isFromHome: true,
+        id: mainStates.user.id,
+        username: mainStates.user.username,
+        email: mainStates.user.email,
+        cif: mainStates.user.cif,
+        roles: mainStates.user.roles,
+        productCode: mainStates.creatingProductName,
+        currentPage: mainStates.currentPage,
+        isFromSectionPage: mainStates.isFromSectionPage,
         isBack: false,
         isSubmit: false,
       };
       console.log(payload);
-      const response: IInputFormsResponse = await authorizationAxios.post(
+      const initialProps = await authorizationAxios.post(
         "/getFormData",
         payload
       );
-      setSectionDetails(response.formMap.sectionList!);
+      const initialPropsData: IInputFormsResponse = initialProps.data;
+      console.log(initialPropsData);
+      console.log(initialPropsData.formMap.sectionList!);
+      setMainStates(prevState => ({
+        ...prevState,
+        sectionDetails: initialPropsData.formMap.sectionList!
+      }));
     };
+    console.log(mainStates.creatingProductName);
+    
     getInitialProps();
   }, []);
 
@@ -52,12 +56,12 @@ const InputData: React.FunctionComponent<IInputDataProps> = (props) => {
     {
       inputName: "Identity Card (KTP)",
       goToPage: "/inputs/takePhoto",
-      isActive: ktpIsActive,
-      isFilled: ktpIsFilled,
+      isActive: false,
+      isFilled: false,
     },
     {
       inputName: "Selfie + Identity Card (KTP)",
-      goToPage: "/inputs/takePhoto",
+      goToPage: "/inputs/takePhoto",  
       isActive: false,
       isFilled: false,
     },
@@ -84,14 +88,14 @@ const InputData: React.FunctionComponent<IInputDataProps> = (props) => {
   return (
     <MainContainer containerType="secondary">
       <RegistrationHeader
-        creatingProductName={creatingProductName}
+        creatingProductName={mainStates.creatingProductName}
         goToPage="/products/chooseProduct"
       />
       <div className="flex flex-col justify-center gap-5 p-5 bg-white">
         <div className="text-lg font-bold">Please input your data below:</div>
 
-        {sectionDetails.length !== 0
-          ? sectionDetails.map((sectionDetail) => {
+        {mainStates.sectionDetails.length !== 0
+          ? mainStates.sectionDetails.map((sectionDetail) => {
               return (
                 <InputDataButton
                   sectionTitle={sectionDetail.sectionTitle}

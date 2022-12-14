@@ -1,8 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import Image, { StaticImageData } from "next/image";
+import { StaticImageData } from "next/image";
 import Link from "next/link";
-import { useRouter } from 'next/router';
 
 //local
 import creditPlatinum from "../../../public/assets/images/creditplatinum.png";
@@ -27,7 +26,6 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
   const [creditSelected, setCreditSelected] = useState<boolean>(false);
   const [savingsSelected, setSavingsSelected] = useState<boolean>(false);
   const [loanSelected, setLoanSelected] = useState<boolean>(false);
-  const router = useRouter();
 
   const { productSectionSelected, setProductSectionSelected } = useMain();
 

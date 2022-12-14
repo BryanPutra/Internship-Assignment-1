@@ -12,17 +12,13 @@ const Protected: React.FunctionComponent<IProtectedProps> = (props) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (router.asPath === "/") return;
-    if (router.asPath.includes("/auth")) return;
-    console.log('shit');
     checkAuthenticated();
+    console.log("check based on route change");
   }, [router.asPath]);
 
   useEffect(() => {
-    if (router.asPath === "/") return;
-    if (router.asPath.includes("/auth")) return;
-    console.log('shit');
     checkAuthenticated();
+    console.log("change based on first render");
   }, []);
 
   return (<>{props.children}</>)

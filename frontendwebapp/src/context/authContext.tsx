@@ -7,6 +7,8 @@ import * as dataUtils from "utils/dataUtils";
 import { useRouter } from "next/router";
 import { useMain } from "./mainContext";
 
+import type { IUser } from "interfaces/inputFormInterfaces";
+
 interface IAuthContext {
   authState: boolean;
   setAuthState: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,13 +18,6 @@ interface IAuthContext {
   logout: () => Promise<any>;
   testPostAuth: () => Promise<any>;
   checkAuthenticated: () => Promise<any>;
-}
-
-interface IUser {
-  id: string;
-  username: string;
-  email: string;
-  roles: string[];
 }
 
 const authContextDefault: IAuthContext = {
@@ -49,7 +44,7 @@ interface IAuthProviderProps {
 const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
   const [authState, setAuthState] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<IUser[]>([]);
-  const { resetMainStates, user, setUser } = useMain();
+  const { resetMainStates, setUser } = useMain();
   const { authenticationAxios, testAxios, authorizationAxios } = useAxios();
   const router = useRouter();
 
@@ -59,10 +54,9 @@ const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
     try {
       const response = await authenticationAxios.post("/login", data);
       const userDetail: IUser = response.data;
+      console.log(response.data);
       setUserDetails((users) => [...users, userDetail]);
       setUser(userDetail);
-      // setUser({...user, id: userDetail.id, username: userDetail.username, email: userDetail.email, roles: userDetail.roles } as IUser);
-      // setUser({...user, ...{id: userDetail.id, username: userDetail.username, email: userDetail.email, roles: userDetail.roles} as IUser});
       setAuthState(true);
       alert("Logged in successfully");
       router.push("/mainmenu");
@@ -71,15 +65,27 @@ const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
     }
   };
 
-  const checkAuthenticated = async () => {  
+  const isNotInMain = router.asPath === "/" || router.asPath.includes("/auth");
+
+  const checkAuthenticated = async () => {    
     try {
+      if (!localStorage.getItem("mainStates")){
+        console.log("localStorage cant find any states");
+        logout();
+        return
+      };
       const response = await authorizationAxios.get("/home");
       console.log(response);
-      if (isAuthorized(response)) return;
+      if (isNotInMain) {
+        router.replace("/mainmenu");
+      }
     } catch (err) {
-      alert(`User is not authenticated. Please login again.`);
+      console.log(err);
+      if (isNotInMain) {
+        alert(`User is not authenticated. Please login again.`);
+      }
+      console.log("logging out");
       logout();
-      router.replace("/auth/login");
     }
   };
 
@@ -97,7 +103,7 @@ const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
     try {
       resetMainStates();
       setAuthState(false);
-      dataUtils.clearArray(userDetails);
+      dataUtils.clearArray(userDetails);      
       router.replace("/auth/login");
     } catch (err) {
       alert(`Failed to logout, ${errorUtils.getErrorMessage(err)}`);

@@ -46,14 +46,6 @@ const Login: React.FunctionComponent = () => {
     setIsLoading(false);
   };
 
-  const loginWithGoogle = () => {};
-
-  const bruh = () => {
-    setAuthState(true);
-    console.log(authState);
-    router.replace("/mainmenu");
-  };
-
   const router = useRouter();
 
   useEffect(() => {
@@ -66,7 +58,9 @@ const Login: React.FunctionComponent = () => {
 
   return (
     <MainContainer containerType="primary">
-      <Image src={imageLogo} alt="Login Pic" layout="responsive" priority />
+      <div>
+        <Image src={imageLogo} alt="Login Pic" layout="responsive" priority />
+      </div>
       <AuthTitle text="Login" textSize="text-4xl" />
       <FormProvider {...methods}>
         <form

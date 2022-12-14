@@ -32,6 +32,7 @@ import ProductCard from "components/cards/ProductCard";
 
 import { useMain } from "context/mainContext";
 import { useHistory } from "context/historyContext";
+import { useAxios } from "context/axiosContext";
 
 interface IMainMenuProps {}
 
@@ -57,6 +58,7 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
     prevPage,
     setPrevPage,
   } = useMain();
+  const {authorizationAxios} = useAxios();
 
   useEffect(() => {
     setCurrentPage("mainmenu");
@@ -66,6 +68,12 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
     console.log(currentPage);
     console.log(prevPage);
   }, []);
+
+  const resetDatabase = async() => {
+    const response = await authorizationAxios.get("/debug/freshstart");
+    console.log(response);
+    alert('Database has been reset for testing purposes')
+  }
 
   const printCurrentPage = () => {
     console.log(history.length - 1);
@@ -163,8 +171,8 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
           <div className="w-1/3">
             <Image src={SimobiLogo} alt="Login Pic" layout="responsive" />
           </div>
-          <div className="flex flex-row justify-end w-full gap-3">
-            <div onClick={printCurrentPage}>
+          <div className="flex flex-row justify-end w-full space-x-3">
+            <div onClick={resetDatabase}>
               <Settings />
             </div>
             <div onClick={logout}>
@@ -258,8 +266,6 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
       </CardContainer>
       <CardContainer>
         <MainMenuTitle name="Hellow" />
-
-        <div></div>
         <SavingsCard />
         <CardDetail />
       </CardContainer>

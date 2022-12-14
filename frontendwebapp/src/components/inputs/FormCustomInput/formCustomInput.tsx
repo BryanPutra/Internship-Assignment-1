@@ -55,10 +55,11 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
           {{
             textfield: (
               <TextField
+                InputLabelProps={{shrink: true}}
                 className=""
                 fullWidth
                 {...field}
-                value={props.defaultValueProp}
+                // value={props.defaultValueProp}
                 color="primary"
                 placeholder={props.inputPlaceholder}
                 label={props.inputLabel}
@@ -73,7 +74,7 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
                   labelId="select"
                   variant="standard"
                   {...field}
-                  value={props.defaultValueProp}
+                  // value={props.defaultValueProp}
                 >
                   {props.selectItemsList?.map((item: string) => {
                     return <MenuItem value={item}>{item}</MenuItem>;
@@ -81,7 +82,7 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
                 </Select>
               </>
             ),
-            calendar: (
+            Calendar: (
               <LocalizationProvider dateAdapter={AdapterMoment}>
                 <DatePicker
                   label={props.inputLabel}
@@ -95,12 +96,11 @@ const FormCustomInput: React.FunctionComponent<IFormCustomInputProps> = (
                       {...props}
                       datatype=""
                       fullWidth
-                      color="info"
+                      color="primary"
                       variant="standard"
                     />
                   )}
                   {...field}
-                  value={props.defaultValueProp}
                 />
               </LocalizationProvider>
             ),

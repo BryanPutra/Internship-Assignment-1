@@ -2,12 +2,11 @@ import { AxiosInstance } from "axios";
 import * as React from "react";
 import { createContext, useContext } from "react";
 import axios from "axios";
-
 const portHostClient = "3000";
-const apiURL = "https://f37d-36-72-88-33.ap.ngrok.io/api"
-const authorizationURL = "https://f37d-36-72-88-33.ap.ngrok.io/api/form";
-const authenticationURL = "https://f37d-36-72-88-33.ap.ngrok.io/api/auth";
-const testURL = "https://f37d-36-72-88-33.ap.ngrok.io/api/form";
+const apiURL = "https://e736-180-241-243-23.ap.ngrok.io/api"
+const authorizationURL = `${apiURL}/form`;
+const authenticationURL = `${apiURL}/auth`;
+const testURL = `${apiURL}/form`;
 
 interface IAxiosContext {
   authenticationAxios: AxiosInstance;
@@ -70,4 +69,4 @@ const AxiosProvider: React.FunctionComponent<IAxiosProviderProps> = (props) => {
   );
 };
 
-export { AxiosProvider, useAxios };
+export { AxiosProvider, useAxios, apiURL };

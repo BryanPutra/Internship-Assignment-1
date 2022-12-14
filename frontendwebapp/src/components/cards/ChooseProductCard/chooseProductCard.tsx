@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import { useRouter } from "next/router";
-import {useMain} from 'context/mainContext';
+import { useMain } from "context/mainContext";
 
 interface IChooseProductCardProps {
   productTitle: string;
@@ -13,10 +13,21 @@ interface IChooseProductCardProps {
 const ChooseProductCard: React.FunctionComponent<IChooseProductCardProps> = (
   props
 ) => {
-  const [isHeld, setIsHeld] = useState(false);
+  const [isHeld, setIsHeld] = useState<boolean>(false);
   const router = useRouter();
-  const { setCreatingProductName} = useMain();
-  
+  const { mainStates, setMainStates } = useMain();
+
+  const onClicked = () => {
+    setMainStates(prevState => ({
+      ...prevState,
+      creatingProductName: props.productTitle,
+      currentPage: "sectionPage",
+      isFromSectionPage: true,
+    }));
+    router.push("/inputs/inputData");
+    console.log(mainStates);
+  }
+
   return (
     <div
       onTouchStart={() => {
@@ -25,10 +36,7 @@ const ChooseProductCard: React.FunctionComponent<IChooseProductCardProps> = (
       onTouchEnd={() => {
         setIsHeld(false);
       }}
-      onClick={() => {
-        setCreatingProductName(props.productTitle)
-        router.push('/inputs/inputData');
-      }}
+      onClick={onClicked}
       className={`p-5 flex flex-row bg-white rounded-2xl shadow-lg w-full gap-2 ${
         isHeld ? "!bg-grey" : "!bg-white"
       }`}

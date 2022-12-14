@@ -8,7 +8,7 @@ interface ISubmitButtonProps {
 }
 
 const SubmitButton: React.FunctionComponent<ISubmitButtonProps> = (props) => {
-  const [isHeld, setIsHeld] = useState(false);
+  const [isHeld, setIsHeld] = useState<boolean>(false);
 
   return (
     <button

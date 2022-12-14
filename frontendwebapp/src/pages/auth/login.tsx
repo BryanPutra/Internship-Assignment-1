@@ -1,6 +1,9 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
+//local
 import MainContainer from "components/containers/MainContainer";
 import AuthTitle from "components/titles/AuthTitle";
 import Image from "next/image";
@@ -8,14 +11,14 @@ import imageLogo from "../../../public/assets/images/login.png";
 import AuthInput from "components/inputs/AuthInput";
 import ButtonInText from "components/buttons/ButtonInText";
 import SubmitButton from "components/buttons/SubmitButton";
+import { useAuth } from "context/authContext";
 
+//libs
+import * as yup from "yup";
 import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { AlternateEmail, Lock } from "@mui/icons-material";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useAuth } from "context/authContext";
+import { useMain } from "context/mainContext";
 
 interface ILoginFormInputs {
   email: string;
@@ -28,12 +31,12 @@ const schema = yup.object().shape({
 });
 
 const Login: React.FunctionComponent = () => {
-  const { login, authState, setAuthState, testPostAuth } = useAuth();
+  const { login, authState, setAuthState, testPostAuth, userDetails } =
+    useAuth();
   const methods = useForm<ILoginFormInputs>({ resolver: yupResolver(schema) });
   const errors = methods.formState.errors;
-  const [isHeld, setIsHeld] = useState(false);
-
-  const [isLoading, setIsLoading] = useState(false);
+  const [isHeld, setIsHeld] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onLoginPressed: SubmitHandler<ILoginFormInputs> = async (
     data: ILoginFormInputs
@@ -43,27 +46,21 @@ const Login: React.FunctionComponent = () => {
     setIsLoading(false);
   };
 
-  const loginWithGoogle = () => {};
-  
-  const bruh = () => {
-    setAuthState(true);
-    console.log(authState);
-    router.replace("/mainmenu");
-  }
-
   const router = useRouter();
 
   useEffect(() => {
     if (authState) {
       router.back();
-      return
+      return;
     }
     router.prefetch("/mainmenu");
   }, []);
 
   return (
     <MainContainer containerType="primary">
-      <Image src={imageLogo} alt="Login Pic" layout="responsive" />
+      <div>
+        <Image src={imageLogo} alt="Login Pic" layout="responsive" priority />
+      </div>
       <AuthTitle text="Login" textSize="text-4xl" />
       <FormProvider {...methods}>
         <form
@@ -116,7 +113,9 @@ const Login: React.FunctionComponent = () => {
           onTouchEnd={() => {
             setIsHeld(false);
           }}
-          className={`${isHeld ? "!bg-grey" : "!bg-paleGrey"} font-semibold py-3 flex flex-row text-textDarkGrey w-full rounded-lg shadow-md align-center justify-center`}
+          className={`${
+            isHeld ? "!bg-grey" : "!bg-paleGrey"
+          } font-semibold py-3 flex flex-row text-textDarkGrey w-full rounded-lg shadow-md align-center justify-center`}
         >
           Login with Google
         </button>

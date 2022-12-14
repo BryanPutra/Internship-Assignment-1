@@ -1,16 +1,30 @@
-import * as React from 'react';
+import * as React from "react";
+import { useState } from "react";
 
-interface ICustomButtonsProps {
-  
+interface ICustomButtonProps {
+  name: string;
+  isPressable: boolean;
+  goToPage: () => void;
 }
 
-const CustomButtons: React.FunctionComponent<ICustomButtonsProps> = (props) => {
+const CustomButton: React.FunctionComponent<ICustomButtonProps> = (props) => {
+  const [isHeld, setIsHeld] = useState<boolean>(false);
   return (
-    <div className="container">
-        <div className="text">bro</div>
+    <div
+      onTouchStart={() => {
+        setIsHeld(true);
+      }}
+      onTouchEnd={() => {
+        setIsHeld(false);
+      }}
+      onClick={props.goToPage}
+      className={`${
+        isHeld ? "!bg-red" : "!bg-pink"
+      } font-semibold py-3 flex flex-row text-whiteGrey w-fill rounded-lg shadow-lg align-center justify-center`}
+    >
+      <div className="">{props.name}</div>
     </div>
   );
 };
 
-export default CustomButtons;
-
+export default CustomButton;

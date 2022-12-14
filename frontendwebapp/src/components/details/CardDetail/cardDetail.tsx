@@ -8,10 +8,11 @@ interface ICardDetail {
 }
 
 const CardDetail: React.FunctionComponent = () => {
+
   const cardsDetails: ICardDetail[] = [
     {
       accountNumber: "014428812",
-      ownerName: "BRYAN PUTRA SUANDI",
+      ownerName: "Bryan Putra",
       amount: 2500000,
       productName: "Tabungan Simas Payroll",
     },

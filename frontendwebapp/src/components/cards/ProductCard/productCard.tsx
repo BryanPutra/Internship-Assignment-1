@@ -9,7 +9,7 @@ interface IProductCardProps {
 }
 
 const ProductCard: React.FunctionComponent<IProductCardProps> = (props) => {
-  const [selectedProduct, setSelectedProduct] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<string>("");
   // add hook or function from product section page that sets a certain selected product
   // put the function in the onclick div
   return (

@@ -31,6 +31,8 @@ import MainMenuTitle from "components/titles/MainMenuTitle";
 import ProductCard from "components/cards/ProductCard";
 
 import { useMain } from "context/mainContext";
+import { useHistory } from "context/historyContext";
+import { useAxios } from "context/axiosContext";
 
 interface IMainMenuProps {}
 
@@ -48,27 +50,54 @@ interface IPayIcons {
 
 const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
   const { logout, testPostAuth, userDetails } = useAuth();
-  const { setProductSectionSelected } = useMain();
+  const { history } = useHistory();
+  const {
+    setProductSectionSelected,
+    setCurrentPage,
+    currentPage,
+    prevPage,
+    setPrevPage,
+  } = useMain();
+  const {authorizationAxios} = useAxios();
 
-  const frameStyle = {
-    gap: "12",
+  useEffect(() => {
+    setCurrentPage("mainmenu");
+    // console.log(userDetails);
+    // setCurrentPage(history[history.length - 1]);
+    // setPrevPage(history[history.length - 2]);
+    console.log(currentPage);
+    console.log(prevPage);
+  }, []);
+
+  const resetDatabase = async() => {
+    const response = await authorizationAxios.get("/debug/freshstart");
+    console.log(response);
+    alert('Database has been reset for testing purposes')
+  }
+
+  const printCurrentPage = () => {
+    console.log(history.length - 1);
+    console.log(history.length - 2);
+    console.log(currentPage);
+    console.log(prevPage);
+    console.log(history);
   };
 
   const productList = [
     {
-      productName: 'Credit Card',
+      productName: "Credit Card",
       color: "black",
       // function setCreditCardPressed on product section
       // on Link clicked, perform the above function
     },
     {
-      productName: 'Savings',
+      productName: "Savings",
       color: "",
       // function setCreditCardPressed on product section
       // on Link clicked, perform the above function
     },
     {
-      productName: 'Loan',
+      productName: "Loan",
       color: "lightBlue",
       // function setCreditCardPressed on product section
       // on Link clicked, perform the above function
@@ -134,24 +163,6 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
     },
   ];
 
-  const productSelectedValues = {
-    'Credit Card': 'credit',
-    'Savings': 'savings',
-    'Loan': 'loan'
-  }
-
-  // const testPostAuths = async () => {
-  //   try {
-  //     const response = axios.get(
-  //       "https://b776-180-241-243-138.ap.ngrok.io/api/form/home"
-  //     );
-  //     console.log(response);
-  //   } catch (err) {
-  //     console.log(err);
-  //     alert(`Failed to fetch, ${errorUtils.getErrorMessage(err)}`);
-  //   }
-  // };
-
   return (
     <MainContainer containerType="secondary">
       {/* top container */}
@@ -160,8 +171,8 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
           <div className="w-1/3">
             <Image src={SimobiLogo} alt="Login Pic" layout="responsive" />
           </div>
-          <div className="flex flex-row justify-end w-full gap-3">
-            <div onClick={testPostAuth}>
+          <div className="flex flex-row justify-end w-full space-x-3">
+            <div onClick={resetDatabase}>
               <Settings />
             </div>
             <div onClick={logout}>
@@ -228,16 +239,21 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
         >
           {productList.map((product) => {
             return (
-              <div onClick={() => {
-                switch(product.productName){
-                  case 'Credit Card': setProductSectionSelected('credit');
-                  break;
-                  case 'Savings': setProductSectionSelected('savings');
-                  break;
-                  case 'Loan' : setProductSectionSelected('loan');
-                  break;
-                }
-              }}>
+              <div
+                onClick={() => {
+                  switch (product.productName) {
+                    case "Credit Card":
+                      setProductSectionSelected("credit");
+                      break;
+                    case "Savings":
+                      setProductSectionSelected("savings");
+                      break;
+                    case "Loan":
+                      setProductSectionSelected("loan");
+                      break;
+                  }
+                }}
+              >
                 <ProductCard
                   productName={product.productName}
                   color={product.color}
@@ -250,8 +266,6 @@ const MainMenu: React.FunctionComponent<IMainMenuProps> = (props) => {
       </CardContainer>
       <CardContainer>
         <MainMenuTitle name="Hellow" />
-
-        <div></div>
         <SavingsCard />
         <CardDetail />
       </CardContainer>

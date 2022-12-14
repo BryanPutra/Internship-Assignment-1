@@ -1,25 +1,24 @@
 import { useAuth } from "context/authContext";
 import * as React from "react";
 import { useCallback, useEffect } from "react";
-import MainContainer from "components/containers/MainContainer";
-import RefreshIcon from "@mui/icons-material/Refresh";
+import { useRouter } from "next/router";
 
 interface IProtectedProps {
   children: React.ReactNode;
 }
 
 const Protected: React.FunctionComponent<IProtectedProps> = (props) => {
-  const { authState, setAuthState, logout, userDetails } = useAuth();
-  // code if user wants to go to protected while not authenticated
-  // code if user wants to go back to login page when authenticated
-
-  const checkAuth = useCallback(() => {
-    console.log(authState, userDetails);
-    !authState ? logout() : setAuthState(true);
-  }, []);
+  const { checkAuthenticated } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    checkAuth();
+    checkAuthenticated();
+    console.log("check based on route change");
+  }, [router.asPath]);
+
+  useEffect(() => {
+    checkAuthenticated();
+    console.log("change based on first render");
   }, []);
 
   return (<>{props.children}</>)

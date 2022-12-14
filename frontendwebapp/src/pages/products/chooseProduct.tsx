@@ -1,29 +1,31 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
+import { StaticImageData } from "next/image";
+import Link from "next/link";
+
+//local
 import creditPlatinum from "../../../public/assets/images/creditplatinum.png";
 import creditSecure from "../../../public/assets/images/creditsecure.png";
-import Image, { StaticImageData } from "next/image";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MainContainer from "components/containers/MainContainer";
 import SectionButton from "components/buttons/SectionButton";
-import Link from "next/link";
 import ChooseProductCard from "components/cards/ChooseProductCard";
 import { useMain } from "context/mainContext";
-import { useRouter } from 'next/router';
+
+//libs
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 interface IChooseProductProps {}
 
-interface productInfo {
+interface IProductInfo {
   productTitle: string;
   productDetails: string;
   imageSrc: StaticImageData;
 }
 
 const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
-  const [creditSelected, setCreditSelected] = useState(false);
-  const [savingsSelected, setSavingsSelected] = useState(false);
-  const [loanSelected, setLoanSelected] = useState(false);
-  const router = useRouter();
+  const [creditSelected, setCreditSelected] = useState<boolean>(false);
+  const [savingsSelected, setSavingsSelected] = useState<boolean>(false);
+  const [loanSelected, setLoanSelected] = useState<boolean>(false);
 
   const { productSectionSelected, setProductSectionSelected } = useMain();
 
@@ -39,7 +41,7 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
         selectLoan();
         break;
     }
-  }, [productSectionSelected, router.pathname]);
+  }, [productSectionSelected]);
 
   const selectCredit = () => {
     setProductSectionSelected('credit');
@@ -62,7 +64,7 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
     setLoanSelected(true);
   };
 
-  const creditInfo: productInfo[] = [
+  const creditInfo: IProductInfo[] = [
     {
       productTitle: "Platinum Card",
       productDetails: "Pay easier with more benefits",
@@ -74,14 +76,19 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
       imageSrc: creditSecure,
     },
   ];
-  const savingsInfo: productInfo[] = [
+  const savingsInfo: IProductInfo[] = [
     {
       productTitle: "Tabungan Simas Payroll",
       productDetails: "Basically kartu debit lol pakai dengan waspada",
       imageSrc: creditPlatinum,
     },
+    {
+      productTitle: "savings",
+      productDetails: "Untuk testing purposes",
+      imageSrc: creditPlatinum,
+    },
   ];
-  const loanInfo: productInfo[] = [
+  const loanInfo: IProductInfo[] = [
     {
       productTitle: "Beeg Loan",
       productDetails: "Pinjem duit bang kubalikin taun depan",
@@ -124,7 +131,7 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
       {/* main container */}
       <div className="flex flex-col px-5 py-5 items-center gap-5 h-screen">
         {creditSelected &&
-          productInfo.credit.map((product: productInfo) => {
+          productInfo.credit.map((product: IProductInfo) => {
             return (
               <ChooseProductCard
                 productTitle={product.productTitle}
@@ -134,7 +141,7 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
             );
           })}
         {savingsSelected &&
-          productInfo.savings.map((product: productInfo) => {
+          productInfo.savings.map((product: IProductInfo) => {
             return (
               <ChooseProductCard
                 productTitle={product.productTitle}
@@ -144,7 +151,7 @@ const ChooseProduct: React.FunctionComponent<IChooseProductProps> = (props) => {
             );
           })}
         {loanSelected &&
-          productInfo.loan.map((product: productInfo) => {
+          productInfo.loan.map((product: IProductInfo) => {
             return (
               <ChooseProductCard
                 productTitle={product.productTitle}
